@@ -3,9 +3,10 @@ package person;
 import contactdetails.EmailAddress;
 import contactdetails.PhoneNumber;
 
-public class Patient extends Person {
+public class PatientGUI extends Person {
 
 	private String patientID; // Write a method to assign a clientID;
+	private Gender gender;
 	private String nationalID;
 	private int birthDate;
 	private int birthMonth;
@@ -15,12 +16,17 @@ public class Patient extends Person {
 	private PhoneNumber workPhoneNumber;
 	private EmailAddress emailAddress;
 	private NextOfKin nextOfKin;
+
+	public enum Gender {
+		FEMALE,
+		MALE
+	}
 	
-	
-	public Patient (String firstName, String lastName, String nationalID, int birthDate,
+	public PatientGUI (String firstName, String lastName, Gender gender, String nationalID, int birthDate,
 			int birthMonth, int birthYear, String mobilePhoneNumber, String homePhoneNumber, 
 			String workPhoneNumber, String emailAddress, NextOfKin nextOfKin) {
 		super(firstName, lastName);
+		this.gender = gender;
 		this.nationalID = nationalID;
 		this.birthDate = birthDate;
 		this.birthMonth = birthMonth;
