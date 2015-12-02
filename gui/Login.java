@@ -56,7 +56,7 @@ public class Login {
 	
 	private static void verify(String username, String password) {
 		
-		/*
+		/* WORK IN PROGRESS
 		 * Check if the file containing usernames and passwords exists.
 		 * If does not exist, do not create new.  Instead, throw an error 
 		 * and terminate the program.  If username and password combination
@@ -90,6 +90,7 @@ public class Login {
 		JTextField tPassword = new JTextField();
 		JButton bLogin = new JButton("Log in");
 		
+		// THESE LISTENERS HAVE NOT BEEN INITIALISED !!!
 		// The following section adds listeners to certain components.
 		
 		bLogin.addActionListener(bListener);
