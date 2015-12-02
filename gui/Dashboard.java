@@ -72,7 +72,7 @@ public class Dashboard {
 		JButton bRegister = new JButton("Register");
 		JSeparator sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		JLabel lResults = new JLabel("Search Results");
-		JTable tbResults = new JTable();
+		JTable tbResults = new JTable(10, 4);
 		JButton bEdit = new JButton("Edit Patient Details");
 		
 		// THESE LISTENERS HAVE NOT BEEN INITIALISED !!!
