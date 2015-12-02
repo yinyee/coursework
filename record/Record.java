@@ -1,7 +1,7 @@
 package record;
 
 import person.Patient;
-import util.Date;
+import record.util.Date;
 
 public class Record {
 	

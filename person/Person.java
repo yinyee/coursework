@@ -1,6 +1,6 @@
 package person;
 
-import contactdetails.EmailAddress;
+import person.util.EmailAddress;
 
 public class Person {
 

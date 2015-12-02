@@ -1,8 +1,8 @@
 package person;
 
-import contactdetails.Address;
-import util.Date;
-import util.Insurance;
+import person.util.Address;
+import person.util.Insurance;
+import record.util.Date;
 
 public class Patient extends Person {
 

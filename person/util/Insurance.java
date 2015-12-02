@@ -1,4 +1,4 @@
-package util;
+package person.util;
 
 public class Insurance {
 

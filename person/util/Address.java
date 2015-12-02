@@ -1,4 +1,4 @@
-package contactdetails;
+package person.util;
 
 import person.Person;
 
