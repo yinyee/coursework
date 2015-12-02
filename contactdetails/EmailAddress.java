@@ -4,7 +4,7 @@ public class EmailAddress {
 	
 	private String emailAddress;
 	
-	public EmailAddress (String emailAddress) {
+	public EmailAddress(String emailAddress) {
 		if (checkValidEmailAddress(emailAddress) == true) {
 			this.emailAddress = emailAddress;
 		} else {
@@ -20,11 +20,11 @@ public class EmailAddress {
 		}
 	}
 	
-	public String getEmailAddress () {
+	public String toString() {
 		return emailAddress;
 	}
 	
-	public void setEmailAddress (String newEmailAddress) {
+	public void setEmailAddress(String newEmailAddress) {
 		this.emailAddress = newEmailAddress;
 	}
 

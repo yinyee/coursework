@@ -1,13 +1,13 @@
 package person;
 
-public class User extends Person {
+public class Administrator extends Person {
 
-	private String userID; // Write a method to assign a userID
+	// Write a method to assign a userID
 	private String username;
 	private String password;
 	
-	public User (String firstName, String lastName, String username, String password) {
-		super(firstName, lastName);
+	public Administrator (String firstName, String lastName, String emailAddress, String username, String password) {
+		super(firstName, lastName, emailAddress);
 		this.username = username;
 		this.password = password;
 	}
@@ -21,11 +21,7 @@ public class User extends Person {
 	}
 	
 	public boolean checkPassword (String enteredPassword) {
-		if (enteredPassword == password){
-			return true;
-		} else {
-			return false;
-		}
+		return enteredPassword.equals(password);
 	}
 	
 }

@@ -1,0 +1,35 @@
+package record;
+
+import java.io.File;
+
+import person.Patient;
+
+public class Attachment extends Record {
+
+	private String notes;
+	private File attachment;
+	
+	public Attachment(Patient patient, int recordDate, int recordMonth, int recordYear, String notes, File attachment) {
+		super(patient, recordDate, recordMonth, recordYear);
+		this.notes = notes;
+		this.attachment = attachment;
+	}
+	
+	public String getNotes() {
+		return notes;
+	}
+	
+	public void addNotes(String additionalNotes) {
+		StringBuilder str = new StringBuilder(this.notes);
+		str.append(additionalNotes);
+		notes = str.toString();
+	}
+	
+	public File getAttachment() {
+		return attachment;
+	}
+	
+	public void setAttachment(File attachment) {
+		this.attachment = attachment;
+	}
+}
