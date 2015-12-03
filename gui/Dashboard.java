@@ -39,6 +39,7 @@ public class Dashboard {
 	private static ComboBoxListener cboxListener;
 	private static TextFieldListener tListener;
 	private static ButtonListener bListener;
+	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
 	
 	public static void main (String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -73,7 +74,7 @@ public class Dashboard {
 		JSeparator sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		JLabel lResults = new JLabel("Search Results");
 		JTable tbResults = new JTable(10, 4);
-		JButton bEdit = new JButton("Edit Patient Details");
+		JButton bOpen = new JButton("Open patient profile");
 		
 		// THESE LISTENERS HAVE NOT BEEN INITIALISED !!!
 		// The following section adds listeners to certain components.
@@ -83,8 +84,8 @@ public class Dashboard {
 		bSearch.setActionCommand("Search");
 		bRegister.addActionListener(bListener);
 		bRegister.setActionCommand("Register");
-		bEdit.addActionListener(bListener);
-		bEdit.setActionCommand("Edit");
+		bOpen.addActionListener(bListener);
+		bOpen.setActionCommand("Edit");
 		
 		// The following section specifies the GridBagConsraints for each component.
 		
@@ -100,77 +101,77 @@ public class Dashboard {
 		GridBagConstraints csHorizontal = new GridBagConstraints();
 		GridBagConstraints clResults = new GridBagConstraints();
 		GridBagConstraints ctbResults = new GridBagConstraints();
-		GridBagConstraints cbEdit = new GridBagConstraints();
+		GridBagConstraints cbOpen = new GridBagConstraints();
 		
 		clWelcome.gridx = 0;
 		clWelcome.gridy = 0;
 		clWelcome.gridwidth = 2;
 		clWelcome.gridheight = 1;
 		clWelcome.fill = GridBagConstraints.HORIZONTAL;
-		clWelcome.insets = new Insets(5, 5, 5, 5);
+		clWelcome.insets = standardInsets;
 		
 		clSearch.gridx = 0;
 		clSearch.gridy = 2;
 		clSearch.gridwidth = 1;
 		clSearch.gridheight = 1;
 		clSearch.fill = GridBagConstraints.HORIZONTAL;
-		clSearch.insets = new Insets(5, 5, 5, 5);
+		clSearch.insets = standardInsets;
 		
 		ccboxSearch.gridx = 0;
 		ccboxSearch.gridy = 3;
 		ccboxSearch.gridwidth = 1;
 		ccboxSearch.gridheight = 1;
 		ccboxSearch.fill = GridBagConstraints.HORIZONTAL;
-		ccboxSearch.insets = new Insets(5, 5, 5, 5);
+		ccboxSearch.insets = standardInsets;
 		
 		ctSearch.gridx = 1;
 		ctSearch.gridy = 3;
 		ctSearch.gridwidth = 1;
 		ctSearch.gridheight = 1;
 		ctSearch.fill = GridBagConstraints.HORIZONTAL;
-		ctSearch.insets = new Insets(5, 5, 5, 5);
+		ctSearch.insets = standardInsets;
 		
 		cbSearch.gridx = 1;
 		cbSearch.gridy = 4;
 		cbSearch.gridwidth = 1;
 		cbSearch.gridheight = 1;
 		cbSearch.fill = GridBagConstraints.HORIZONTAL;
-		cbSearch.insets = new Insets(5, 5, 5, 5);
+		cbSearch.insets = standardInsets;
 
 		csVertical.gridx = 2;
 		csVertical.gridy = 2;
 		csVertical.gridwidth = 1;
 		csVertical.gridheight = 3;
 		csVertical.fill = GridBagConstraints.VERTICAL;
-		csVertical.insets = new Insets(5, 5, 5, 5);
+		csVertical.insets = standardInsets;
 		
 		clRegister.gridx = 3;
 		clRegister.gridy = 2;
 		clRegister.gridwidth = 1;
 		clRegister.gridheight = 1;
 		clRegister.fill = GridBagConstraints.HORIZONTAL;
-		clRegister.insets = new Insets(5, 5, 5, 5);
+		clRegister.insets = standardInsets;
 		
 		cbRegister.gridx = 3;
 		cbRegister.gridy = 3;
 		cbRegister.gridwidth = 1;
 		cbRegister.gridheight = 1;
 		cbRegister.fill = GridBagConstraints.HORIZONTAL;
-		cbRegister.insets = new Insets(5, 5, 5, 5);		
+		cbRegister.insets = standardInsets;		
 
 		csHorizontal.gridx = 0;
 		csHorizontal.gridy = 5;
 		csHorizontal.gridwidth = 5;
 		csHorizontal.gridheight = 1;
 		csHorizontal.fill = GridBagConstraints.HORIZONTAL;
-		csHorizontal.insets = new Insets(5, 5, 5, 5);
+		csHorizontal.insets = standardInsets;
 		
 		clResults.gridx = 0;
 		clResults.gridy = 6;
 		clResults.gridwidth = 1;
 		clResults.gridheight = 1;
 		clResults.fill = GridBagConstraints.HORIZONTAL;
-		clResults.insets = new Insets(5, 5, 5, 5);
+		clResults.insets = standardInsets;
 		
 		ctbResults.gridx = 0;
 		ctbResults.gridy = 7;
@@ -178,14 +179,14 @@ public class Dashboard {
 		ctbResults.gridheight = 1;
 		ctbResults.fill = GridBagConstraints.HORIZONTAL;
 		ctbResults.fill = GridBagConstraints.VERTICAL;
-		ctbResults.insets = new Insets(5, 5, 5, 5);
+		ctbResults.insets = standardInsets;
 		
-		cbEdit.gridx = 3;
-		cbEdit.gridy = 9;
-		cbEdit.gridwidth = 2;
-		cbEdit.gridheight = 1;
-		cbEdit.fill = GridBagConstraints.HORIZONTAL;
-		cbEdit.insets = new Insets(5, 5, 5, 5);
+		cbOpen.gridx = 3;
+		cbOpen.gridy = 9;
+		cbOpen.gridwidth = 2;
+		cbOpen.gridheight = 1;
+		cbOpen.fill = GridBagConstraints.HORIZONTAL;
+		cbOpen.insets = standardInsets;
 		
 		panel.add(lWelcome, clWelcome);
 		panel.add(lSearch, clSearch);
@@ -198,7 +199,7 @@ public class Dashboard {
 		panel.add(sHorizontal, csHorizontal);
 		panel.add(lResults, clResults);
 		panel.add(tbResults, ctbResults);
-		panel.add(bEdit, cbEdit);
+		panel.add(bOpen, cbOpen);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();

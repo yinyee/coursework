@@ -1,7 +1,5 @@
 package person.util;
 
-import person.Person;
-
 public class Address {
 
 	private String houseNumberOrName;
@@ -18,9 +16,29 @@ public class Address {
 		this.country = country;
 	}
 	
-	public String getAddress(Person person) {
+	public String getFullAddress() {
 		StringBuilder fullAddress = new StringBuilder();
 		fullAddress.append(houseNumberOrName + ", " + street + ", " + city + ", " + postalCode + ", " + country);
 		return fullAddress.toString();
+	}
+	
+	public String getHouseNumberOrName() {
+		return houseNumberOrName;
+	}
+	
+	public String getStreet() {
+		return street;
+	}
+	
+	public String getCity() {
+		return city;
+	}
+	
+	public String getPostalCode() {
+		return postalCode;
+	}
+	
+	public String getCountry() {
+		return country;
 	}
 }

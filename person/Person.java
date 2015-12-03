@@ -14,8 +14,12 @@ public class Person {
 		this.emailAddress = new EmailAddress(emailAddress);
 	}
 	
-	public String fullName () {
-		return firstName + " " + lastName;
+	public String getfullName () {
+		return lastName + ", " + firstName;
+	}
+	
+	public String getEmailAddress() {
+		return emailAddress.toString();
 	}
 	
 	public void setEmailAddress(String newEmailAddress) {

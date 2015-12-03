@@ -4,6 +4,7 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -31,6 +32,7 @@ public class Login {
 	private static String username, password;
 	private static ButtonListener bListener;
 	private static InputListener iListener;
+	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
 	
 	public Login () {
 		draw();
@@ -113,30 +115,35 @@ public class Login {
 		clUsername.gridwidth = 2;
 		clUsername.gridheight = 1;
 		clUsername.fill = GridBagConstraints.HORIZONTAL;
+		clUsername.insets = standardInsets;
 		
 		clPassword.gridx = 1;
 		clPassword.gridy = 4;
 		clPassword.gridwidth = 2;
 		clPassword.gridheight = 1;
 		clPassword.fill = GridBagConstraints.HORIZONTAL;
+		clPassword.insets = standardInsets;
 		
 		ctUsername.gridx = 3;
 		ctUsername.gridy = 1;
 		ctUsername.gridwidth = 2;
 		ctUsername.gridheight = 1;
 		ctUsername.fill = GridBagConstraints.HORIZONTAL;
+		ctUsername.insets = standardInsets;
 		
 		ctPassword.gridx = 3;
 		ctPassword.gridy = 4;
 		ctPassword.gridwidth = 2;
 		ctPassword.gridheight = 1;
 		ctPassword.fill = GridBagConstraints.HORIZONTAL;
+		ctPassword.insets = standardInsets;
 		
 		cbLogin.gridx = 5;
 		cbLogin.gridy = 5;
 		cbLogin.gridwidth = 1;
 		cbLogin.gridheight = 1;
 		cbLogin.fill = GridBagConstraints.HORIZONTAL;
+		cbLogin.insets = standardInsets;
 		
 		panel.add(lUsername, clUsername);
 		panel.add(lPassword, clPassword);
