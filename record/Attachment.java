@@ -9,8 +9,8 @@ public class Attachment extends Record {
 	private String notes;
 	private File attachment;
 	
-	public Attachment(Patient patient, int recordDate, int recordMonth, int recordYear, String notes, File attachment) {
-		super(patient, recordDate, recordMonth, recordYear);
+	public Attachment(Patient patient, int recordDate, int recordMonth, int recordYear, String doctor, String notes, File attachment) {
+		super(patient, recordDate, recordMonth, recordYear, doctor);
 		this.notes = notes;
 		this.attachment = attachment;
 	}

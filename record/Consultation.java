@@ -6,13 +6,13 @@ public class Consultation extends Record {
 	
 	private String notes;
 	private String diagnosis;
-	private Prescription[] prescription;
+//	private Prescription[] prescription;
 	
-	public Consultation(Patient patient, int recordDate, int recordMonth, int recordYear, String notes, String diagnosis, Prescription[] prescription) {
-		super(patient, recordDate, recordMonth, recordYear);
+	public Consultation(Patient patient, int recordDate, int recordMonth, int recordYear, String doctor, String notes, String diagnosis) {
+		super(patient, recordDate, recordMonth, recordYear, doctor);
 		this.notes = notes;
 		this.diagnosis = diagnosis;
-		this.prescription = prescription;
+//		this.prescription = prescription;
 	}
 
 	public String getNotes() {
@@ -29,7 +29,7 @@ public class Consultation extends Record {
 		return diagnosis;
 	}
 	
-	public Prescription[] getPrescription() {
-		return prescription;
-	}
+//	public Prescription[] getPrescription() {
+//		return prescription;
+//	}
 }

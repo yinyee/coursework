@@ -767,7 +767,7 @@ public class Profile {
 	 */
 		
 	private class CardController implements ActionListener {
-	
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			CardLayout layout = (CardLayout)(pAdditional.getLayout());
@@ -783,9 +783,7 @@ public class Profile {
 				layout.show(pAdditional, "View");
 				break;
 			}
-			
-		}
-				
+		}	
 	}
 
 

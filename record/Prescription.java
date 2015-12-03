@@ -10,9 +10,9 @@ public class Prescription extends Record {
 	private Frequency frequency;
 	private Instruction instruction;
 	
-	public Prescription(Patient patient, int recordDate, int recordMonth, int recordYear, 
+	public Prescription(Patient patient, int recordDate, int recordMonth, int recordYear, String doctor,
 			String drugName, int dosage, Times times, Frequency frequency, Instruction instruction) {
-		super(patient, recordDate, recordMonth, recordYear);
+		super(patient, recordDate, recordMonth, recordYear, doctor);
 		this.drugName = drugName;
 		this.dosage = dosage;
 		this.times = times;
