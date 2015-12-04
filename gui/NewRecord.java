@@ -1,11 +1,15 @@
 package gui;
 
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -15,20 +19,22 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import person.Patient;
+import record.util.Diseases;
 
 public class NewRecord {
 	
 	private static NewRecord instance = null;
+	private static Diseases diseases;
 	
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
 	private final static String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 	private JFrame frame;
 	private JLabel lPatient, l2Patient,lRecordDate, lDoctor, lNotes, lDiagnosis, lAttachment;
-	private JTextField tDoctor, tNotes, tDiagnosis, tAttachment;
-	private JComboBox<String> cboxRecordDate, cboxRecordMonth, cboxRecordYear;
+	private JTextField tDoctor, tNotes, tAttachment;
+	private JComboBox<String> cboxRecordDate, cboxRecordMonth, cboxRecordYear, cboxDiagnosis;
 	private JSeparator sHorizontal;
-	private JButton bSave;
+	private JButton bGet, bSave;
 	private ButtonListener listener;
 	
 	private NewRecord(Patient patient) {
@@ -75,7 +81,12 @@ public class NewRecord {
 		lNotes = new JLabel("Notes");
 		tNotes = new JTextField();
 		lDiagnosis = new JLabel("Diagnosis");
-		tDiagnosis = new JTextField();
+		diseases = new Diseases();
+		cboxDiagnosis = new JComboBox<String>(diseases.getList());
+		bGet = new JButton("Get information");
+		listener = new ButtonListener();
+		bGet.addActionListener(listener);
+		bGet.setActionCommand("Get");
 		lAttachment = new JLabel("Attachment");
 		tAttachment = new JTextField();
 		bSave = new JButton("Save");
@@ -93,7 +104,8 @@ public class NewRecord {
 		GridBagConstraints clNotes = new GridBagConstraints();
 		GridBagConstraints cl2Notes = new GridBagConstraints();
 		GridBagConstraints clDiagnosis = new GridBagConstraints();
-		GridBagConstraints cl2Diagnosis = new GridBagConstraints();
+		GridBagConstraints ccboxDiagnosis = new GridBagConstraints();
+		GridBagConstraints cbGet = new GridBagConstraints();
 		GridBagConstraints clAttachment = new GridBagConstraints();
 		GridBagConstraints cl2Attachment = new GridBagConstraints();
 		GridBagConstraints cbEdit = new GridBagConstraints();
@@ -182,13 +194,20 @@ public class NewRecord {
 		clDiagnosis.fill = GridBagConstraints.HORIZONTAL;
 		clDiagnosis.insets = standardInsets;
 
-		cl2Diagnosis.gridx = 1;
-		cl2Diagnosis.gridy = 5;
-		cl2Diagnosis.gridwidth = 1;
-		cl2Diagnosis.gridheight = 1;
-		cl2Diagnosis.fill = GridBagConstraints.HORIZONTAL;
-		cl2Diagnosis.insets = standardInsets;
+		ccboxDiagnosis.gridx = 1;
+		ccboxDiagnosis.gridy = 5;
+		ccboxDiagnosis.gridwidth = 1;
+		ccboxDiagnosis.gridheight = 1;
+		ccboxDiagnosis.fill = GridBagConstraints.HORIZONTAL;
+		ccboxDiagnosis.insets = standardInsets;
 
+		cbGet.gridx = 2;
+		cbGet.gridy = 5;
+		cbGet.gridwidth = 1;
+		cbGet.gridheight = 1;
+		cbGet.fill = GridBagConstraints.HORIZONTAL;
+		cbGet.insets = standardInsets;
+		
 		clAttachment.gridx = 0;
 		clAttachment.gridy = 6;
 		clAttachment.gridwidth = 1;
@@ -222,7 +241,8 @@ public class NewRecord {
 		panel.add(lNotes, clNotes);
 		panel.add(tNotes, cl2Notes);
 		panel.add(lDiagnosis, clDiagnosis);
-		panel.add(tDiagnosis, cl2Diagnosis);
+		panel.add(cboxDiagnosis, ccboxDiagnosis);
+		panel.add(bGet, cbGet);
 		panel.add(lAttachment, clAttachment);
 		panel.add(tAttachment, cl2Attachment);
 		
@@ -236,12 +256,42 @@ public class NewRecord {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//save;
+			switch (e.getActionCommand()) {
+			case "Get":
+				openWebpage(diseases.getDiseases().get(cboxDiagnosis.getSelectedItem()));
+				break;
+			case "Save":
+				//Save
+				break;
+			}
 			
 		}
 		
 	}
 
+	/**
+	 * Reference: http://stackoverflow.com/questions/10967451/open-a-link-in-browser-with-java-button
+	 * @param uri
+	 */
+	
+	private void openWebpage(URI uri) {
+	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+	        try {
+	            desktop.browse(uri);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+	private void openWebpage(URL url) {
+	    try {
+	        openWebpage(url.toURI());
+	    } catch (URISyntaxException e) {
+	        e.printStackTrace();
+	    }
+	}
 
 
 }

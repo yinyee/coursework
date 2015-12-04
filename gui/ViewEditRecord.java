@@ -320,7 +320,6 @@ public class ViewEditRecord {
 			}
 		}	
 	}
-
 	private class ButtonListener implements ActionListener {
 
 		@Override
