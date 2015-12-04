@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.CardLayout;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -18,10 +17,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import person.NextOfKin;
 import person.Patient;
-import person.util.Address;
-import person.util.Insurance;
 
 /**
  * Profile displays basic patient information and medical records

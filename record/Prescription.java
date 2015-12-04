@@ -2,7 +2,7 @@ package record;
 
 import person.Patient;
 
-public class Prescription extends Record {
+public class Prescription {
 	
 	private String drugName;
 	private int dosage;
@@ -12,7 +12,7 @@ public class Prescription extends Record {
 	
 	public Prescription(Patient patient, String recordDate, String recordMonth, String recordYear, String doctor,
 			String drugName, int dosage, Times times, Frequency frequency, Instruction instruction) {
-		super(patient, recordDate, recordMonth, recordYear, doctor);
+//		super(patient, recordDate, recordMonth, recordYear, doctor);
 		this.drugName = drugName;
 		this.dosage = dosage;
 		this.times = times;

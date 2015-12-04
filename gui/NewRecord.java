@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import person.Patient;
@@ -31,7 +32,8 @@ public class NewRecord {
 
 	private JFrame frame;
 	private JLabel lPatient, l2Patient,lRecordDate, lDoctor, lNotes, lDiagnosis, lAttachment;
-	private JTextField tDoctor, tNotes, tAttachment;
+	private JTextField tDoctor, tAttachment;
+	private JTextArea tNotes;
 	private JComboBox<String> cboxRecordDate, cboxRecordMonth, cboxRecordYear, cboxDiagnosis;
 	private JSeparator sHorizontal;
 	private JButton bGet, bSave;
@@ -79,7 +81,10 @@ public class NewRecord {
 		tDoctor = new JTextField();
 		sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		lNotes = new JLabel("Notes");
-		tNotes = new JTextField();
+		tNotes = new JTextArea();
+		tNotes.setWrapStyleWord(true);
+		tNotes.setLineWrap(true);
+		tNotes.setEditable(true);
 		lDiagnosis = new JLabel("Diagnosis");
 		diseases = new Diseases();
 		cboxDiagnosis = new JComboBox<String>(diseases.getList());

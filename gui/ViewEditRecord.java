@@ -10,18 +10,16 @@ import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import record.Consultation;
+import record.Record;
 import record.util.Diseases;
 
 /**
@@ -35,21 +33,22 @@ public class ViewEditRecord {
 	
 	private static ViewEditRecord instance = null;
 	private static Diseases diseases;
-	private Consultation record;
+	private Record record;
 	
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
 	private JPanel pCard, pView, pEdit;
 	private JFrame frame;
 	private JLabel lPatient, l2Patient, lRecordDate,  l2RecordDate, lDoctor, l2Doctor, lNotes, l2Notes, lDiagnosis, l2Diagnosis, lAttachment, l2Attachment;
 	private JLabel lePatient, le2Patient, leRecordDate, leDoctor, leNotes, leDiagnosis, leAttachment, le2Attachment;
-	private JTextField le2RecordDate, le2Doctor, le2Notes;
+	private JTextField le2RecordDate, le2Doctor;
+	private JTextArea le2Notes;
 	private JComboBox<String> cboxDiagnosis;
 	private JSeparator sHorizontal, seHorizontal;
 	private JButton bEdit, bGet, bCancel, bSave;
 	private CardController cardController;
 	private ButtonListener bListener;
 	
-	private ViewEditRecord(Consultation record) {
+	private ViewEditRecord(Record record) {
 		this.record = record;
 		draw(record);
 	}
@@ -58,7 +57,7 @@ public class ViewEditRecord {
 	 * The getInstance() method enforces the Singleton design pattern.
 	 * @param record
 	 */
-	public static ViewEditRecord getInstance(Consultation record) {
+	public static ViewEditRecord getInstance(Record record) {
 		if (instance == null) {
 			instance = new ViewEditRecord(record);
 		}
@@ -68,7 +67,7 @@ public class ViewEditRecord {
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
-	public void draw(Consultation record) {
+	public void draw(Record record) {
 	
 		frame = new JFrame("View and Edit Record");
 		pCard = new JPanel(new CardLayout());
@@ -233,7 +232,7 @@ public class ViewEditRecord {
 		le2Doctor = new JTextField(record.getDoctor());
 		seHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		leNotes = new JLabel("Notes");
-		le2Notes = new JTextField(record.getNotes());
+		le2Notes = new JTextArea(record.getNotes());
 		leDiagnosis = new JLabel("Diagnosis");
 		diseases = new Diseases();
 		cboxDiagnosis = new JComboBox<String>(diseases.getList());

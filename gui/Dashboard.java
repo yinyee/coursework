@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Container;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -15,10 +14,6 @@ import javax.swing.JSeparator;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * After successfully logging in, the Administrator will be directed to this screen,

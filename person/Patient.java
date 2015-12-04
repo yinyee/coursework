@@ -1,7 +1,6 @@
 package person;
 
 import person.util.Address;
-import person.util.Insurance;
 import record.util.Date;
 
 public class Patient extends Person {
