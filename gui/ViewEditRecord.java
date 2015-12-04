@@ -1,25 +1,28 @@
 package gui;
 
 import java.awt.CardLayout;
-import java.awt.EventQueue;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import person.NextOfKin;
-import person.Patient;
-import person.util.Address;
-import person.util.Insurance;
 import record.Consultation;
+import record.util.Diseases;
 
 /**
  * 
@@ -31,6 +34,7 @@ import record.Consultation;
 public class ViewEditRecord {
 	
 	private static ViewEditRecord instance = null;
+	private static Diseases diseases;
 	private Consultation record;
 	
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
@@ -38,10 +42,12 @@ public class ViewEditRecord {
 	private JFrame frame;
 	private JLabel lPatient, l2Patient, lRecordDate,  l2RecordDate, lDoctor, l2Doctor, lNotes, l2Notes, lDiagnosis, l2Diagnosis, lAttachment, l2Attachment;
 	private JLabel lePatient, le2Patient, leRecordDate, leDoctor, leNotes, leDiagnosis, leAttachment, le2Attachment;
-	private JTextField le2RecordDate, le2Doctor, le2Notes, le2Diagnosis;
+	private JTextField le2RecordDate, le2Doctor, le2Notes;
+	private JComboBox<String> cboxDiagnosis;
 	private JSeparator sHorizontal, seHorizontal;
-	private JButton bEdit, bCancel, bSave;
+	private JButton bEdit, bGet, bCancel, bSave;
 	private CardController cardController;
+	private ButtonListener bListener;
 	
 	private ViewEditRecord(Consultation record) {
 		this.record = record;
@@ -229,7 +235,11 @@ public class ViewEditRecord {
 		leNotes = new JLabel("Notes");
 		le2Notes = new JTextField(record.getNotes());
 		leDiagnosis = new JLabel("Diagnosis");
-		le2Diagnosis = new JTextField(record.getDiagnosis());
+		diseases = new Diseases();
+		cboxDiagnosis = new JComboBox<String>(diseases.getList());
+		bGet = new JButton("Get information");
+		bListener = new ButtonListener();
+		bGet.addActionListener(bListener);
 		leAttachment = new JLabel("Attachment");
 		le2Attachment = new JLabel("WIP");
 		bCancel = new JButton("Cancel");
@@ -239,9 +249,17 @@ public class ViewEditRecord {
 		bSave.addActionListener(cardController);
 		bSave.setActionCommand("Save");
 
+		GridBagConstraints cbGet = new GridBagConstraints();
 		GridBagConstraints cbCancel = new GridBagConstraints();
 		GridBagConstraints cbSave = new GridBagConstraints();
 
+		cbGet.gridx = 2;
+		cbGet.gridy = 5;
+		cbGet.gridwidth = 1;
+		cbGet.gridheight = 1;
+		cbGet.fill = GridBagConstraints.HORIZONTAL;
+		cbGet.insets = standardInsets;
+		
 		cbCancel.gridx = 0;
 		cbCancel.gridy = 7;
 		cbCancel.gridwidth = 1;
@@ -266,7 +284,8 @@ public class ViewEditRecord {
 		pEdit.add(leNotes, clNotes);
 		pEdit.add(le2Notes, cl2Notes);
 		pEdit.add(leDiagnosis, clDiagnosis);
-		pEdit.add(le2Diagnosis, cl2Diagnosis);
+		pEdit.add(cboxDiagnosis, cl2Diagnosis);
+		pEdit.add(bGet, cbGet);
 		pEdit.add(leAttachment, clAttachment);
 		pEdit.add(le2Attachment, cl2Attachment);
 		pEdit.add(bCancel, cbCancel);
@@ -281,7 +300,7 @@ public class ViewEditRecord {
 		frame.setVisible(true);
 		
 	}
-	
+		
 	private class CardController implements ActionListener {
 		
 		@Override
@@ -302,5 +321,36 @@ public class ViewEditRecord {
 		}	
 	}
 
+	private class ButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			openWebpage(diseases.getDiseases().get(cboxDiagnosis.getSelectedItem()));
+		}
+	}
+	
+	/**
+	 * Reference: http://stackoverflow.com/questions/10967451/open-a-link-in-browser-with-java-button
+	 * @param uri
+	 */
+	
+	private void openWebpage(URI uri) {
+	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+	        try {
+	            desktop.browse(uri);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+	private void openWebpage(URL url) {
+	    try {
+	        openWebpage(url.toURI());
+	    } catch (URISyntaxException e) {
+	        e.printStackTrace();
+	    }
+	}
 
 }

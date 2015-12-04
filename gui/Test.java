@@ -20,9 +20,9 @@ public class Test {
 							"+640987987987", "+64090123983");
 					Patient patient = new Patient("Yin Yee", "Kan", "yin.kan.15@ucl.ac.uk.com", "Female", "8", "December", "1983",
 							"07931155585", "07931155585", "07931155585", homeAddress, billingAddress, nextOfKin);
-					Profile window = Profile.getInstance(patient);
-//					Consultation record = new Consultation(patient, "5", "December", "2015", "Dr. House", "LKMLKMLK", "Ugh", "Atta");
-//					ViewEditRecord window = ViewEditRecord.getInstance(record);
+//					Profile window = Profile.getInstance(patient);
+					Consultation record = new Consultation(patient, "5", "December", "2015", "Dr. House", "LKMLKMLK", "Ugh", "Atta");
+					ViewEditRecord window = ViewEditRecord.getInstance(record);
 					
 				} catch (Exception e) {
 					e.printStackTrace();
