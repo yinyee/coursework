@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -8,8 +9,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
+import reader.Interpreter;
+
 import javax.swing.JSeparator;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -31,9 +37,10 @@ import java.awt.event.ActionListener;
 public class Dashboard {
 	
 	private static Dashboard instance = null;
+	private final static String database = "data/database.xml";
 	
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
-	private final static String[] searchFields = {"First name", "Last name", "Birth date", "Gender"};
+	private final static String[] searchFields = {"First name", "Last name", "Gender", "Postal code", "Doctor", "Diagnosis"};
 	
 	private String searchField, searchText;
 	
@@ -43,6 +50,7 @@ public class Dashboard {
 	private JComboBox<String> cboxSearch;
 	private JButton bSearch, bRegister, bOpen;
 	private JSeparator sVertical, sHorizontal;
+	private JScrollPane scrResults;
 	private JTable tbResults;
 	private ButtonListener bListener;
 	
@@ -69,7 +77,7 @@ public class Dashboard {
 		
 		frame = new JFrame("Dashboard");
 		lWelcome = new JLabel("Welcome, Administrator");
-		lSearch = new JLabel("Search");
+		lSearch = new JLabel("Search patients");
 		cboxSearch = new JComboBox<String>(searchFields);
 		tSearch = new JTextField();
 		bSearch = new JButton("Search");
@@ -77,10 +85,16 @@ public class Dashboard {
 		lRegister = new JLabel("New patient");
 		bRegister = new JButton("Register");
 		sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		lResults = new JLabel("Search Results");
-		tbResults = new JTable(10, 4);
+		lResults = new JLabel("Search results");
+		tbResults = new JTable(5, 10);
+		tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tbResults.setFillsViewportHeight(true);
+		scrResults = new JScrollPane(tbResults);
+		scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		bOpen = new JButton("Open patient profile");
 		
+		bListener = new ButtonListener();
 		bSearch.addActionListener(bListener);
 		bSearch.setActionCommand("Search");
 		bRegister.addActionListener(bListener);
@@ -101,7 +115,7 @@ public class Dashboard {
 		GridBagConstraints cbRegister = new GridBagConstraints();
 		GridBagConstraints csHorizontal = new GridBagConstraints();
 		GridBagConstraints clResults = new GridBagConstraints();
-		GridBagConstraints ctbResults = new GridBagConstraints();
+		GridBagConstraints cscrResults = new GridBagConstraints();
 		GridBagConstraints cbOpen = new GridBagConstraints();
 		
 		clWelcome.gridx = 0;
@@ -174,17 +188,17 @@ public class Dashboard {
 		clResults.fill = GridBagConstraints.HORIZONTAL;
 		clResults.insets = standardInsets;
 		
-		ctbResults.gridx = 0;
-		ctbResults.gridy = 7;
-		ctbResults.gridwidth = 5;
-		ctbResults.gridheight = 1;
-		ctbResults.fill = GridBagConstraints.HORIZONTAL;
-		ctbResults.fill = GridBagConstraints.VERTICAL;
-		ctbResults.insets = standardInsets;
+		cscrResults.gridx = 0;
+		cscrResults.gridy = 7;
+		cscrResults.gridwidth = 5;
+		cscrResults.gridheight = 1;
+		cscrResults.fill = GridBagConstraints.HORIZONTAL;
+		cscrResults.fill = GridBagConstraints.VERTICAL;
+		cscrResults.insets = standardInsets;
 		
 		cbOpen.gridx = 3;
 		cbOpen.gridy = 9;
-		cbOpen.gridwidth = 2;
+		cbOpen.gridwidth = 1;
 		cbOpen.gridheight = 1;
 		cbOpen.fill = GridBagConstraints.HORIZONTAL;
 		cbOpen.insets = standardInsets;
@@ -199,7 +213,7 @@ public class Dashboard {
 		panel.add(bRegister, cbRegister);
 		panel.add(sHorizontal, csHorizontal);
 		panel.add(lResults, clResults);
-		panel.add(tbResults, ctbResults);
+		panel.add(scrResults, cscrResults);
 		panel.add(bOpen, cbOpen);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -214,8 +228,9 @@ public class Dashboard {
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand()) {
 			case "Search":
-				searchField = cboxSearch.getSelectedItem().toString();
-				searchText = tSearch.getText();
+				ActionThread searchThread = new ActionThread();
+				searchThread.start();
+				searchThread.search();
 				break;
 			case "Register":
 				try {
@@ -233,6 +248,22 @@ public class Dashboard {
 				}
 				break;
 			}
+		}
+	}
+	
+	private class ActionThread extends Thread {
+		
+		private void search() {
+			searchField = cboxSearch.getSelectedItem().toString();
+			searchText = tSearch.getText();			 
+			Interpreter interpreter = new Interpreter();
+			tbResults = interpreter.searchPatient(database, searchField, searchText);
+			tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			tbResults.setMinimumSize(tbResults.getPreferredSize());
+			scrResults.setViewportView(tbResults);
+			scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			frame.validate();
 		}
 	}
 	

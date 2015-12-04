@@ -12,18 +12,18 @@
 		<homePhoneNumber>07931155585</homePhoneNumber>
 		<workPhoneNumber>07931155585</workPhoneNumber>
 		<homeAddress>
-			<homeNumberOrName>Flat 15, Croydon House</homeNumberOrName>
-			<homeStreet>Wootton Street</homeStreet>
-			<homeCity>London</homeCity>
-			<homePostalCode>SE1 8TS</homePostalCode>
-			<homeCountry>United Kingdom</homeCountry>
+			<numberOrName>Flat 15, Croydon House</numberOrName>
+			<street>Wootton Street</street>
+			<city>London</city>
+			<postalCode>SE1 8TS</postalCode>
+			<country>United Kingdom</country>
 		</homeAddress>
 		<billingAddress>
-			<billingNumberOrName>Flat 15, Croydon House</billingNumberOrName>
-			<billingStreet>Wootton Street</billingStreet>
-			<billingCity>London</billingCity>
-			<billingPostalCode>SE1 8TS</billingPostalCode>
-			<billingCountry>United Kingdom</billingCountry>
+			<numberOrName>Flat 15, Croydon House</numberOrName>
+			<street>Wootton Street</street>
+			<city>London</city>
+			<postalCode>SE1 8TS</postalCode>
+			<country>United Kingdom</country>
 		</billingAddress>
 		<nextOfKin>
 			<NOKFirstName>Yin Wei</NOKFirstName>
@@ -46,8 +46,8 @@
 			</record>
 			<record>
 				<recordDate>10</recordDate>
-				<recordMonth>February</recordMonth>
-				<recordYear>1992</recordYear>
+				<recordMonth>February</recordMonth
+				><recordYear>1992</recordYear>
 				<recordTime>3:00PM</recordTime>
 				<doctor>Dr. Andrews</doctor>
 				<diagnosis>Nesidioblastoma</diagnosis>
@@ -56,7 +56,7 @@
 			</record>
 		</records>
 	</patient>
-		<patient>
+	<patient>
 		<firstName>Alexis</firstName>
 		<lastName>Sherrington</lastName>
 		<gender>Female</gender>
@@ -68,18 +68,18 @@
 		<homePhoneNumber>07988888888</homePhoneNumber>
 		<workPhoneNumber>07988888888</workPhoneNumber>
 		<homeAddress>
-			<homeNumberOrName>Flat D, Cornwall Court</homeNumberOrName>
-			<homeStreet>Cleaver Street</homeStreet>
-			<homeCity>London</homeCity>
-			<homePostalCode>SE11 6FD</homePostalCode>
-			<homeCountry>United Kingdom</homeCountry>
+			<numberOrName>Flat D, Cornwall Court</numberOrName>
+			<street>Cleaver Street</street>
+			<city>London</city>
+			<postalCode>SE11 6FD</postalCode>
+			<country>United Kingdom</country>
 		</homeAddress>
 		<billingAddress>
-			<billingNumberOrName>106</billingNumberOrName>
-			<billingStreet>Kensington Road</billingStreet>
-			<billingCity>London</billingCity>
-			<billingPostalCode>WC1 7FD</billingPostalCode>
-			<billingCountry>United Kingdom</billingCountry>
+			<numberOrName>106</numberOrName>
+			<street>Kensington Road</street>
+			<city>London</city>
+			<postalCode>WC1 7FD</postalCode>
+			<country>United Kingdom</country>
 		</billingAddress>
 		<nextOfKin>
 			<NOKFirstName>Marcus</NOKFirstName>
@@ -124,18 +124,18 @@
 		<homePhoneNumber>07911111111</homePhoneNumber>
 		<workPhoneNumber>07911111111</workPhoneNumber>
 		<homeAddress>
-			<homeNumberOrName>34, Conrad House</homeNumberOrName>
-			<homeStreet>Beaver Street</homeStreet>
-			<homeCity>London</homeCity>
-			<homePostalCode>N1 6FD</homePostalCode>
-			<homeCountry>United Kingdom</homeCountry>
+			<numberOrName>34, Conrad House</numberOrName>
+			<street>Beaver Street</street>
+			<city>London</city>
+			<postalCode>N1 6FD</postalCode>
+			<country>United Kingdom</country>
 		</homeAddress>
 		<billingAddress>
-			<billingNumberOrName>34, Conrad House</billingNumberOrName>
-			<billingStreet>Beaver Street</billingStreet>
-			<billingCity>London</billingCity>
-			<billingPostalCode>N1 6FD</billingPostalCode>
-			<billingCountry>United Kingdom</billingCountry>
+			<numberOrName>34, Conrad House</numberOrName>
+			<street>Beaver Street</street>
+			<city>London</city>
+			<postalCode>N1 6FD</postalCode>
+			<country>United Kingdom</country>
 		</billingAddress>
 		<nextOfKin>
 			<NOKFirstName>Suzy</NOKFirstName>

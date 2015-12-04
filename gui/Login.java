@@ -6,16 +6,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-
-import org.w3c.dom.Node;
 
 import reader.Interpreter;
 
@@ -31,10 +25,8 @@ import reader.Interpreter;
 public class Login {
 	
 	private static Login instance = null;
-	private static File login;
+	private final static String file = "data/login.xml";
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
-	private final static JLabel lUsernameError = new JLabel("Username does not exist");
-	private final static JLabel lPasswordError = new JLabel("Password is incorrect");
 	private String username, password;
 	
 	private JFrame frame;
@@ -57,38 +49,13 @@ public class Login {
 		return instance;
 	}
 	
-	/**
-	 * The verify() method checks:
-	 * 1 - that the username exists in the database
-	 * 2 - that the password matches the username provided
-	 */
 	
-	private void verify() {
-		 try {
-			 login = new File(Login.class.getClassLoader().getResource("data/login.xml").toURI());
-		 } catch (URISyntaxException e) {
-			 e.printStackTrace();
-		 }
-		 
-		 username = tUsername.getText();
-		 password = tPassword.getText();
-		 
+	private void login() {		 
+		username = tUsername.getText();
+		password = tPassword.getText(); 
 		Interpreter interpreter = new Interpreter();
-		ArrayList<Node> results = interpreter.search(login, "username", username);
-		
-		if (results != null) {
-			for (Node node : results) {
-				if(password.equals(node.getLastChild().getTextContent())) {
-					Dashboard window = Dashboard.getInstance();
-				} else {
-					lMessage.setVisible(false);
-					lPasswordError.setVisible(true);
-				}
-			}
-		} else {
-			lMessage.setVisible(false);
-			lUsernameError.setVisible(true);
-		}
+		lMessage.setText(interpreter.verify(file, username, password));
+		lMessage.validate();
 	}
 	
 	/**
@@ -159,16 +126,11 @@ public class Login {
 		cbLogin.insets = standardInsets;
 		
 		panel.add(lMessage, clMessage);
-		panel.add(lUsernameError, clMessage);
-		panel.add(lPasswordError, clMessage);
 		panel.add(lUsername, clUsername);
 		panel.add(lPassword, clPassword);
 		panel.add(tUsername, ctUsername);
 		panel.add(tPassword, ctPassword);
 		panel.add(bLogin, cbLogin);
-		
-		lUsernameError.setVisible(false);
-		lPasswordError.setVisible(false);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -180,7 +142,7 @@ public class Login {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			verify();
+			login();
 		}
 	}
 	
