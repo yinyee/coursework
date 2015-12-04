@@ -9,7 +9,7 @@ public class Record {
 	private Date date;
 	private String doctor;
 	
-	public Record (Patient patient, int recordDate, int recordMonth, int recordYear, String doctor) {
+	public Record (Patient patient, String recordDate, String recordMonth, String recordYear, String doctor) {
 		this.patient = patient;
 		this.date = new Date(recordDate, recordMonth, recordYear);
 		this.doctor = doctor;
@@ -20,7 +20,7 @@ public class Record {
 	}
 	
 	public String getRecordDate() {
-		return date.getFormattedDate();
+		return date.getFormalFormattedDate();
 	}
 	
 	public String getDoctor() {

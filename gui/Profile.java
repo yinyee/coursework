@@ -20,7 +20,6 @@ import javax.swing.JTextField;
 
 import person.NextOfKin;
 import person.Patient;
-import person.Patient.Gender;
 import person.util.Address;
 import person.util.Insurance;
 
@@ -35,57 +34,79 @@ import person.util.Insurance;
 
 public class Profile {
 	
-	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
-	private static JPanel pAdditional = new JPanel(new CardLayout());
-	private static JPanel pView = new JPanel(new GridBagLayout());
-	private static JPanel pEdit = new JPanel(new GridBagLayout());
-	private static CardController cardController;
+	private static Profile instance = null;
+	private Patient patient;
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Address homeAddress = new Address("15, Croydon House", "Wootton Street", "London", "SE1 8TS", "United Kingdom");
-					Address billingAddress = new Address("15, Croydon House", "Wootton Street", "London", "SE1 8TS", "United Kingdom");
-					Insurance insurance = new Insurance("Allianz", "ABC0988776");
-					NextOfKin nextOfKin = new NextOfKin("Yin Wei", "Kan", "kanyinwei@gmail.com", "Sibling",
-							"+640987987987", "+64090123983");
-					Patient patient = new Patient("Yin Yee", "Kan", "yin.kan.15@ucl.ac.uk.com", Gender.FEMALE, 8, 12, 1983,
-							"07931155585", "07931155585", "07931155585", homeAddress, billingAddress, insurance, nextOfKin);
-					Profile window = new Profile();
-					cardController = window. new CardController();
-					window.draw(patient);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	
+	private JFrame frame;
+	private JTabbedPane tabbedPane;
+	private JPanel pMain, pAdditional, pView, pEdit;
+	private ImageIcon photo;
+	private JLabel lPhoto, lFullName, lGender, lBirthDate, lRecord;
+	private JLabel lContactDetails, lEmailAddress, l2EmailAddress, lMobilePhoneNumber, l2MobilePhoneNumber, lHomePhoneNumber, l2HomePhoneNumber, lWorkPhoneNumber, l2WorkPhoneNumber;
+	private JLabel lHomeAddress, lHomeNumberOrName, l2HomeNumberOrName, lHomeStreet, l2HomeStreet, lHomeCity, l2HomeCity, lHomePostalCode, l2HomePostalCode, lHomeCountry, l2HomeCountry;
+	private JLabel lBillingAddress, lBillingNumberOrName, l2BillingNumberOrName, lBillingStreet, l2BillingStreet, lBillingCity, l2BillingCity, lBillingPostalCode, l2BillingPostalCode, lBillingCountry, l2BillingCountry;
+	private JLabel lNextOfKin, lNOKFullName, l2NOKFullName, lNOKRelationship, l2NOKRelationship, lNOKEmailAddress, l2NOKEmailAddress, lNOKMobilePhoneNumber, l2NOKMobilePhoneNumber, lNOKHomePhoneNumber, l2NOKHomePhoneNumber;
+	private JLabel leContactDetails, leEmailAddress, leMobilePhoneNumber, leHomePhoneNumber, leWorkPhoneNumber; 
+	private JLabel leHomeAddress, leHomeNumberOrName, leHomeStreet, leHomeCity, leHomePostalCode, leHomeCountry;
+	private JLabel leBillingAddress, leBillingNumberOrName, leBillingStreet, leBillingCity, leBillingPostalCode, leBillingCountry;
+	private JLabel leNextOfKin, leNOKFullName, leNOKRelationship, leNOKEmailAddress, leNOKMobilePhoneNumber, leNOKHomePhoneNumber; 
+	private JTextField le2EmailAddress, le2MobilePhoneNumber, le2HomePhoneNumber, le2WorkPhoneNumber;
+	private JTextField le2HomeNumberOrName, le2HomeStreet, le2HomeCity, le2HomePostalCode, le2HomeCountry;
+	private JTextField le2BillingNumberOrName, le2BillingStreet, le2BillingCity, le2BillingPostalCode, le2BillingCountry;
+	private JTextField le2NOKFullName, le2NOKRelationship, le2NOKEmailAddress, le2NOKMobilePhoneNumber, le2NOKHomePhoneNumber;
+	private JSeparator sMainHorizontal, sAddHorizontal1, sAddHorizontal2, seAddHorizontal1, seAddHorizontal2;
+	private JTable tbRecord;
+	private JButton bAdd, bView, bEdit, bCancel, bSave;
+	private ButtonListener bListener;
+	private CardController cardController;
+	
+	private Profile(Patient patient) {
+		this.patient = patient;
+		draw(patient);
 	}
 	
-	public void draw(Patient patient) {
+	/**
+	 * The getInstance() method enforces the Singleton design pattern.
+	 * @param patient
+	 */
+	public static Profile getInstance(Patient patient) {
+		if (instance == null) {
+			instance = new Profile(patient);
+		}
+		return instance;
+	}
+	
+	/**
+	 * The draw() method contains the code to render the GUI.	
+	 */
+	private void draw(Patient patient) {
 		
-		JFrame frame = new JFrame("Patient Profile - " + patient.getfullName());
-		JTabbedPane tabbedPane = new JTabbedPane();		
-		
-		// THESE LISTENERS HAVE NOT BEEN INITIALISED !!!
-		// The following section adds listeners to certain components.
-		
-		// The following section specifies the GridBagConsraints for each component.
+		frame = new JFrame("Patient Profile - " + patient.getFullName());
+		tabbedPane = new JTabbedPane();
+		pMain = new JPanel(new GridBagLayout());
+		pAdditional = new JPanel(new CardLayout());
+		pView = new JPanel(new GridBagLayout());
+		pEdit = new JPanel(new GridBagLayout());
 
 		// Main tab
-		JPanel pMain = new JPanel();
-		pMain.setLayout(new GridBagLayout());
 		
-		ImageIcon photo = new ImageIcon();
-		JLabel lPhoto = new JLabel(photo);
-		JLabel lFullName = new JLabel(patient.getfullName());
-		JLabel lGender = new JLabel(patient.getGender().toString());
-		JLabel lBirthDate = new JLabel("Born " + patient.getBirthDate().getLongFormattedDate());
-		JSeparator sMainHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel lRecord = new JLabel("MEDICAL RECORD");
-		JTable tbRecord = new JTable(12, 3);
-		JButton bAdd = new JButton("Add New Record");
-		JButton bView = new JButton("View Record");
+		photo = new ImageIcon();
+		lPhoto = new JLabel(photo);
+		lFullName = new JLabel(patient.getFullName());
+		lGender = new JLabel(patient.getGender().toString());
+		lBirthDate = new JLabel("Born " + patient.getBirthDate().getFormalFormattedDate());
+		sMainHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		lRecord = new JLabel("MEDICAL RECORD");
+		tbRecord = new JTable(12, 3);
+		bListener = new ButtonListener();
+		bAdd = new JButton("Add New Record");
+		bAdd.addActionListener(bListener);
+		bAdd.setActionCommand("Add");
+		bView = new JButton("View Record");
+		bView.addActionListener(bListener);
+		bView.setActionCommand("View");
 
 		GridBagConstraints clPhoto = new GridBagConstraints();
 		GridBagConstraints clFullName = new GridBagConstraints();
@@ -176,51 +197,52 @@ public class Profile {
 		// Use Card layout to switch between View and Edit
 		// View card
 		
-		JLabel lContactDetails = new JLabel("CONTACT DETAILS");
-		JLabel lEmailAddress = new JLabel("Email address");
-		JLabel l2EmailAddress = new JLabel(patient.getEmailAddress());
-		JLabel lMobilePhoneNumber = new JLabel("Mobile phone number");
-		JLabel l2MobilePhoneNumber = new JLabel(patient.getMobilePhoneNumber());
-		JLabel lHomePhoneNumber = new JLabel("Home phone number");
-		JLabel l2HomePhoneNumber = new JLabel(patient.getHomePhoneNumber());
-		JLabel lWorkPhoneNumber = new JLabel("Work phone number");
-		JLabel l2WorkPhoneNumber = new JLabel(patient.getWorkPhoneNumber());
-		JSeparator sAddHorizontal1 = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel lHomeAddress = new JLabel("HOME ADDRESS");
-		JLabel lHomeNumberOrName = new JLabel("House number and name");
-		JLabel l2HomeNumberOrName = new JLabel(patient.getHomeAddress().getHouseNumberOrName());
-		JLabel lHomeStreet = new JLabel("Street");
-		JLabel l2HomeStreet = new JLabel(patient.getHomeAddress().getStreet());
-		JLabel lHomeCity = new JLabel("City or town");
-		JLabel l2HomeCity = new JLabel(patient.getHomeAddress().getCity());
-		JLabel lHomePostalCode = new JLabel("Postal code");
-		JLabel l2HomePostalCode = new JLabel(patient.getHomeAddress().getPostalCode());
-		JLabel lHomeCountry = new JLabel("Country");
-		JLabel l2HomeCountry = new JLabel(patient.getHomeAddress().getCountry());
-		JLabel lBillingAddress = new JLabel("BILLING ADDRESS");
-		JLabel lBillingNumberOrName = new JLabel("House number and name");
-		JLabel l2BillingNumberOrName = new JLabel(patient.getBillingAddress().getHouseNumberOrName());
-		JLabel lBillingStreet = new JLabel("Street");
-		JLabel l2BillingStreet = new JLabel(patient.getBillingAddress().getStreet());
-		JLabel lBillingCity = new JLabel("City or town");
-		JLabel l2BillingCity = new JLabel(patient.getBillingAddress().getCity());
-		JLabel lBillingPostalCode = new JLabel("Postal code");
-		JLabel l2BillingPostalCode = new JLabel(patient.getBillingAddress().getPostalCode());
-		JLabel lBillingCountry = new JLabel("Country");
-		JLabel l2BillingCountry = new JLabel(patient.getBillingAddress().getCountry());
-		JSeparator sAddHorizontal2 = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel lNextOfKin = new JLabel("NEXT OF KIN");
-		JLabel lNOKFullName = new JLabel("Full name");
-		JLabel l2NOKFullName = new JLabel(patient.getNextOfKin().getfullName());
-		JLabel lNOKRelationship = new JLabel("Relationship to patient");
-		JLabel l2NOKRelationship = new JLabel(patient.getNextOfKin().getRelationshipToPatient());
-		JLabel lNOKEmailAddress = new JLabel("Email address");
-		JLabel l2NOKEmailAddress = new JLabel(patient.getNextOfKin().getEmailAddress());
-		JLabel lNOKMobilePhoneNumber = new JLabel("Mobile phone number");
-		JLabel l2NOKMobilePhoneNumber = new JLabel(patient.getNextOfKin().getNextOfKinMobilePhoneNumber());
-		JLabel lNOKHomePhoneNumber = new JLabel("Home phone number");
-		JLabel l2NOKHomePhoneNumber = new JLabel(patient.getNextOfKin().getNextOfKinHomePhoneNumber());
-		JButton bEdit = new JButton("Edit");
+		lContactDetails = new JLabel("CONTACT DETAILS");
+		lEmailAddress = new JLabel("Email address");
+		l2EmailAddress = new JLabel(patient.getEmailAddress());
+		lMobilePhoneNumber = new JLabel("Mobile phone number");
+		l2MobilePhoneNumber = new JLabel(patient.getMobilePhoneNumber());
+		lHomePhoneNumber = new JLabel("Home phone number");
+		l2HomePhoneNumber = new JLabel(patient.getHomePhoneNumber());
+		lWorkPhoneNumber = new JLabel("Work phone number");
+		l2WorkPhoneNumber = new JLabel(patient.getWorkPhoneNumber());
+		sAddHorizontal1 = new JSeparator(JSeparator.HORIZONTAL);
+		lHomeAddress = new JLabel("HOME ADDRESS");
+		lHomeNumberOrName = new JLabel("House number and name");
+		l2HomeNumberOrName = new JLabel(patient.getHomeAddress().getHouseNumberOrName());
+		lHomeStreet = new JLabel("Street");
+		l2HomeStreet = new JLabel(patient.getHomeAddress().getStreet());
+		lHomeCity = new JLabel("City or town");
+		l2HomeCity = new JLabel(patient.getHomeAddress().getCity());
+		lHomePostalCode = new JLabel("Postal code");
+		l2HomePostalCode = new JLabel(patient.getHomeAddress().getPostalCode());
+		lHomeCountry = new JLabel("Country");
+		l2HomeCountry = new JLabel(patient.getHomeAddress().getCountry());
+		lBillingAddress = new JLabel("BILLING ADDRESS");
+		lBillingNumberOrName = new JLabel("House number and name");
+		l2BillingNumberOrName = new JLabel(patient.getBillingAddress().getHouseNumberOrName());
+		lBillingStreet = new JLabel("Street");
+		l2BillingStreet = new JLabel(patient.getBillingAddress().getStreet());
+		lBillingCity = new JLabel("City or town");
+		l2BillingCity = new JLabel(patient.getBillingAddress().getCity());
+		lBillingPostalCode = new JLabel("Postal code");
+		l2BillingPostalCode = new JLabel(patient.getBillingAddress().getPostalCode());
+		lBillingCountry = new JLabel("Country");
+		l2BillingCountry = new JLabel(patient.getBillingAddress().getCountry());
+		sAddHorizontal2 = new JSeparator(JSeparator.HORIZONTAL);
+		lNextOfKin = new JLabel("NEXT OF KIN");
+		lNOKFullName = new JLabel("Full name");
+		l2NOKFullName = new JLabel(patient.getNextOfKin().getFullName());
+		lNOKRelationship = new JLabel("Relationship to patient");
+		l2NOKRelationship = new JLabel(patient.getNextOfKin().getRelationshipToPatient());
+		lNOKEmailAddress = new JLabel("Email address");
+		l2NOKEmailAddress = new JLabel(patient.getNextOfKin().getEmailAddress());
+		lNOKMobilePhoneNumber = new JLabel("Mobile phone number");
+		l2NOKMobilePhoneNumber = new JLabel(patient.getNextOfKin().getNextOfKinMobilePhoneNumber());
+		lNOKHomePhoneNumber = new JLabel("Home phone number");
+		l2NOKHomePhoneNumber = new JLabel(patient.getNextOfKin().getNextOfKinHomePhoneNumber());
+		bEdit = new JButton("Edit");
+		cardController = new CardController();
 		bEdit.addActionListener(cardController);
 		bEdit.setActionCommand("Edit");
 		
@@ -633,54 +655,54 @@ public class Profile {
 		
 		// Edit card
 		
-		JLabel leContactDetails = new JLabel("CONTACT DETAILS");
-		JLabel leEmailAddress = new JLabel("Email address");
-		JTextField le2EmailAddress = new JTextField(patient.getEmailAddress());
-		JLabel leMobilePhoneNumber = new JLabel("Mobile phone number");
-		JTextField le2MobilePhoneNumber = new JTextField(patient.getMobilePhoneNumber());
-		JLabel leHomePhoneNumber = new JLabel("Home phone number");
-		JTextField le2HomePhoneNumber = new JTextField(patient.getHomePhoneNumber());
-		JLabel leWorkPhoneNumber = new JLabel("Work phone number");
-		JTextField le2WorkPhoneNumber = new JTextField(patient.getWorkPhoneNumber());
-		JSeparator seAddHorizontal1 = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel leHomeAddress = new JLabel("HOME ADDRESS");
-		JLabel leHomeNumberOrName = new JLabel("House number and name");
-		JTextField le2HomeNumberOrName = new JTextField(patient.getHomeAddress().getHouseNumberOrName());
-		JLabel leHomeStreet = new JLabel("Street");
-		JTextField le2HomeStreet = new JTextField(patient.getHomeAddress().getStreet());
-		JLabel leHomeCity = new JLabel("City or town");
-		JTextField le2HomeCity = new JTextField(patient.getHomeAddress().getCity());
-		JLabel leHomePostalCode = new JLabel("Postal code");
-		JTextField le2HomePostalCode = new JTextField(patient.getHomeAddress().getPostalCode());
-		JLabel leHomeCountry = new JLabel("Country");
-		JTextField le2HomeCountry = new JTextField(patient.getHomeAddress().getCountry());
-		JLabel leBillingAddress = new JLabel("BILLING ADDRESS");
-		JLabel leBillingNumberOrName = new JLabel("House number and name");
-		JTextField le2BillingNumberOrName = new JTextField(patient.getBillingAddress().getHouseNumberOrName());
-		JLabel leBillingStreet = new JLabel("Street");
-		JTextField le2BillingStreet = new JTextField(patient.getBillingAddress().getStreet());
-		JLabel leBillingCity = new JLabel("City or town");
-		JTextField le2BillingCity = new JTextField(patient.getBillingAddress().getCity());
-		JLabel leBillingPostalCode = new JLabel("Postal code");
-		JTextField le2BillingPostalCode = new JTextField(patient.getBillingAddress().getPostalCode());
-		JLabel leBillingCountry = new JLabel("Country");
-		JTextField le2BillingCountry = new JTextField(patient.getBillingAddress().getCountry());
-		JSeparator seAddHorizontal2 = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel leNextOfKin = new JLabel("NEXT OF KIN");
-		JLabel leNOKFullName = new JLabel("Full name");
-		JTextField le2NOKFullName = new JTextField(patient.getNextOfKin().getfullName());
-		JLabel leNOKRelationship = new JLabel("Relationship to patient");
-		JTextField le2NOKRelationship = new JTextField(patient.getNextOfKin().getRelationshipToPatient());
-		JLabel leNOKEmailAddress = new JLabel("Email address");
-		JTextField le2NOKEmailAddress = new JTextField(patient.getNextOfKin().getEmailAddress());
-		JLabel leNOKMobilePhoneNumber = new JLabel("Mobile phone number");
-		JTextField le2NOKMobilePhoneNumber = new JTextField(patient.getNextOfKin().getNextOfKinMobilePhoneNumber());
-		JLabel leNOKHomePhoneNumber = new JLabel("Home phone number");
-		JTextField le2NOKHomePhoneNumber = new JTextField(patient.getNextOfKin().getNextOfKinHomePhoneNumber());
-		JButton bCancel = new JButton("Cancel");
+		leContactDetails = new JLabel("CONTACT DETAILS");
+		leEmailAddress = new JLabel("Email address");
+		le2EmailAddress = new JTextField(patient.getEmailAddress());
+		leMobilePhoneNumber = new JLabel("Mobile phone number");
+		le2MobilePhoneNumber = new JTextField(patient.getMobilePhoneNumber());
+		leHomePhoneNumber = new JLabel("Home phone number");
+		le2HomePhoneNumber = new JTextField(patient.getHomePhoneNumber());
+		leWorkPhoneNumber = new JLabel("Work phone number");
+		le2WorkPhoneNumber = new JTextField(patient.getWorkPhoneNumber());
+		seAddHorizontal1 = new JSeparator(JSeparator.HORIZONTAL);
+		leHomeAddress = new JLabel("HOME ADDRESS");
+		leHomeNumberOrName = new JLabel("House number and name");
+		le2HomeNumberOrName = new JTextField(patient.getHomeAddress().getHouseNumberOrName());
+		leHomeStreet = new JLabel("Street");
+		le2HomeStreet = new JTextField(patient.getHomeAddress().getStreet());
+		leHomeCity = new JLabel("City or town");
+		le2HomeCity = new JTextField(patient.getHomeAddress().getCity());
+		leHomePostalCode = new JLabel("Postal code");
+		le2HomePostalCode = new JTextField(patient.getHomeAddress().getPostalCode());
+		leHomeCountry = new JLabel("Country");
+		le2HomeCountry = new JTextField(patient.getHomeAddress().getCountry());
+		leBillingAddress = new JLabel("BILLING ADDRESS");
+		leBillingNumberOrName = new JLabel("House number and name");
+		le2BillingNumberOrName = new JTextField(patient.getBillingAddress().getHouseNumberOrName());
+		leBillingStreet = new JLabel("Street");
+		le2BillingStreet = new JTextField(patient.getBillingAddress().getStreet());
+		leBillingCity = new JLabel("City or town");
+		le2BillingCity = new JTextField(patient.getBillingAddress().getCity());
+		leBillingPostalCode = new JLabel("Postal code");
+		le2BillingPostalCode = new JTextField(patient.getBillingAddress().getPostalCode());
+		leBillingCountry = new JLabel("Country");
+		le2BillingCountry = new JTextField(patient.getBillingAddress().getCountry());
+		seAddHorizontal2 = new JSeparator(JSeparator.HORIZONTAL);
+		leNextOfKin = new JLabel("NEXT OF KIN");
+		leNOKFullName = new JLabel("Full name");
+		le2NOKFullName = new JTextField(patient.getNextOfKin().getFullName());
+		leNOKRelationship = new JLabel("Relationship to patient");
+		le2NOKRelationship = new JTextField(patient.getNextOfKin().getRelationshipToPatient());
+		leNOKEmailAddress = new JLabel("Email address");
+		le2NOKEmailAddress = new JTextField(patient.getNextOfKin().getEmailAddress());
+		leNOKMobilePhoneNumber = new JLabel("Mobile phone number");
+		le2NOKMobilePhoneNumber = new JTextField(patient.getNextOfKin().getNextOfKinMobilePhoneNumber());
+		leNOKHomePhoneNumber = new JLabel("Home phone number");
+		le2NOKHomePhoneNumber = new JTextField(patient.getNextOfKin().getNextOfKinHomePhoneNumber());
+		bCancel = new JButton("Cancel");
 		bCancel.addActionListener(cardController);
 		bCancel.setActionCommand("Cancel");
-		JButton bSave = new JButton("Save");
+		bSave = new JButton("Save");
 		bSave.addActionListener(cardController);
 		bSave.setActionCommand("Save");
 		
@@ -762,9 +784,25 @@ public class Profile {
 		
 	}
 	
-	/**
-	 * The following section contains helper classes.
-	 */
+	private NewRecord addNewRecord(Patient patient) {
+		return NewRecord.getInstance(patient);
+	}
+	
+	private class ButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			switch (e.getActionCommand()) {
+			case "Add" :
+				addNewRecord(patient);
+				break;
+			case "Edit" :
+//				tbRecord.getSelectedRow();
+//				ViewEditRecord window = ViewEditRecord.getInstance(record);
+				break;
+			}		
+		}
+	}
 		
 	private class CardController implements ActionListener {
 		

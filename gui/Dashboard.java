@@ -35,61 +35,67 @@ import java.awt.event.KeyListener;
 
 public class Dashboard {
 	
-	private String searchField, searchText;
-	private static ComboBoxListener cboxListener;
-	private static TextFieldListener tListener;
-	private static ButtonListener bListener;
-	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	private static Dashboard instance = null;
 	
-	public static void main (String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Dashboard window = new Dashboard();
-					draw();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	private final static String[] searchFields = {"First name", "Last name", "Birth date", "Gender"};
+	
+	private String searchField, searchText;
+	
+	private JFrame frame;
+	private JLabel lWelcome, lSearch, lRegister, lResults;
+	private JTextField tSearch;
+	private JComboBox<String> cboxSearch;
+	private JButton bSearch, bRegister, bOpen;
+	private JSeparator sVertical, sHorizontal;
+	private JTable tbResults;
+	private ButtonListener bListener;
+	
+	private Dashboard() {
+		draw();
 	}
+	
+	/**
+	 * The getInstance() method enforces the Singleton design pattern.
+	 */
+	
+	public static Dashboard getInstance() {
+		if (instance == null) {
+			instance = new Dashboard();
+		}
+		return instance;
+	}
+	
 	
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
-	
-	private static void draw() {
+	private void draw() {
 		
-		JFrame frame = new JFrame("Dashboard");
-		Container panel = frame.getContentPane();
-		JLabel lWelcome = new JLabel("Welcome, Administrator");
-		JLabel lSearch = new JLabel("Search");
-		String[] searchFields = {"First name", "Last name", "Birth date", "Gender"};
-		JComboBox cboxSearch = new JComboBox(searchFields);
-		JTextField tSearch = new JTextField();
-		JButton bSearch = new JButton("Search");
-		JSeparator sVertical = new JSeparator(JSeparator.VERTICAL);
-		JLabel lRegister = new JLabel("New patient");
-		JButton bRegister = new JButton("Register");
-		JSeparator sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel lResults = new JLabel("Search Results");
-		JTable tbResults = new JTable(10, 4);
-		JButton bOpen = new JButton("Open patient profile");
+		frame = new JFrame("Dashboard");
+		lWelcome = new JLabel("Welcome, Administrator");
+		lSearch = new JLabel("Search");
+		cboxSearch = new JComboBox<String>(searchFields);
+		tSearch = new JTextField();
+		bSearch = new JButton("Search");
+		sVertical = new JSeparator(JSeparator.VERTICAL);
+		lRegister = new JLabel("New patient");
+		bRegister = new JButton("Register");
+		sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		lResults = new JLabel("Search Results");
+		tbResults = new JTable(10, 4);
+		bOpen = new JButton("Open patient profile");
 		
-		// THESE LISTENERS HAVE NOT BEEN INITIALISED !!!
-		// The following section adds listeners to certain components.
-		cboxSearch.addItemListener(cboxListener);
-		tSearch.addKeyListener(tListener);
 		bSearch.addActionListener(bListener);
 		bSearch.setActionCommand("Search");
 		bRegister.addActionListener(bListener);
 		bRegister.setActionCommand("Register");
 		bOpen.addActionListener(bListener);
-		bOpen.setActionCommand("Edit");
+		bOpen.setActionCommand("Open");
 		
-		// The following section specifies the GridBagConsraints for each component.
-		
+		Container panel = frame.getContentPane();
 		panel.setLayout(new GridBagLayout());
+		
 		GridBagConstraints clWelcome = new GridBagConstraints();
 		GridBagConstraints clSearch = new GridBagConstraints();
 		GridBagConstraints ccboxSearch = new GridBagConstraints();
@@ -207,58 +213,32 @@ public class Dashboard {
 		
 	}
 	
-	/**
-	 * The following section contains helper listener classes.
-	 */
-	
 	private class ButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand()) {
 			case "Search":
-				;
+				searchField = cboxSearch.getSelectedItem().toString();
+				searchText = tSearch.getText();
 				break;
 			case "Register":
-				;
+				try {
+					Registration registration = Registration.getInstance();
+				} catch (Exception f) {
+					f.printStackTrace();
+				}
 				break;
-			case "Edit":
-				;
+			case "Open":
+				try {
+//					tbResults.getSelectedRow();
+//					Profile profile = Profile.getInstance(Patient patient);
+				} catch (Exception f) {
+					f.printStackTrace();
+				}
 				break;
 			}
 		}
 	}
 	
-	private class ComboBoxListener implements ItemListener {
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.SELECTED) {
-				searchField = e.getItem().toString();
-			}
-		}
-	}
-	
-	private class TextFieldListener implements KeyListener {
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	
-
 }

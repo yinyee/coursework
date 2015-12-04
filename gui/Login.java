@@ -1,18 +1,11 @@
 package gui;
 
 import java.awt.Container;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,80 +21,60 @@ import javax.swing.JTextField;
 
 public class Login {
 	
-	private final static File loginFile = new File("/Users/yinyee/Documents/workspace/Coursework/doc/login.txt");
-	private static String username, password;
-	private static ButtonListener bListener;
-	private static InputListener iListener;
-	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	private static Login instance = null;
 	
-	public Login () {
+	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	private String username, password;
+	
+	private JFrame frame;
+	private JLabel lUsername, lPassword;
+	private JTextField tUsername, tPassword;
+	private JButton bLogin;
+	private ButtonListener bListener;
+
+	private Login () {
 		draw();
 	}
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Login window = new Login();
-				} catch (Exception e) {
-				e.printStackTrace();
-				}
-			}
-		});
+	/**
+	 * The getInstance() method enforces the Singleton design pattern.
+	 */
+	public static Login getInstance() {
+		if (instance == null) {
+			instance = new Login();
+		}
+		return instance;
 	}
-
+	
 	/**
 	 * The verify() method checks:
-	 * 1 - that the username exists in the database
+	 * 1 - that the username exists in the database (WIP)
 	 * 2 - that the password matches the username provided
 	 */
 	
-	private static void verify(String username, String password) {
-		
-		/* WORK IN PROGRESS
-		 * Check if the file containing usernames and passwords exists.
-		 * If does not exist, do not create new.  Instead, throw an error 
-		 * and terminate the program.  If username and password combination
-		 * is found in the file, call new screen.
-		 */
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(loginFile));
-			StringBuilder str = new StringBuilder();
-			String readLine;
-			while ((readLine = reader.readLine()) != null) {
-				str.append(readLine + "\n");
-			}
-			reader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+	private Dashboard verify(String username, String password) {
+//		if (tUsername.getText() == username && tPassword.getText() == password) {
+			return Dashboard.getInstance();
+//		} else {
+//			return null;
+//		}
 	}
 	
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
 	
-	private static void draw() {
+	private void draw() {
 		
-		JFrame frame = new JFrame();
+		frame = new JFrame("Patient Registry System -- Please log in to continue");
 		Container panel = frame.getContentPane();
-		JLabel lUsername = new JLabel("Username");
-		JLabel lPassword = new JLabel("Password");
-		JTextField tUsername = new JTextField();
-		JTextField tPassword = new JTextField();
-		JButton bLogin = new JButton("Log in");
-		
-		// THESE LISTENERS HAVE NOT BEEN INITIALISED !!!
-		// The following section adds listeners to certain components.
-		
+		lUsername = new JLabel("Username");
+		lPassword = new JLabel("Password");
+		tUsername = new JTextField();
+		tPassword = new JTextField();
+		bLogin = new JButton("Log in");
+		bListener = new ButtonListener();
 		bLogin.addActionListener(bListener);
-		tUsername.addKeyListener(iListener);
-		tUsername.setActionCommand("Username");
-		tPassword.addKeyListener(iListener);
-		tPassword.setActionCommand("Password");
-		
-		// The following section specifies the GridBagConsraints for each component.
 		
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints clUsername = new GridBagConstraints();
@@ -156,44 +129,12 @@ public class Login {
 		frame.setVisible(true);
 		
 	}
-
-	/**
-	 * The following classes are helper classes; specifically listener classes.
-	 * InputListener reads user input from tUsername and tPassword.
-	 * ButtonListener fires the verify() method when bLogin is clicked.
-	 */
-	
-	private class InputListener implements KeyListener {
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			switch (e.getComponent().toString()) {
-			case "Username" : username = e.toString();
-			case "Password" : password = e.toString();
-			}
-		}
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			// TODO Auto-generated method stub
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-		}
-		
-	}
 	
 	private class ButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			try {
-				verify(username, password);
-			} catch (Exception loginException) {
-				loginException.printStackTrace();
-			}
+			verify(username, password);
 		}
 	}
 	

@@ -1,9 +1,10 @@
 package gui;
 
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,6 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+
+import person.NextOfKin;
+import person.Patient;
+import person.util.Address;
 
 /**
  * The Registration screen triggers when the "Register" button
@@ -28,58 +33,128 @@ import javax.swing.JTextField;
 
 public class Registration {
 
-	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	private static Registration instance = null;
 	
-	public static void main (String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Registration window = new Registration();
-					draw();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	private final static String[] gender = {"Female", "Male"};
+	private final static String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	private final static String[] relationship = {"Spouse", "Parent", "Sibling", "Child", "Friend", "Lawyer"};
+	private JPanel pPersonal, pAddress, pNextOfKin;
+	private JLabel lPersonal, lFirstName, lLastName, lGender, lBirthDate, lEmailAddress, lMobilePhoneNumber, lHomePhoneNumber, lWorkPhoneNumber;
+	private JLabel lHomeAddress, lHomeNumberOrName, lHomeStreet, lHomeCity, lHomePostalCode, lHomeCountry;
+	private JLabel lBillingAddress, lBillingNumberOrName, lBillingStreet, lBillingCity, lBillingPostalCode, lBillingCountry;
+	private JLabel lNextOfKin, lNOKFirstName, lNOKLastName, lNOKRelationship, lNOKEmailAddress, lNOKMobilePhoneNumber, lNOKHomePhoneNumber;
+	private JTextField tFirstName, tLastName, tEmailAddress, tMobilePhoneNumber, tHomePhoneNumber, tWorkPhoneNumber;
+	private JTextField tHomeNumberOrName, tHomeStreet, tHomeCity, tHomePostalCode, tHomeCountry;
+	private JTextField tBillingNumberOrName, tBillingStreet, tBillingCity, tBillingPostalCode, tBillingCountry;
+	private JTextField tNOKFirstName, tNOKLastName, tNOKEmailAddress, tNOKMobilePhoneNumber, tNOKHomePhoneNumber;
+	private JButton bAddresses, bNextOfKin, bSave;
+	private JComboBox<String> tGender, cboxBirthDate, cboxBirthMonth, cboxBirthYear, cboxNOKRelationship;
+	private JSeparator sVertical;
+	private JCheckBox ckBillingSameAsHome;
+	private ButtonListener listener;
+
+	private Registration() {
+		draw();
+	}
+	
+	/**
+	 * The getInstance() method enforces the Singleton design pattern.
+	 */
+	public static Registration getInstance() {
+		if (instance == null) {
+			instance = new Registration();
+		}
+		return instance;
 	}
 	
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
 	
-	private static void draw() {
+	private void draw() {
 		
+		// Instantiate variables
 		JFrame frame = new JFrame("Register New Patient");
 		JTabbedPane tabbedPane = new JTabbedPane();		
 		
-		// THESE LISTENERS HAVE NOT BEEN INITIALISED !!!
-		// The following section adds listeners to certain components.
+		pPersonal = new JPanel(new GridBagLayout());
+		pAddress = new JPanel(new GridBagLayout());
+		pNextOfKin = new JPanel(new GridBagLayout());
 		
-		// The following section specifies the GridBagConsraints for each component.
-
+		lPersonal = new JLabel("PERSONAL DETAILS");
+		lFirstName = new JLabel("First name");
+		lLastName = new JLabel("Last name");
+		lGender = new JLabel("Gender");
+		lBirthDate = new JLabel("Date of birth");
+		lEmailAddress = new JLabel("Email address");
+		lMobilePhoneNumber = new JLabel("Mobile phone number");
+		lHomePhoneNumber = new JLabel("Home phone number");
+		lWorkPhoneNumber = new JLabel("Work phone number");
+		tFirstName = new JTextField();
+		tLastName = new JTextField();
+		tGender = new JComboBox<String>(gender);
+		String[] dates = new String[31];
+		for (int i = 0; i < 31; i++) {
+			dates[i] = Integer.toString(i + 1);
+		}
+		cboxBirthDate = new JComboBox<String>(dates);
+		cboxBirthMonth = new JComboBox<String>(months);
+		String[] years = new String[100];
+		for (int i = 0; i < 100; i++) {
+			years[i] = Integer.toString(i + 1916);
+		}
+		cboxBirthYear = new JComboBox<String>(years);
+		tEmailAddress = new JTextField();
+		tMobilePhoneNumber = new JTextField();
+		tHomePhoneNumber = new JTextField();
+		tWorkPhoneNumber = new JTextField();				
+		bAddresses = new JButton("Addresses >>");
+		
+		lHomeAddress = new JLabel("HOME ADDRESS");
+		lHomeNumberOrName = new JLabel("House number and name");
+		lHomeStreet = new JLabel("Street");
+		lHomeCity = new JLabel("City or town");
+		lHomePostalCode = new JLabel("Postal code");
+		lHomeCountry = new JLabel("Country");
+		sVertical = new JSeparator(JSeparator.VERTICAL);
+		lBillingAddress = new JLabel("BILLING ADDRESS");
+		ckBillingSameAsHome = new JCheckBox("Copy from home address?");
+		lBillingNumberOrName = new JLabel("House number and name");
+		lBillingStreet = new JLabel("Street");
+		lBillingCity = new JLabel("City or town");
+		lBillingPostalCode = new JLabel("Postal code");
+		lBillingCountry = new JLabel("Country");
+		tHomeNumberOrName = new JTextField();
+		tHomeStreet = new JTextField();
+		tHomeCity = new JTextField();
+		tHomePostalCode = new JTextField();
+		tHomeCountry = new JTextField();
+		tBillingNumberOrName = new JTextField();
+		tBillingStreet = new JTextField();
+		tBillingCity = new JTextField();
+		tBillingPostalCode = new JTextField();
+		tBillingCountry = new JTextField();
+		bNextOfKin = new JButton("Next of kin >>");
+		
+		lNextOfKin = new JLabel("NEXT OF KIN");
+		lNOKFirstName = new JLabel("First name");
+		lNOKLastName = new JLabel("Last name");
+		lNOKRelationship = new JLabel("Relationship to patient");
+		lNOKEmailAddress = new JLabel("Email address");
+		lNOKMobilePhoneNumber = new JLabel("Mobile phone number");
+		lNOKHomePhoneNumber = new JLabel("Home phone number");
+		tNOKFirstName = new JTextField();
+		tNOKLastName = new JTextField();
+		cboxNOKRelationship = new JComboBox<String>(relationship);
+		tNOKEmailAddress = new JTextField();
+		tNOKMobilePhoneNumber = new JTextField();
+		tNOKHomePhoneNumber = new JTextField();
+		bSave = new JButton("Save");
+		listener = new ButtonListener();
+		bSave.addActionListener(listener);
+		
 		// Personal tab
-		JPanel pPersonal = new JPanel();
-		pPersonal.setLayout(new GridBagLayout());
-		
-		JLabel lPersonal = new JLabel("PERSONAL DETAILS");
-		JLabel lFirstName = new JLabel("First name");
-		JLabel lLastName = new JLabel("Last name");
-		JLabel lGender = new JLabel("Gender");
-		JLabel lBirthDate = new JLabel("Date of birth (dd/mm/yyyy)");
-		JLabel lEmailAddress = new JLabel("Email address");
-		JLabel lMobilePhoneNumber = new JLabel("Mobile phone number");
-		JLabel lHomePhoneNumber = new JLabel("Home phone number");
-		JLabel lWorkPhoneNumber = new JLabel("Work phone number");
-		JTextField tFirstName = new JTextField();
-		JTextField tLastName = new JTextField();
-		String[] gender = {"Female", "Male"};
-		JComboBox tGender = new JComboBox(gender);
-		JTextField tBirthDate = new JTextField();
-		JTextField tEmailAddress = new JTextField();
-		JTextField tMobilePhoneNumber = new JTextField();
-		JTextField tHomePhoneNumber = new JTextField();
-		JTextField tWorkPhoneNumber = new JTextField();				
-		JButton bAddresses = new JButton("Addresses >>");
 		
 		GridBagConstraints clPersonal = new GridBagConstraints();
 		GridBagConstraints clFirstName = new GridBagConstraints();
@@ -93,7 +168,9 @@ public class Registration {
 		GridBagConstraints ctFirstName = new GridBagConstraints();
 		GridBagConstraints ctLastName = new GridBagConstraints();
 		GridBagConstraints ctGender = new GridBagConstraints();
-		GridBagConstraints ctBirthDate = new GridBagConstraints();
+		GridBagConstraints ccboxBirthDate = new GridBagConstraints();
+		GridBagConstraints ccboxBirthMonth = new GridBagConstraints();
+		GridBagConstraints ccboxBirthYear = new GridBagConstraints();
 		GridBagConstraints ctEmailAddress = new GridBagConstraints();
 		GridBagConstraints ctMobilePhoneNumber = new GridBagConstraints();
 		GridBagConstraints ctHomePhoneNumber = new GridBagConstraints();
@@ -184,13 +261,27 @@ public class Registration {
 		ctGender.fill = GridBagConstraints.HORIZONTAL;
 		ctGender.insets = standardInsets;
 		
-		ctBirthDate.gridx = 1;
-		ctBirthDate.gridy = 4;
-		ctBirthDate.gridwidth = 1;
-		ctBirthDate.gridheight = 1;
-		ctBirthDate.fill = GridBagConstraints.HORIZONTAL;
-		ctBirthDate.insets = standardInsets;
+		ccboxBirthDate.gridx = 1;
+		ccboxBirthDate.gridy = 4;
+		ccboxBirthDate.gridwidth = 1;
+		ccboxBirthDate.gridheight = 1;
+		ccboxBirthDate.fill = GridBagConstraints.HORIZONTAL;
+		ccboxBirthDate.insets = standardInsets;
 
+		ccboxBirthMonth.gridx = 1;
+		ccboxBirthMonth.gridy = 5;
+		ccboxBirthMonth.gridwidth = 1;
+		ccboxBirthMonth.gridheight = 1;
+		ccboxBirthMonth.fill = GridBagConstraints.HORIZONTAL;
+		ccboxBirthMonth.insets = standardInsets;
+		
+		ccboxBirthYear.gridx = 1;
+		ccboxBirthYear.gridy = 6;
+		ccboxBirthYear.gridwidth = 1;
+		ccboxBirthYear.gridheight = 1;
+		ccboxBirthYear.fill = GridBagConstraints.HORIZONTAL;
+		ccboxBirthYear.insets = standardInsets;
+		
 		ctEmailAddress.gridx = 4;
 		ctEmailAddress.gridy = 1;
 		ctEmailAddress.gridwidth = 1;
@@ -220,7 +311,7 @@ public class Registration {
 		ctWorkPhoneNumber.insets = standardInsets;
 
 		cbAddresses.gridx = 4;
-		cbAddresses.gridy = 5;
+		cbAddresses.gridy = 7;
 		cbAddresses.gridwidth = 1;
 		cbAddresses.gridheight = 1;
 		cbAddresses.fill = GridBagConstraints.HORIZONTAL;
@@ -238,7 +329,9 @@ public class Registration {
 		pPersonal.add(tFirstName, ctFirstName);
 		pPersonal.add(tLastName, ctLastName);
 		pPersonal.add(tGender, ctGender);
-		pPersonal.add(tBirthDate, ctBirthDate);
+		pPersonal.add(cboxBirthDate, ccboxBirthDate);
+		pPersonal.add(cboxBirthMonth, ccboxBirthMonth);
+		pPersonal.add(cboxBirthYear, ccboxBirthYear);
 		pPersonal.add(tEmailAddress, ctEmailAddress);
 		pPersonal.add(tMobilePhoneNumber, ctMobilePhoneNumber);
 		pPersonal.add(tHomePhoneNumber, ctHomePhoneNumber);
@@ -246,35 +339,7 @@ public class Registration {
 		pPersonal.add(bAddresses, cbAddresses);
 		
 		// Addresses tab
-		JPanel pAddress = new JPanel();
-		pAddress.setLayout(new GridBagLayout());
-		
-		JLabel lHomeAddress = new JLabel("HOME ADDRESS");
-		JLabel lHomeNumberOrName = new JLabel("House number and name");
-		JLabel lHomeStreet = new JLabel("Street");
-		JLabel lHomeCity = new JLabel("City or town");
-		JLabel lHomePostalCode = new JLabel("Postal code");
-		JLabel lHomeCountry = new JLabel("Country");
-		JSeparator sVertical = new JSeparator(JSeparator.VERTICAL);
-		JLabel lBillingAddress = new JLabel("BILLING ADDRESS");
-		JCheckBox ckBillingSameAsHome = new JCheckBox("Copy from home address?");
-		JLabel lBillingNumberOrName = new JLabel("House number and name");
-		JLabel lBillingStreet = new JLabel("Street");
-		JLabel lBillingCity = new JLabel("City or town");
-		JLabel lBillingPostalCode = new JLabel("Postal code");
-		JLabel lBillingCountry = new JLabel("Country");
-		JTextField tHomeNumberOrName = new JTextField();
-		JTextField tHomeStreet = new JTextField();
-		JTextField tHomeCity = new JTextField();
-		JTextField tHomePostalCode = new JTextField();
-		JTextField tHomeCountry = new JTextField();
-		JTextField tBillingNumberOrName = new JTextField();
-		JTextField tBillingStreet = new JTextField();
-		JTextField tBillingCity = new JTextField();
-		JTextField tBillingPostalCode = new JTextField();
-		JTextField tBillingCountry = new JTextField();
-		JButton bNextOfKin = new JButton("Next of kin >>");
-		
+				
 		GridBagConstraints clHomeAddress = new GridBagConstraints();
 		GridBagConstraints clHomeNumberOrName = new GridBagConstraints();
 		GridBagConstraints clHomeStreet = new GridBagConstraints();
@@ -504,24 +569,6 @@ public class Registration {
 		pAddress.add(bNextOfKin, cbNextOfKin);
 		
 		// Next Of Kin tab
-		JPanel pNextOfKin = new JPanel();
-		pNextOfKin.setLayout(new GridBagLayout());
-
-		JLabel lNextOfKin = new JLabel("NEXT OF KIN");
-		JLabel lNOKFirstName = new JLabel("First name");
-		JLabel lNOKLastName = new JLabel("Last name");
-		JLabel lNOKRelationship = new JLabel("Relationship to patient");
-		JLabel lNOKEmailAddress = new JLabel("Email address");
-		JLabel lNOKMobilePhoneNumber = new JLabel("Mobile phone number");
-		JLabel lNOKHomePhoneNumber = new JLabel("Home phone number");
-		JTextField tNOKFirstName = new JTextField();
-		JTextField tNOKLastName = new JTextField();
-		String[] relationship = {"Spouse", "Parent", "Sibling", "Child", "Friend", "Lawyer"};
-		JComboBox cboxNOKRelationship = new JComboBox(relationship);
-		JTextField tNOKEmailAddress = new JTextField();
-		JTextField tNOKMobilePhoneNumber = new JTextField();
-		JTextField tNOKHomePhoneNumber = new JTextField();
-		JButton bSave = new JButton("Save");
 		
 		GridBagConstraints clNextOfKin = new GridBagConstraints();
 		GridBagConstraints clNOKFirstName = new GridBagConstraints();
@@ -662,5 +709,35 @@ public class Registration {
 		
 	}
 	
+	private void save() {
+		
+		Address homeAddress = new Address(tHomeNumberOrName.getText(), tHomeStreet.getText(), tHomeCity.getText(), tHomePostalCode.getText(), tHomeCountry.getText());
+		Address billingAddress = new Address(tBillingNumberOrName.getText(), tBillingStreet.getText(), tBillingCity.getText(), tBillingPostalCode.getText(), tBillingCountry.getText());
+		NextOfKin nextOfKin = new NextOfKin(tNOKFirstName.getText(), tNOKLastName.getText(), cboxNOKRelationship.getSelectedItem().toString(), tNOKEmailAddress.getText(), tNOKMobilePhoneNumber.getText(), tNOKHomePhoneNumber.getText());
+		
+		/*	public Patient (String firstName, String lastName, String emailAddress,
+			String gender,
+			String birthDate, String birthMonth, String birthYear,
+			String mobilePhoneNumber, String homePhoneNumber, String workPhoneNumber, 
+			Address homeAddress, Address billingAddress,
+			NextOfKin nextOfKin)
+		 */
+		
+		Patient patient = new Patient(tFirstName.getText(), tLastName.getText(), tEmailAddress.getText(), tGender.getSelectedItem().toString(),
+				cboxBirthDate.getSelectedItem().toString(), cboxBirthMonth.getSelectedItem().toString(), cboxBirthYear.getSelectedItem().toString(),
+				tMobilePhoneNumber.getText(), tHomePhoneNumber.getText(), tWorkPhoneNumber.getText(), homeAddress, billingAddress, nextOfKin);
+		
+		// output the following string to file
+		patient.toString();
+	}
+	
+	private class ButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			save();
+		}
+		
+	}
 	
 }

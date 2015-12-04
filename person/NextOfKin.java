@@ -14,6 +14,22 @@ public class NextOfKin extends Person {
 		this.homePhoneNumber = homePhoneNumber;
 	}
 	
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append(this.getFirstName());
+		str.append(", ");
+		str.append(this.getLastName());
+		str.append(", ");
+		str.append(this.getEmailAddress());
+		str.append(", ");
+		str.append(this.getRelationshipToPatient());
+		str.append(", ");
+		str.append(this.getNextOfKinMobilePhoneNumber());
+		str.append(", ");
+		str.append(this.getNextOfKinHomePhoneNumber());
+		return str.toString();
+	}
+	
 	public String getRelationshipToPatient() {
 		return relationshipToPatient;
 	}

@@ -17,7 +17,6 @@ import javax.swing.JTextField;
 
 import person.NextOfKin;
 import person.Patient;
-import person.Patient.Gender;
 import person.util.Address;
 import person.util.Insurance;
 import record.Consultation;
@@ -31,58 +30,62 @@ import record.Consultation;
 
 public class ViewEditRecord {
 	
+	private static ViewEditRecord instance = null;
+	private Consultation record;
+	
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
-	private static JPanel pCard = new JPanel(new CardLayout());
-	private static JPanel pView = new JPanel(new GridBagLayout());
-	private static JPanel pEdit = new JPanel(new GridBagLayout());
-	private static CardController cardController;
+	private JPanel pCard, pView, pEdit;
+	private JFrame frame;
+	private JLabel lPatient, l2Patient, lRecordDate,  l2RecordDate, lDoctor, l2Doctor, lNotes, l2Notes, lDiagnosis, l2Diagnosis, lAttachment, l2Attachment;
+	private JLabel lePatient, le2Patient, leRecordDate, leDoctor, leNotes, leDiagnosis, leAttachment, le2Attachment;
+	private JTextField le2RecordDate, le2Doctor, le2Notes, le2Diagnosis;
+	private JSeparator sHorizontal, seHorizontal;
+	private JButton bEdit, bCancel, bSave;
+	private CardController cardController;
 	
-	public ViewEditRecord() {
-		
+	private ViewEditRecord(Consultation record) {
+		this.record = record;
+		draw(record);
 	}
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Address homeAddress = new Address("15, Croydon House", "Wootton Street", "London", "SE1 8TS", "United Kingdom");
-					Address billingAddress = new Address("15, Croydon House", "Wootton Street", "London", "SE1 8TS", "United Kingdom");
-					Insurance insurance = new Insurance("Allianz", "ABC0988776");
-					NextOfKin nextOfKin = new NextOfKin("Yin Wei", "Kan", "kanyinwei@gmail.com", "Sibling",
-							"+640987987987", "+64090123983");
-					Patient patient = new Patient("Yin Yee", "Kan", "yin.kan.15@ucl.ac.uk.com", Gender.FEMALE, 8, 12, 1983,
-							"07931155585", "07931155585", "07931155585", homeAddress, billingAddress, insurance, nextOfKin);
-					Consultation record = new Consultation(patient, 5, 12, 2015, "Dr. House", "LKMLKMLK", "Ugh");
-					ViewEditRecord window = new ViewEditRecord();
-					cardController = window. new CardController();
-					window.draw(record);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}				
-			}
-		});
+	/**
+	 * The getInstance() method enforces the Singleton design pattern.
+	 * @param record
+	 */
+	public static ViewEditRecord getInstance(Consultation record) {
+		if (instance == null) {
+			instance = new ViewEditRecord(record);
+		}
+		return instance;
 	}
 	
+	/**
+	 * The draw() method contains the code to render the GUI.	
+	 */
 	public void draw(Consultation record) {
-		
-		JFrame frame = new JFrame("View and Edit Record");
+	
+		frame = new JFrame("View and Edit Record");
+		pCard = new JPanel(new CardLayout());
+		pView = new JPanel(new GridBagLayout());
+		pEdit = new JPanel(new GridBagLayout());
 		
 		// View card
 		
-		JLabel lPatient = new JLabel("Patient");
-		JLabel l2Patient = new JLabel(record.getPatient().getfullName());
-		JLabel lRecordDate = new JLabel("Date (dd/mm/yyyy)");
-		JLabel l2RecordDate = new JLabel(record.getRecordDate());
-		JLabel lDoctor = new JLabel("Doctor");
-		JLabel l2Doctor = new JLabel(record.getDoctor());
-		JSeparator sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel lNotes = new JLabel("Notes");
-		JLabel l2Notes = new JLabel(record.getNotes());
-		JLabel lDiagnosis = new JLabel("Diagnosis");
-		JLabel l2Diagnosis = new JLabel(record.getDiagnosis());
-		JLabel lAttachment = new JLabel("Attachment");
-		JLabel l2Attachment = new JLabel("WIP");
-		JButton bEdit = new JButton("Edit");
+		lPatient = new JLabel("Patient");
+		l2Patient = new JLabel(record.getPatient().getFullName());
+		lRecordDate = new JLabel("Date");
+		l2RecordDate = new JLabel(record.getRecordDate());
+		lDoctor = new JLabel("Doctor");
+		l2Doctor = new JLabel(record.getDoctor());
+		sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		lNotes = new JLabel("Notes");
+		l2Notes = new JLabel(record.getNotes());
+		lDiagnosis = new JLabel("Diagnosis");
+		l2Diagnosis = new JLabel(record.getDiagnosis());
+		lAttachment = new JLabel("Attachment");
+		l2Attachment = new JLabel("WIP");
+		bEdit = new JButton("Edit");
+		cardController = new CardController();
 		bEdit.addActionListener(cardController);
 		bEdit.setActionCommand("Edit");
 		
@@ -216,23 +219,23 @@ public class ViewEditRecord {
 		
 		// Edit card
 		
-		JLabel lePatient = new JLabel("Patient");
-		JLabel le2Patient = new JLabel(record.getPatient().getfullName());
-		JLabel leRecordDate = new JLabel("Date (dd/mm/yyyy)");
-		JTextField le2RecordDate = new JTextField(record.getRecordDate());
-		JLabel leDoctor = new JLabel("Doctor");
-		JTextField le2Doctor = new JTextField(record.getDoctor());
-		JSeparator seHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel leNotes = new JLabel("Notes");
-		JTextField le2Notes = new JTextField(record.getNotes());
-		JLabel leDiagnosis = new JLabel("Diagnosis");
-		JTextField le2Diagnosis = new JTextField(record.getDiagnosis());
-		JLabel leAttachment = new JLabel("Attachment");
-		JLabel le2Attachment = new JLabel("WIP");
-		JButton bCancel = new JButton("Cancel");
+		lePatient = new JLabel("Patient");
+		le2Patient = new JLabel(record.getPatient().getFullName());
+		leRecordDate = new JLabel("Date");
+		le2RecordDate = new JTextField(record.getRecordDate());
+		leDoctor = new JLabel("Doctor");
+		le2Doctor = new JTextField(record.getDoctor());
+		seHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		leNotes = new JLabel("Notes");
+		le2Notes = new JTextField(record.getNotes());
+		leDiagnosis = new JLabel("Diagnosis");
+		le2Diagnosis = new JTextField(record.getDiagnosis());
+		leAttachment = new JLabel("Attachment");
+		le2Attachment = new JLabel("WIP");
+		bCancel = new JButton("Cancel");
 		bCancel.addActionListener(cardController);
 		bCancel.setActionCommand("Cancel");
-		JButton bSave = new JButton("Save");
+		bSave = new JButton("Save");
 		bSave.addActionListener(cardController);
 		bSave.setActionCommand("Save");
 
@@ -286,7 +289,6 @@ public class ViewEditRecord {
 			CardLayout layout = (CardLayout)(pCard.getLayout());
 			switch(e.getActionCommand()) {
 			case "Edit" : 
-				System.out.println("Working");
 				layout.show(pCard, "Edit");
 				break;
 			case "Cancel" :
