@@ -1,11 +1,13 @@
 package person;
 
+import java.util.ArrayList;
+
 import person.util.Address;
+import record.Record;
 import record.util.Date;
 
 public class Patient extends Person {
 
-	// Write a method to assign a patientID
 	private String gender;
 	private Date birthDate;
 	private String mobilePhoneNumber;
@@ -14,22 +16,25 @@ public class Patient extends Person {
 	private Address homeAddress;
 	private Address billingAddress;
 	private NextOfKin nextOfKin;
+	private ArrayList<Record> records;
 
-	public Patient (String firstName, String lastName, String emailAddress,
-			String gender,
+//	"First name", "Last name", "Gender", "Birth date", "Birth month", "Birth year", "Email address", "Mobile number", "Home number", "Work number"
+	public Patient (String firstName, String lastName, String gender,
 			String birthDate, String birthMonth, String birthYear,
-			String mobilePhoneNumber, String homePhoneNumber, String workPhoneNumber, 
-			Address homeAddress, Address billingAddress,
-			NextOfKin nextOfKin) {
+			String emailAddress,
+			String mobilePhoneNumber, String homePhoneNumber, String workPhoneNumber) { 
+//			Address homeAddress, Address billingAddress,
+//			NextOfKin nextOfKin) {
 		super(firstName, lastName, emailAddress);
 		this.gender = gender;
 		this.birthDate = new Date(birthDate, birthMonth, birthYear);
 		this.mobilePhoneNumber = mobilePhoneNumber;
 		this.homePhoneNumber = homePhoneNumber;
 		this.workPhoneNumber = workPhoneNumber;
-		this.homeAddress = homeAddress;
-		this.billingAddress = billingAddress;
-		this.nextOfKin = nextOfKin;
+//		this.homeAddress = homeAddress;
+//		this.billingAddress = billingAddress;
+//		this.nextOfKin = nextOfKin;
+		records = null;
 	}
 	
 	public String toString() {

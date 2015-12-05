@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -20,6 +19,7 @@ import javax.swing.JSeparator;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 /**
  * After successfully logging in, the Administrator will be directed to this screen,
@@ -41,8 +41,10 @@ public class Dashboard {
 	
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
 	private final static String[] searchFields = {"First name", "Last name", "Gender", "Postal code", "Doctor", "Diagnosis"};
+	private final static String[] header = {"First name", "Last name", "Gender", "Birth date", "Birth month", "Birth year", "Email address", "Mobile number", "Home number", "Work number"};
 	
 	private String searchField, searchText;
+	private String[][] searchResults;
 	
 	private JFrame frame;
 	private JLabel lWelcome, lSearch, lRegister, lResults;
@@ -69,7 +71,24 @@ public class Dashboard {
 		return instance;
 	}
 	
-	
+	/**
+	 * The search() method searches the database for patients based the
+	 * the search field specified and the desired search term.
+	 */
+	private void search() {
+		searchField = cboxSearch.getSelectedItem().toString();
+		searchText = tSearch.getText();			 
+		Interpreter interpreter = new Interpreter();
+		searchResults = interpreter.searchPatient(database, searchField, searchText);
+		tbResults = new JTable(searchResults, header);
+		tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tbResults.setMinimumSize(tbResults.getPreferredSize());
+		tbResults.setAutoCreateRowSorter(true);
+		scrResults.setViewportView(tbResults);
+		scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		frame.validate();
+	}
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
@@ -228,9 +247,7 @@ public class Dashboard {
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand()) {
 			case "Search":
-				ActionThread searchThread = new ActionThread();
-				searchThread.start();
-				searchThread.search();
+				search();
 				break;
 			case "Register":
 				try {
@@ -241,8 +258,8 @@ public class Dashboard {
 				break;
 			case "Open":
 				try {
-//					tbResults.getSelectedRow();
-//					Profile profile = Profile.getInstance(Patient patient);
+					String[] selection = searchResults[tbResults.getSelectedRow()];
+					System.out.println(Arrays.toString(selection));
 				} catch (Exception f) {
 					f.printStackTrace();
 				}
@@ -250,21 +267,5 @@ public class Dashboard {
 			}
 		}
 	}
-	
-	private class ActionThread extends Thread {
 		
-		private void search() {
-			searchField = cboxSearch.getSelectedItem().toString();
-			searchText = tSearch.getText();			 
-			Interpreter interpreter = new Interpreter();
-			tbResults = interpreter.searchPatient(database, searchField, searchText);
-			tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			tbResults.setMinimumSize(tbResults.getPreferredSize());
-			scrResults.setViewportView(tbResults);
-			scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-			scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			frame.validate();
-		}
-	}
-	
 }

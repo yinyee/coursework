@@ -69,14 +69,13 @@ public class Interpreter {
 	 * @param searchTerm
 	 */
 	
-	public JTable searchPatient(String domain, String searchField, String searchTerm) {
+	public String[][] searchPatient(String domain, String searchField, String searchTerm) {
 		
 		Document doc = parse(domain);
 		doc.getDocumentElement().normalize();
 		NodeList searchSpace = null;
 		ArrayList<Node> searchResults = new ArrayList<Node>();
-		ArrayList<String> header = new ArrayList<String>();
-		ArrayList<String> row = new ArrayList<String>();
+		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
 		
 		switch (searchField) {
@@ -135,30 +134,27 @@ public class Interpreter {
 		 * number of search results returned cannot be known in advance.
 		 */
 		int rowCount = 0;
-		for (int i = 0; i < searchResults.size(); i++) {
-			NodeList patient = searchResults.get(i).getChildNodes();
-			for (int j = 0; j < patient.getLength(); j++) {
-				if (patient.item(j).getNodeType() == Node.ELEMENT_NODE && patient.item(j).getFirstChild().getNodeType() == Node.TEXT_NODE) {
-					row.add(patient.item(j).getFirstChild().getTextContent());
-				} 
+		
+		for (int i = 0; i < searchResults.size(); i++) { // Loop through the number of search results
+			NodeList patient = searchResults.get(i).getChildNodes(); // Load each result
+			ArrayList<String> row = new ArrayList<String>();
+			for (int j = 0; j < patient.getLength(); j++) { // Loop through the fields
+				Node currentNode = patient.item(j);
+				if (currentNode.getNodeType() == Node.ELEMENT_NODE) { // Add if node is an element
+					row.add(currentNode.getFirstChild().getTextContent());
+				}
 			}
-			table.add(row);
+			table.add(row); // Add row
 			rowCount++;
 		}
 		
-		/**
-		 * Get headers for Patient element.
-		 */
 		int colCount = 0;
 		NodeList headerNodes = searchResults.get(0).getChildNodes();
 		for (int i = 0; i < headerNodes.getLength(); i++) {
 			if(headerNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				header.add(headerNodes.item(i).getNodeName());
 				colCount++;
 			}
 		}
-		String[] headerArray = new String[header.size()];
-		header.toArray(headerArray);
 				
 		/**
 		 * Unpack the nested ArrayLists into a 2D Array to be output to the JTable.
@@ -169,11 +165,8 @@ public class Interpreter {
 			table.get(i).toArray(rowArray);
 			array[i] = rowArray;
 		}
-		System.out.println(table.size());
-		for (int i = 0; i < table.size(); i++) {
-		System.out.println(table.get(i));}
-		JTable result = new JTable(array, headerArray);
-		return result;
+		
+		return array;
 	}
 	
 	/**

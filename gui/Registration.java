@@ -39,6 +39,9 @@ public class Registration {
 	private final static String[] gender = {"Female", "Male"};
 	private final static String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private final static String[] relationship = {"Spouse", "Parent", "Sibling", "Child", "Friend", "Lawyer"};
+	
+	private JFrame frame;
+	private JTabbedPane tabbedPane;
 	private JPanel pPersonal, pAddress, pNextOfKin;
 	private JLabel lPersonal, lFirstName, lLastName, lGender, lBirthDate, lEmailAddress, lMobilePhoneNumber, lHomePhoneNumber, lWorkPhoneNumber;
 	private JLabel lHomeAddress, lHomeNumberOrName, lHomeStreet, lHomeCity, lHomePostalCode, lHomeCountry;
@@ -75,8 +78,8 @@ public class Registration {
 	private void draw() {
 		
 		// Instantiate variables
-		JFrame frame = new JFrame("Register New Patient");
-		JTabbedPane tabbedPane = new JTabbedPane();		
+		frame = new JFrame("Register New Patient");
+		tabbedPane = new JTabbedPane();		
 		
 		pPersonal = new JPanel(new GridBagLayout());
 		pAddress = new JPanel(new GridBagLayout());
@@ -110,6 +113,9 @@ public class Registration {
 		tHomePhoneNumber = new JTextField();
 		tWorkPhoneNumber = new JTextField();				
 		bAddresses = new JButton("Addresses >>");
+		listener = new ButtonListener();
+		bAddresses.addActionListener(listener);
+		bAddresses.setActionCommand("Addresses");
 		
 		lHomeAddress = new JLabel("HOME ADDRESS");
 		lHomeNumberOrName = new JLabel("House number and name");
@@ -120,22 +126,31 @@ public class Registration {
 		sVertical = new JSeparator(JSeparator.VERTICAL);
 		lBillingAddress = new JLabel("BILLING ADDRESS");
 		ckBillingSameAsHome = new JCheckBox("Copy from home address?");
+		ckBillingSameAsHome.addActionListener(listener);
+		ckBillingSameAsHome.setActionCommand("Copy");
 		lBillingNumberOrName = new JLabel("House number and name");
 		lBillingStreet = new JLabel("Street");
 		lBillingCity = new JLabel("City or town");
 		lBillingPostalCode = new JLabel("Postal code");
 		lBillingCountry = new JLabel("Country");
 		tHomeNumberOrName = new JTextField();
+		tHomeNumberOrName.setMinimumSize(tHomeNumberOrName.getPreferredSize());
 		tHomeStreet = new JTextField();
+		tHomeStreet.setMinimumSize(tHomeStreet.getPreferredSize());
 		tHomeCity = new JTextField();
+		tHomeCity.setMinimumSize(tHomeCity.getPreferredSize());
 		tHomePostalCode = new JTextField();
+		tHomePostalCode.setMinimumSize(tHomePostalCode.getPreferredSize());
 		tHomeCountry = new JTextField();
+		tHomeCountry.setMinimumSize(tHomeCountry.getPreferredSize());
 		tBillingNumberOrName = new JTextField();
 		tBillingStreet = new JTextField();
 		tBillingCity = new JTextField();
 		tBillingPostalCode = new JTextField();
 		tBillingCountry = new JTextField();
 		bNextOfKin = new JButton("Next of kin >>");
+		bNextOfKin.addActionListener(listener);
+		bNextOfKin.setActionCommand("NextOfKin");
 		
 		lNextOfKin = new JLabel("NEXT OF KIN");
 		lNOKFirstName = new JLabel("First name");
@@ -151,8 +166,8 @@ public class Registration {
 		tNOKMobilePhoneNumber = new JTextField();
 		tNOKHomePhoneNumber = new JTextField();
 		bSave = new JButton("Save");
-		listener = new ButtonListener();
 		bSave.addActionListener(listener);
+		bSave.setActionCommand("Save");
 		
 		// Personal tab
 		
@@ -244,6 +259,7 @@ public class Registration {
 		ctFirstName.gridy = 1;
 		ctFirstName.gridwidth = 1;
 		ctFirstName.gridheight = 1;
+		ctFirstName.weightx = 1.;
 		ctFirstName.fill = GridBagConstraints.HORIZONTAL;
 		ctFirstName.insets = standardInsets;
 		
@@ -251,6 +267,7 @@ public class Registration {
 		ctLastName.gridy = 2;
 		ctLastName.gridwidth = 1;
 		ctLastName.gridheight = 1;
+		ctLastName.weightx = 1.;
 		ctLastName.fill = GridBagConstraints.HORIZONTAL;
 		ctLastName.insets = standardInsets;
 		
@@ -258,6 +275,7 @@ public class Registration {
 		ctGender.gridy = 3;
 		ctGender.gridwidth = 1;
 		ctGender.gridheight = 1;
+		ctGender.weightx = 1.;
 		ctGender.fill = GridBagConstraints.HORIZONTAL;
 		ctGender.insets = standardInsets;
 		
@@ -265,6 +283,7 @@ public class Registration {
 		ccboxBirthDate.gridy = 4;
 		ccboxBirthDate.gridwidth = 1;
 		ccboxBirthDate.gridheight = 1;
+		ccboxBirthDate.weightx = 0.3;
 		ccboxBirthDate.fill = GridBagConstraints.HORIZONTAL;
 		ccboxBirthDate.insets = standardInsets;
 
@@ -272,6 +291,7 @@ public class Registration {
 		ccboxBirthMonth.gridy = 5;
 		ccboxBirthMonth.gridwidth = 1;
 		ccboxBirthMonth.gridheight = 1;
+		ccboxBirthMonth.weightx = 1.;
 		ccboxBirthMonth.fill = GridBagConstraints.HORIZONTAL;
 		ccboxBirthMonth.insets = standardInsets;
 		
@@ -279,6 +299,7 @@ public class Registration {
 		ccboxBirthYear.gridy = 6;
 		ccboxBirthYear.gridwidth = 1;
 		ccboxBirthYear.gridheight = 1;
+		ccboxBirthYear.weightx = 0.5;
 		ccboxBirthYear.fill = GridBagConstraints.HORIZONTAL;
 		ccboxBirthYear.insets = standardInsets;
 		
@@ -286,6 +307,7 @@ public class Registration {
 		ctEmailAddress.gridy = 1;
 		ctEmailAddress.gridwidth = 1;
 		ctEmailAddress.gridheight = 1;
+		ctEmailAddress.weightx = 1.;
 		ctEmailAddress.fill = GridBagConstraints.HORIZONTAL;
 		ctEmailAddress.insets = standardInsets;
 		
@@ -293,6 +315,7 @@ public class Registration {
 		ctMobilePhoneNumber.gridy = 2;
 		ctMobilePhoneNumber.gridwidth = 1;
 		ctMobilePhoneNumber.gridheight = 1;
+		ctMobilePhoneNumber.weightx = 0.7;
 		ctMobilePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
 		ctMobilePhoneNumber.insets = standardInsets;
 		
@@ -300,6 +323,7 @@ public class Registration {
 		ctHomePhoneNumber.gridy = 3;
 		ctHomePhoneNumber.gridwidth = 1;
 		ctHomePhoneNumber.gridheight = 1;
+		ctHomePhoneNumber.weightx = 0.7;
 		ctHomePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
 		ctHomePhoneNumber.insets = standardInsets;
 		
@@ -307,6 +331,7 @@ public class Registration {
 		ctWorkPhoneNumber.gridy = 4;
 		ctWorkPhoneNumber.gridwidth = 1;
 		ctWorkPhoneNumber.gridheight = 1;
+		ctWorkPhoneNumber.weightx = 0.7;
 		ctWorkPhoneNumber.fill = GridBagConstraints.HORIZONTAL;
 		ctWorkPhoneNumber.insets = standardInsets;
 
@@ -469,6 +494,7 @@ public class Registration {
 		ctHomeNumberOrName.gridy = 2;
 		ctHomeNumberOrName.gridwidth = 1;
 		ctHomeNumberOrName.gridheight = 1;
+		ctHomeNumberOrName.weightx = 1.;
 		ctHomeNumberOrName.fill = GridBagConstraints.HORIZONTAL;
 		ctHomeNumberOrName.insets = standardInsets;
 
@@ -476,6 +502,7 @@ public class Registration {
 		ctHomeStreet.gridy = 3;
 		ctHomeStreet.gridwidth = 1;
 		ctHomeStreet.gridheight = 1;
+		ctHomeStreet.weightx = 1.;
 		ctHomeStreet.fill = GridBagConstraints.HORIZONTAL;
 		ctHomeStreet.insets = standardInsets;
 
@@ -483,6 +510,7 @@ public class Registration {
 		ctHomeCity.gridy = 4;
 		ctHomeCity.gridwidth = 1;
 		ctHomeCity.gridheight = 1;
+		ctHomeCity.weightx = 1.;
 		ctHomeCity.fill = GridBagConstraints.HORIZONTAL;
 		ctHomeCity.insets = standardInsets;
 		
@@ -490,6 +518,7 @@ public class Registration {
 		ctHomePostalCode.gridy = 5;
 		ctHomePostalCode.gridwidth = 1;
 		ctHomePostalCode.gridheight = 1;
+		ctHomePostalCode.weightx = 1.;
 		ctHomePostalCode.fill = GridBagConstraints.HORIZONTAL;
 		ctHomePostalCode.insets = standardInsets;
 
@@ -497,6 +526,7 @@ public class Registration {
 		ctHomeCountry.gridy = 6;
 		ctHomeCountry.gridwidth = 1;
 		ctHomeCountry.gridheight = 1;
+		ctHomeCountry.weightx = 1.;
 		ctHomeCountry.fill = GridBagConstraints.HORIZONTAL;
 		ctHomeCountry.insets = standardInsets;
 
@@ -504,6 +534,7 @@ public class Registration {
 		ctBillingNumberOrName.gridy = 2;
 		ctBillingNumberOrName.gridwidth = 1;
 		ctBillingNumberOrName.gridheight = 1;
+		ctBillingNumberOrName.weightx = 1.;
 		ctBillingNumberOrName.fill = GridBagConstraints.HORIZONTAL;
 		ctBillingNumberOrName.insets = standardInsets;
 
@@ -511,6 +542,7 @@ public class Registration {
 		ctBillingStreet.gridy = 3;
 		ctBillingStreet.gridwidth = 1;
 		ctBillingStreet.gridheight = 1;
+		ctBillingStreet.weightx = 1.;
 		ctBillingStreet.fill = GridBagConstraints.HORIZONTAL;
 		ctBillingStreet.insets = standardInsets;
 
@@ -518,6 +550,7 @@ public class Registration {
 		ctBillingCity.gridy = 4;
 		ctBillingCity.gridwidth = 1;
 		ctBillingCity.gridheight = 1;
+		ctBillingCity.weightx = 1.;
 		ctBillingCity.fill = GridBagConstraints.HORIZONTAL;
 		ctBillingCity.insets = standardInsets;
 
@@ -525,6 +558,7 @@ public class Registration {
 		ctBillingPostalCode.gridy = 5;
 		ctBillingPostalCode.gridwidth = 1;
 		ctBillingPostalCode.gridheight = 1;
+		ctBillingPostalCode.weightx = 1.;
 		ctBillingPostalCode.fill = GridBagConstraints.HORIZONTAL;
 		ctBillingPostalCode.insets = standardInsets;
 
@@ -532,6 +566,7 @@ public class Registration {
 		ctBillingCountry.gridy = 6;
 		ctBillingCountry.gridwidth = 1;
 		ctBillingCountry.gridheight = 1;
+		ctBillingCountry.weightx = 1.;
 		ctBillingCountry.fill = GridBagConstraints.HORIZONTAL;
 		ctBillingCountry.insets = standardInsets;
 	
@@ -638,6 +673,7 @@ public class Registration {
 		ctNOKFirstName.gridy = 1;
 		ctNOKFirstName.gridwidth = 1;
 		ctNOKFirstName.gridheight = 1;
+		ctNOKFirstName.weightx = 1.;
 		ctNOKFirstName.fill = GridBagConstraints.HORIZONTAL;
 		ctNOKFirstName.insets = standardInsets;
 
@@ -645,6 +681,7 @@ public class Registration {
 		ctNOKLastName.gridy = 2;
 		ctNOKLastName.gridwidth = 1;
 		ctNOKLastName.gridheight = 1;
+		ctNOKLastName.weightx = 1.;
 		ctNOKLastName.fill = GridBagConstraints.HORIZONTAL;
 		ctNOKLastName.insets = standardInsets;
 
@@ -659,6 +696,7 @@ public class Registration {
 		ctNOKEmailAddress.gridy = 1;
 		ctNOKEmailAddress.gridwidth = 1;
 		ctNOKEmailAddress.gridheight = 1;
+		ctNOKEmailAddress.weightx = 1.;
 		ctNOKEmailAddress.fill = GridBagConstraints.HORIZONTAL;
 		ctNOKEmailAddress.insets = standardInsets;
 
@@ -666,6 +704,7 @@ public class Registration {
 		ctNOKMobilePhoneNumber.gridy = 2;
 		ctNOKMobilePhoneNumber.gridwidth = 1;
 		ctNOKMobilePhoneNumber.gridheight = 1;
+		ctNOKMobilePhoneNumber.weightx = 1.;
 		ctNOKMobilePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
 		ctNOKMobilePhoneNumber.insets = standardInsets;
 
@@ -673,6 +712,7 @@ public class Registration {
 		ctNOKHomePhoneNumber.gridy = 3;
 		ctNOKHomePhoneNumber.gridwidth = 1;
 		ctNOKHomePhoneNumber.gridheight = 1;
+		ctNOKHomePhoneNumber.weightx = 1.;
 		ctNOKHomePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
 		ctNOKHomePhoneNumber.insets = standardInsets;
 
@@ -723,19 +763,40 @@ public class Registration {
 			NextOfKin nextOfKin)
 		 */
 		
-		Patient patient = new Patient(tFirstName.getText(), tLastName.getText(), tEmailAddress.getText(), tGender.getSelectedItem().toString(),
+		Patient patient = new Patient(tFirstName.getText(), tLastName.getText(), tGender.getSelectedItem().toString(),
 				cboxBirthDate.getSelectedItem().toString(), cboxBirthMonth.getSelectedItem().toString(), cboxBirthYear.getSelectedItem().toString(),
-				tMobilePhoneNumber.getText(), tHomePhoneNumber.getText(), tWorkPhoneNumber.getText(), homeAddress, billingAddress, nextOfKin);
+				tEmailAddress.getText(), tMobilePhoneNumber.getText(), tHomePhoneNumber.getText(), tWorkPhoneNumber.getText()/*, homeAddress, billingAddress, nextOfKin*/);
 		
+		Profile window = Profile.getInstance(patient);
 		// output the following string to file
-		patient.toString();
+//		patient.toString();
 	}
 	
 	private class ButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			save();
+			switch(e.getActionCommand()) {
+			case "Addresses":
+				tabbedPane.setSelectedIndex(1);
+				tabbedPane.validate();
+				break;
+			case "Copy":
+				tBillingNumberOrName.setText(tHomeNumberOrName.getText());
+				tBillingStreet.setText(tHomeStreet.getText());
+				tBillingCity.setText(tHomeCity.getText());
+				tBillingPostalCode.setText(tHomePostalCode.getText());
+				tBillingCountry.setText(tHomeCountry.getText());
+				break;
+			case "NextOfKin":
+				tabbedPane.setSelectedIndex(2);
+				tabbedPane.validate();
+				break;
+			case "Save":
+				save();
+				break;
+			}
+			
 		}
 		
 	}
