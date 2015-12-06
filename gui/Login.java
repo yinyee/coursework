@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -11,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import reader.Interpreter;
+import io.Interpreter;
 
 /**  
  * The Login class is based on the Singleton design pattern.
@@ -54,7 +55,7 @@ public class Login {
 		username = tUsername.getText();
 		password = tPassword.getText(); 
 		Interpreter interpreter = new Interpreter();
-		lMessage.setText(interpreter.verify(file, username, password));
+		lMessage.setText(interpreter.verify(file, username, password, this.frame));
 		lMessage.validate();
 	}
 	
@@ -65,6 +66,7 @@ public class Login {
 	private void draw() {
 		
 		frame = new JFrame("Patient Registry System");
+		frame.setMinimumSize(new Dimension(300, 300));
 		Container panel = frame.getContentPane();
 		lMessage = new JLabel("Please log in to continue:");
 		lUsername = new JLabel("Username");
@@ -132,7 +134,7 @@ public class Login {
 		panel.add(tPassword, ctPassword);
 		panel.add(bLogin, cbLogin);
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
 		

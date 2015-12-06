@@ -1,4 +1,4 @@
-package record.util;
+package obj.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +30,17 @@ public class Diseases {
 	
 	public String[] getList() {
 		return list;
+	}
+	
+	public int getDiseaseAsInt(String disease) {
+		int index = 0;
+		for (int i = 0; i < list.length; i++) {
+			if (list[i].equals(disease)) {
+				index = i;
+				break;
+			}
+		}
+		return index;
 	}
 
 }

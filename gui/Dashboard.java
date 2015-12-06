@@ -8,28 +8,32 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
-import reader.Interpreter;
+import io.Interpreter;
+import obj.Patient;
 
 import javax.swing.JSeparator;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 /**
+ * The Dashboard class is implemented based on the Singleton design pattern.
+ * 
  * After successfully logging in, the Administrator will be directed to this screen,
  * which presents the following options:
- * 1.	Create, edit, delete a patient
- * 2.	Create, edit, delete a record
- * 3.	Search patients based on Patient instance variables
- * (4.)	Export list of patients to file
- * (5.) Import list of patients from file 
+ * 1.	Search patients based on specified search fields
+ * 2.	Register a new patient 
  * 
+ * References:
+ * >> http://stackoverflow.com/questions/10321038/jtable-clickable-column-sorting-sorting-sorts-content-of-cells-but-doesnt-upd
+ * >> https://www.clear.rice.edu/comp310/JavaResources/frame_close.html
+ * >> http://stackoverflow.com/questions/9919230/disable-user-edit-in-jtable
  * @author yinyee
  *
  */
@@ -37,11 +41,12 @@ import java.util.Arrays;
 public class Dashboard {
 	
 	private static Dashboard instance = null;
-	private final static String database = "data/database.xml";
+	private final static String database = "data/patient.xml";
 	
 	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
-	private final static String[] searchFields = {"First name", "Last name", "Gender", "Postal code", "Doctor", "Diagnosis"};
-	private final static String[] header = {"First name", "Last name", "Gender", "Birth date", "Birth month", "Birth year", "Email address", "Mobile number", "Home number", "Work number"};
+	private final static String[] searchFields = {"First name", "Last name", "Gender", "Postal code"};
+	private final static String[] header = {"First name", "Last name", "Gender", "Birth date", "Birth month", "Birth year",
+			"Email address", "Mobile number", "Home number", "House number or name", "Street", "City", "Postal code", "Country", "Photo"};
 	
 	private String searchField, searchText;
 	private String[][] searchResults;
@@ -50,7 +55,7 @@ public class Dashboard {
 	private JLabel lWelcome, lSearch, lRegister, lResults;
 	private JTextField tSearch;
 	private JComboBox<String> cboxSearch;
-	private JButton bSearch, bRegister, bOpen;
+	private JButton bSearch, bRegister, bOpen, bLogout;
 	private JSeparator sVertical, sHorizontal;
 	private JScrollPane scrResults;
 	private JTable tbResults;
@@ -80,7 +85,12 @@ public class Dashboard {
 		searchText = tSearch.getText();			 
 		Interpreter interpreter = new Interpreter();
 		searchResults = interpreter.searchPatient(database, searchField, searchText);
-		tbResults = new JTable(searchResults, header);
+		tbResults = new JTable(searchResults, header) {
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 		tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tbResults.setMinimumSize(tbResults.getPreferredSize());
 		tbResults.setAutoCreateRowSorter(true);
@@ -89,6 +99,40 @@ public class Dashboard {
 		scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		frame.validate();
 	}
+	
+	private class ButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			switch (e.getActionCommand()) {
+			case "Search":
+				search();
+				break;
+			case "Register":
+				try {
+					NewPatient rWindow = new NewPatient();
+				} catch (Exception f) {
+					f.printStackTrace();
+				}
+				break;
+			case "Open":
+				try {
+					String[] selection = searchResults[tbResults.getSelectedRow()];					
+					ViewEditPatient pWindow = new ViewEditPatient(new Patient(selection));
+					break;
+				} catch (Exception f) {
+					f.printStackTrace();
+				}
+				break;
+			case "Logout":
+				JFrame small = new JFrame();
+				JOptionPane.showMessageDialog(small, "You have logged out successfully\n Thank you for using the patient\nregistry system.");
+				System.exit(0);
+				break;
+			}
+		}
+	}
+	
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
@@ -112,6 +156,7 @@ public class Dashboard {
 		scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		bOpen = new JButton("Open patient profile");
+		bLogout = new JButton("Log out");
 		
 		bListener = new ButtonListener();
 		bSearch.addActionListener(bListener);
@@ -120,6 +165,8 @@ public class Dashboard {
 		bRegister.setActionCommand("Register");
 		bOpen.addActionListener(bListener);
 		bOpen.setActionCommand("Open");
+		bLogout.addActionListener(bListener);
+		bLogout.setActionCommand("Logout");
 		
 		Container panel = frame.getContentPane();
 		panel.setLayout(new GridBagLayout());
@@ -136,6 +183,7 @@ public class Dashboard {
 		GridBagConstraints clResults = new GridBagConstraints();
 		GridBagConstraints cscrResults = new GridBagConstraints();
 		GridBagConstraints cbOpen = new GridBagConstraints();
+		GridBagConstraints cbLogout = new GridBagConstraints();
 		
 		clWelcome.gridx = 0;
 		clWelcome.gridy = 0;
@@ -221,6 +269,13 @@ public class Dashboard {
 		cbOpen.gridheight = 1;
 		cbOpen.fill = GridBagConstraints.HORIZONTAL;
 		cbOpen.insets = standardInsets;
+
+		cbLogout.gridx = 3;
+		cbLogout.gridy = 0;
+		cbLogout.gridwidth = 1;
+		cbLogout.gridheight = 1;
+		cbLogout.fill = GridBagConstraints.HORIZONTAL;
+		cbLogout.insets = standardInsets;
 		
 		panel.add(lWelcome, clWelcome);
 		panel.add(lSearch, clSearch);
@@ -234,38 +289,12 @@ public class Dashboard {
 		panel.add(lResults, clResults);
 		panel.add(scrResults, cscrResults);
 		panel.add(bOpen, cbOpen);
+		panel.add(bLogout, cbLogout);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
 		
 	}
-	
-	private class ButtonListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			switch (e.getActionCommand()) {
-			case "Search":
-				search();
-				break;
-			case "Register":
-				try {
-					Registration registration = Registration.getInstance();
-				} catch (Exception f) {
-					f.printStackTrace();
-				}
-				break;
-			case "Open":
-				try {
-					String[] selection = searchResults[tbResults.getSelectedRow()];
-					System.out.println(Arrays.toString(selection));
-				} catch (Exception f) {
-					f.printStackTrace();
-				}
-				break;
-			}
-		}
-	}
-		
+			
 }
