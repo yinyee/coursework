@@ -14,11 +14,18 @@ import javax.swing.JSeparator;
 
 import obj.util.Diseases;
 
+/**
+ * The Record class has been declared abstract to prevent it from being instantiated.
+ * It has two subclasses -- NewRecord and ViewEditRecord.
+ * @author yinyee
+ *
+ */
 public abstract class Record {
 	
-	protected final Dimension dimension = new Dimension(450, 450);
-	protected final Insets standardInsets = new Insets(5, 5, 5, 5);
-	protected final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	protected final static Dimension DIMENSION = new Dimension(450, 450);
+	protected final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
+	protected final static String[] MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	
 	protected Diseases diseases;
 	
 	protected JLabel lPatient,lRecordDate, lDoctor, lDiagnosis, lNotes, lAttachment;
@@ -28,7 +35,10 @@ public abstract class Record {
 	protected GridBagConstraints clPatient, cl2Patient, clRecordDate, ccboxRecordDate, ccboxRecordMonth, ccboxRecordYear, 
 	clDoctor, cl2Doctor, csHorizontal, clDiagnosis, ccboxDiagnosis, cbGet, clNotes, cl2Notes, clAttachment, cl2Attachment,
 	cbEditSave, cbCancel, cbDelete;
-		
+	
+	/**
+	 * The constructor defines the common GUI elements and attributes.
+	 */
 	public Record() {
 		
 		lPatient = new JLabel("Patient");
@@ -44,7 +54,7 @@ public abstract class Record {
 		}
 		cboxRecordDate = new JComboBox<String>(dates);
 
-		cboxRecordMonth = new JComboBox<String>(months);
+		cboxRecordMonth = new JComboBox<String>(MONTHS);
 		
 		String[] years = new String[100];
 		for (int i = 0; i < 100; i++) {
@@ -83,133 +93,133 @@ public abstract class Record {
 		cbDelete.gridheight = 1;
 		cbDelete.weighty = 0.7;
 		cbDelete.anchor = GridBagConstraints.LINE_END;
-		cbDelete.insets = standardInsets;
+		cbDelete.insets = STANDARDINSETS;
 
 		clPatient.gridx = 0;
 		clPatient.gridy = 1;
 		clPatient.gridwidth = 1;
 		clPatient.gridheight = 1;
 		clPatient.fill = GridBagConstraints.HORIZONTAL;
-		clPatient.insets = standardInsets;
+		clPatient.insets = STANDARDINSETS;
 
 		cl2Patient.gridx = 1;
 		cl2Patient.gridy = 1;
 		cl2Patient.gridwidth = 1;
 		cl2Patient.gridheight = 1;
 		cl2Patient.fill = GridBagConstraints.HORIZONTAL;
-		cl2Patient.insets = standardInsets;
+		cl2Patient.insets = STANDARDINSETS;
 
 		clRecordDate.gridx = 0;
 		clRecordDate.gridy = 2;
 		clRecordDate.gridwidth = 1;
 		clRecordDate.gridheight = 1;
 		clRecordDate.fill = GridBagConstraints.HORIZONTAL;
-		clRecordDate.insets = standardInsets;
+		clRecordDate.insets = STANDARDINSETS;
 		
 		ccboxRecordMonth.gridx = 1;
 		ccboxRecordMonth.gridy = 2;
 		ccboxRecordMonth.gridwidth = 1;
 		ccboxRecordMonth.gridheight = 1;
 		ccboxRecordMonth.fill = GridBagConstraints.HORIZONTAL;
-		ccboxRecordMonth.insets = standardInsets;
+		ccboxRecordMonth.insets = STANDARDINSETS;
 
 		ccboxRecordDate.gridx = 2;
 		ccboxRecordDate.gridy = 2;
 		ccboxRecordDate.gridwidth = 1;
 		ccboxRecordDate.gridheight = 1;
 		ccboxRecordDate.anchor = GridBagConstraints.CENTER;
-		ccboxRecordDate.insets = standardInsets;
+		ccboxRecordDate.insets = STANDARDINSETS;
 
 		ccboxRecordYear.gridx = 3;
 		ccboxRecordYear.gridy = 2;
 		ccboxRecordYear.gridwidth = 1;
 		ccboxRecordYear.gridheight = 1;
 		ccboxRecordYear.anchor = GridBagConstraints.LINE_START;
-		ccboxRecordYear.insets = standardInsets;		
+		ccboxRecordYear.insets = STANDARDINSETS;		
 		
 		clDoctor.gridx = 0;
 		clDoctor.gridy = 3;
 		clDoctor.gridwidth = 1;
 		clDoctor.gridheight = 1;
 		clDoctor.fill = GridBagConstraints.HORIZONTAL;
-		clDoctor.insets = standardInsets;
+		clDoctor.insets = STANDARDINSETS;
 
 		cl2Doctor.gridx = 1;
 		cl2Doctor.gridy = 3;
 		cl2Doctor.gridwidth = 3;
 		cl2Doctor.gridheight = 1;
 		cl2Doctor.fill = GridBagConstraints.HORIZONTAL;
-		cl2Doctor.insets = standardInsets;
+		cl2Doctor.insets = STANDARDINSETS;
 
 		csHorizontal.gridx = 0;
 		csHorizontal.gridy = 4;
 		csHorizontal.gridwidth = 4;
 		csHorizontal.gridheight = 1;
 		csHorizontal.fill = GridBagConstraints.HORIZONTAL;
-		csHorizontal.insets = standardInsets;
+		csHorizontal.insets = STANDARDINSETS;
 
 		clDiagnosis.gridx = 0;
 		clDiagnosis.gridy = 5;
 		clDiagnosis.gridwidth = 1;
 		clDiagnosis.gridheight = 1;
 		clDiagnosis.fill = GridBagConstraints.HORIZONTAL;
-		clDiagnosis.insets = standardInsets;
+		clDiagnosis.insets = STANDARDINSETS;
 
 		ccboxDiagnosis.gridx = 1;
 		ccboxDiagnosis.gridy = 5;
 		ccboxDiagnosis.gridwidth = 2;
 		ccboxDiagnosis.gridheight = 1;
 		ccboxDiagnosis.fill = GridBagConstraints.HORIZONTAL;
-		ccboxDiagnosis.insets = standardInsets;
+		ccboxDiagnosis.insets = STANDARDINSETS;
 
 		cbGet.gridx = 3;
 		cbGet.gridy = 5;
 		cbGet.gridwidth = 1;
 		cbGet.gridheight = 1;
 		cbGet.anchor = GridBagConstraints.LINE_END;
-		cbGet.insets = standardInsets;
+		cbGet.insets = STANDARDINSETS;
 		
 		clNotes.gridx = 0;
 		clNotes.gridy = 6;
 		clNotes.gridwidth = 1;
 		clNotes.gridheight = 1;
 		clNotes.fill = GridBagConstraints.HORIZONTAL;
-		clNotes.insets = standardInsets;
+		clNotes.insets = STANDARDINSETS;
 
 		cl2Notes.gridx = 1;
 		cl2Notes.gridy = 6;
 		cl2Notes.gridwidth = 3;
 		cl2Notes.gridheight = 2;
 		cl2Notes.fill = GridBagConstraints.BOTH;
-		cl2Notes.insets = standardInsets;
+		cl2Notes.insets = STANDARDINSETS;
 
 		clAttachment.gridx = 0;
 		clAttachment.gridy = 8;
 		clAttachment.gridwidth = 1;
 		clAttachment.gridheight = 1;
 		clAttachment.fill = GridBagConstraints.HORIZONTAL;
-		clAttachment.insets = standardInsets;
+		clAttachment.insets = STANDARDINSETS;
 
 		cl2Attachment.gridx = 1;
 		cl2Attachment.gridy = 8;
 		cl2Attachment.gridwidth = 3;
 		cl2Attachment.gridheight = 1;
 		cl2Attachment.fill = GridBagConstraints.HORIZONTAL;
-		cl2Attachment.insets = standardInsets;
+		cl2Attachment.insets = STANDARDINSETS;
 		
 		cbCancel.gridx = 3;
 		cbCancel.gridy = 9;
 		cbCancel.gridwidth = 1;
 		cbCancel.gridheight = 1;
 		cbCancel.anchor = GridBagConstraints.LINE_END;
-		cbCancel.insets = standardInsets;
+		cbCancel.insets = STANDARDINSETS;
 		
 		cbEditSave.gridx = 3;
 		cbEditSave.gridy = 10;
 		cbEditSave.gridwidth = 1;
 		cbEditSave.gridheight = 1;
 		cbEditSave.anchor = GridBagConstraints.LINE_END;
-		cbEditSave.insets = standardInsets;
+		cbEditSave.insets = STANDARDINSETS;
 
 	}
 		
@@ -238,7 +248,5 @@ public abstract class Record {
 	        e.printStackTrace();
 	    }
 	}
-	
-	
 
 }

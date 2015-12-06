@@ -5,6 +5,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,7 +23,7 @@ import obj.Patient;
 import obj.Record;
 
 /**
- * The Profile class displays patient information and medical records
+ * The ViewEditPatient class displays patient information and medical records
  * on the first tab and the patient's contact details on the second tab.
  * 
  * In addition to viewing the profile, the user can edit and save the 
@@ -36,10 +38,12 @@ public class ViewEditPatient extends gui.Patient {
 	private Patient patient;
 	private String[][] records;
 	
-	private final static String database = "data/records.xml";
-	private final static String[] header = {"First name", "Last name", "Record date", "Record month", "Record year", "Doctor", "Diagnosis", "Notes", "Attachment"};
+	private final static Logger LOGGER = Logger.getLogger(ViewEditPatient.class.getName());
+	private final static String DATABASE = "data/records.xml";
+	private final static String[] HEADER = {"First name", "Last name", "Record date", "Record month", "Record year", "Doctor", "Diagnosis", "Notes", "Attachment"};
 	
-	private JFrame frame;
+	private JFrame frame, small;
+	private int n;
 	private JPanel pView, pEdit;
 	private CardLayout layout;
 	private JLabel lPhoto, lFullName, lGender, lBirthDate, lRecord;
@@ -49,10 +53,12 @@ public class ViewEditPatient extends gui.Patient {
 	private JScrollPane scrRecord;
 	private JButton bAdd, bView, bEdit, bCancel, bSave, bDelete;
 	private ButtonListener bListener;
-	
+		
 	public ViewEditPatient(Patient patient) {
 		this.patient = patient;
-		this.records = loadRecords(patient);
+		if (loadRecords(patient) != null) {
+			this.records = loadRecords(patient);
+		}
 		draw(patient);
 	}
 	
@@ -61,78 +67,142 @@ public class ViewEditPatient extends gui.Patient {
 	 * this patient from the database.
 	 */
 	private String[][] loadRecords(Patient patient) {
+		
 		Interpreter interpreter = new Interpreter();
-		return interpreter.retrieveRecords(database, patient.getFirstName(), patient.getLastName());
+		return interpreter.retrieveRecords(DATABASE, patient.getFirstName(), patient.getLastName());
 	}
 	
 	/**
-	 * What does this do?
-	 * @param patient
+	 * The newRecord() method launches a new NewRecord screen.
 	 */
-	private void addNewRecord(Patient patient) {
-		NewRecord newRecord = new NewRecord(patient);
+	private void newRecord() {
+		NewRecord nrWindow = new NewRecord(patient);
 	}
 	
 	/**
-	 * The ButtonListener class is a helper class that directs
-	 * the program to perform certain actions, e.g. get information
-	 * or save changes, depending on the buttons that the user clicks on.
+	 * The viewRecord() method launches a new ViewRecord screen and populates it 
+	 * with the selected record.
+	 */
+	private void viewRecord() {
+		try {
+			String[] selection = records[tbRecord.getSelectedRow()];
+			ViewEditRecord verWindow = new ViewEditRecord(new Record(selection));					
+		} catch (Exception f) {
+			JOptionPane.showMessageDialog(small, "Please select a record.");
+			f.printStackTrace();
+		}
+	}
+
+	/**
+	 * The cancel() method prompts the user for confirmation before discarding edits.
+	 */
+	private void cancel() {
+		n = JOptionPane.showConfirmDialog(small, "Changes will be discarded.\nCancel anyway?", "Discard edits", JOptionPane.YES_NO_OPTION);
+		if (n == JOptionPane.YES_OPTION) {
+			LOGGER.info("Edits discarded");
+			layout.show(pContactDetails, "View");
+		}
+	}
+	
+	/**
+	 * The save() method logs the edits made before saving.
+	 */
+	private void save() {
+		
+		if (tEmailAddress.equals(patient.getEmailAddress())) {
+			LOGGER.info("Email address: changed from " + patient.getEmailAddress() + " to " + tEmailAddress.getText());
+		}
+		if (tMobilePhoneNumber.equals(patient.getMobilePhoneNumber())) {
+			LOGGER.info("Mobile phone number: changed from " + patient.getMobilePhoneNumber() + " to " + tMobilePhoneNumber.getText());
+		}
+		if (tHomePhoneNumber.equals(patient.getHomePhoneNumber())) {
+			LOGGER.info("Home phone number: changed from " + patient.getHomePhoneNumber() + " to " + tHomePhoneNumber.getText());
+		}
+		if (tHouseNumberOrName.equals(patient.getHouseNumberOrName())) {
+			LOGGER.info("House number or name: changed from " + patient.getHouseNumberOrName() + " to " + tHouseNumberOrName.getText());
+		}
+		if (tStreet.equals(patient.getStreet())) {
+			LOGGER.info("Street: changed from " + patient.getStreet() + " to " + tStreet.getText());
+		}
+		if (tCity.equals(patient.getCity())) {
+			LOGGER.info("City: changed from " + patient.getCity() + " to " + tCity.getText());
+		}
+		if (tPostalCode.equals(patient.getPostalCode())) {
+			LOGGER.info("Postal code: changed from " + patient.getPostalCode() + " to " + tPostalCode.getText());
+		}
+		if (tCountry.equals(patient.getCountry())) {
+			LOGGER.info("Country: changed from " + patient.getCountry() + " to " + tCountry.getText());
+		}
+
+		// Save to file!! lPhoto is temp				
+		String[] edittedPatient = new String[15];
+		edittedPatient[0] = patient.getFirstName();
+		edittedPatient[1] = patient.getLastName();
+		edittedPatient[2] = patient.getGender();
+		edittedPatient[3] = patient.getBirthDate();
+		edittedPatient[4] = patient.getBirthMonth();
+		edittedPatient[5] = patient.getBirthYear();
+		edittedPatient[6] = tEmailAddress.getText();
+		edittedPatient[7] = tMobilePhoneNumber.getText();
+		edittedPatient[8] = tHomePhoneNumber.getText();
+		edittedPatient[9] = tHouseNumberOrName.getText();
+		edittedPatient[10] = tStreet.getText();
+		edittedPatient[11] = tCity.getText();
+		edittedPatient[12] = tPostalCode.getText();
+		edittedPatient[13] = tCountry.getText();
+		edittedPatient[14] = lPhoto.getText();
+		
+		patient = new Patient(edittedPatient);
+		draw(patient);
+		layout.show(pContactDetails, "View");
+		pContactDetails.validate();
+		
+		LOGGER.info("Saved edits to patient " + patient.getFullName());
+	}
+	
+	/**
+	 * The delete() method prompts for user confirmation before deleting the patient 
+	 * from the system.
+	 */
+	private void delete() {
+		n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this patient?", "Delete Patient", JOptionPane.YES_NO_OPTION);
+		if (n == JOptionPane.YES_OPTION) {
+			// Delete from database
+			LOGGER.severe(patient.getFullName() + "deleted");
+			JOptionPane.showMessageDialog(small, "Patient deleted");
+			frame.dispose();					
+		}
+	}
+	
+	/**
+	 * The ButtonListener class is a helper class that directs the program to 
+	 * perform certain actions, e.g. get information or save changes, depending 
+	 * on the buttons that the user clicks on.
 	 */
 	private class ButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			
 			switch (e.getActionCommand()) {
 			case "Add" :
-				addNewRecord(patient);
+				newRecord();
 				break;
 			case "View" :
-				try {
-					String[] selection = records[tbRecord.getSelectedRow()];
-					ViewEditRecord verWindow = new ViewEditRecord(new Record(selection));					
-				} catch (Exception f) {
-					f.printStackTrace();
-				}
+				viewRecord();
 				break;
 			case "Edit" : 
 				layout.show(pContactDetails, "Edit");
 				break;
 			case "Cancel" :
-				layout.show(pContactDetails, "View");
+				cancel();
 				break;
 			case "Save" :
-				// Save to file!! lPhoto is temp
-				String[] edittedPatient = new String[15];
-				edittedPatient[0] = patient.getFirstName();
-				edittedPatient[1] = patient.getLastName();
-				edittedPatient[2] = patient.getGender();
-				edittedPatient[3] = patient.getBirthDate();
-				edittedPatient[4] = patient.getBirthMonth();
-				edittedPatient[5] = patient.getBirthYear();
-				edittedPatient[6] = tEmailAddress.getText();
-				edittedPatient[7] = tMobilePhoneNumber.getText();
-				edittedPatient[8] = tHomePhoneNumber.getText();
-				edittedPatient[9] = tHomeNumberOrName.getText();
-				edittedPatient[10] = tHomeStreet.getText();
-				edittedPatient[11] = tHomeCity.getText();
-				edittedPatient[12] = tHomePostalCode.getText();
-				edittedPatient[13] = tHomeCountry.getText();
-				edittedPatient[14] = lPhoto.getText();
-				patient = new Patient(edittedPatient);
-				layout.show(pContactDetails, "View");
-				pContactDetails.validate();
+				save();
 				break;
 			case "Delete" :
-				JFrame small = new JFrame();
-				int n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this patient?", "Delete Patient", JOptionPane.YES_NO_OPTION);
-				if (n == JOptionPane.YES_OPTION) {
-					// Delete from database
-					JOptionPane.showMessageDialog(small, "Patient deleted");
-					frame.dispose();					
-				}
-				if (n == JOptionPane.NO_OPTION) {
-					small.dispose();
-				}
+				delete();
 				break;
 			}		
 		}
@@ -144,7 +214,7 @@ public class ViewEditPatient extends gui.Patient {
 	private void draw(Patient patient) {
 		
 		frame = new JFrame("Patient Profile - " + patient.getFullName());
-		frame.setMaximumSize(dimension);
+		frame.setMaximumSize(DIMENSION);
 		tabbedPane = new JTabbedPane();
 		pPersonalDetails = new JPanel(new GridBagLayout());
 		layout = new CardLayout();
@@ -159,7 +229,7 @@ public class ViewEditPatient extends gui.Patient {
 		lBirthDate = new JLabel("Born " + patient.getFormattedBirthDate());
 		sMainHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		lRecord = new JLabel("MEDICAL RECORD");
-		tbRecord = new JTable(records, header) {
+		tbRecord = new JTable(records, HEADER) {
 			private static final long serialVersionUID = 1L;
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -197,27 +267,27 @@ public class ViewEditPatient extends gui.Patient {
 		clPhoto.gridheight = 3;
 		clPhoto.fill = GridBagConstraints.HORIZONTAL;
 		clPhoto.fill = GridBagConstraints.VERTICAL;
-		clPhoto.insets = standardInsets;
+		clPhoto.insets = STANDARDINSETS;
 		
 		cbDelete.gridx = 2;
 		cbDelete.gridy = 0;
 		cbDelete.gridwidth = 1;
 		cbDelete.gridheight = 1;
-		cbDelete.insets = standardInsets;
+		cbDelete.insets = STANDARDINSETS;
 		
 		csMainHorizontal.gridx = 0;
 		csMainHorizontal.gridy = 3;
 		csMainHorizontal.gridwidth = 3;
 		csMainHorizontal.gridheight = 1;
 		csMainHorizontal.fill = GridBagConstraints.HORIZONTAL;
-		csMainHorizontal.insets = standardInsets;
+		csMainHorizontal.insets = STANDARDINSETS;
 
 		clRecord.gridx = 0;
 		clRecord.gridy = 4;
 		clRecord.gridwidth = 1;
 		clRecord.gridheight = 1;
 		clRecord.fill = GridBagConstraints.HORIZONTAL;
-		clRecord.insets = standardInsets;
+		clRecord.insets = STANDARDINSETS;
 
 		cscrRecord.gridx = 0;
 		cscrRecord.gridy = 5;
@@ -225,21 +295,21 @@ public class ViewEditPatient extends gui.Patient {
 		cscrRecord.gridheight = 1;
 		cscrRecord.fill = GridBagConstraints.HORIZONTAL;
 		cscrRecord.fill = GridBagConstraints.VERTICAL;
-		cscrRecord.insets = standardInsets;
+		cscrRecord.insets = STANDARDINSETS;
 
 		cbAdd.gridx = 1;
 		cbAdd.gridy = 6;
 		cbAdd.gridwidth = 1;
 		cbAdd.gridheight = 1;
 		cbAdd.anchor = GridBagConstraints.LINE_END;
-		cbAdd.insets = standardInsets;
+		cbAdd.insets = STANDARDINSETS;
 
 		cbView.gridx = 2;
 		cbView.gridy = 6;
 		cbView.gridwidth = 1;
 		cbView.gridheight = 1;
 		cbView.anchor = GridBagConstraints.LINE_END;
-		cbView.insets = standardInsets;
+		cbView.insets = STANDARDINSETS;
 
 		pPersonalDetails.add(lPhoto, clPhoto);
 		pPersonalDetails.add(lFullName, ctName);
@@ -301,15 +371,15 @@ public class ViewEditPatient extends gui.Patient {
 		seAddHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		leHomeAddress = new JLabel("HOME ADDRESS");
 		leHomeNumberOrName = new JLabel("House number and name");
-		tHomeNumberOrName = new JTextField(patient.getHouseNumberOrName());
+		tHouseNumberOrName = new JTextField(patient.getHouseNumberOrName());
 		leHomeStreet = new JLabel("Street");
-		tHomeStreet = new JTextField(patient.getStreet());
+		tStreet = new JTextField(patient.getStreet());
 		leHomeCity = new JLabel("City or town");
-		tHomeCity = new JTextField(patient.getCity());
+		tCity = new JTextField(patient.getCity());
 		leHomePostalCode = new JLabel("Postal code");
-		tHomePostalCode = new JTextField(patient.getPostalCode());
+		tPostalCode = new JTextField(patient.getPostalCode());
 		leHomeCountry = new JLabel("Country");
-		tHomeCountry = new JTextField(patient.getCountry());
+		tCountry = new JTextField(patient.getCountry());
 		bCancel = new JButton("Cancel");
 		bCancel.addActionListener(bListener);
 		bCancel.setActionCommand("Cancel");
@@ -327,15 +397,15 @@ public class ViewEditPatient extends gui.Patient {
 		pEdit.add(seAddHorizontal, csHorizontal);
 		pEdit.add(leHomeAddress, clHomeAddress);
 		pEdit.add(leHomeNumberOrName, clHomeNumberOrName);
-		pEdit.add(tHomeNumberOrName, cl2HomeNumberOrName);
+		pEdit.add(tHouseNumberOrName, cl2HomeNumberOrName);
 		pEdit.add(leHomeStreet, clHomeStreet);
-		pEdit.add(tHomeStreet, cl2HomeStreet);
+		pEdit.add(tStreet, cl2HomeStreet);
 		pEdit.add(leHomeCity, clHomeCity);
-		pEdit.add(tHomeCity, cl2HomeCity);
+		pEdit.add(tCity, cl2HomeCity);
 		pEdit.add(leHomePostalCode, clHomePostalCode);
-		pEdit.add(tHomePostalCode, cl2HomePostalCode);
+		pEdit.add(tPostalCode, cl2HomePostalCode);
 		pEdit.add(leHomeCountry, clHomeCountry);
-		pEdit.add(tHomeCountry, cl2HomeCountry);
+		pEdit.add(tCountry, cl2HomeCountry);
 		pEdit.add(bCancel, cbCancel1);
 		pEdit.add(bSave, cbEditSave);
 		

@@ -4,6 +4,8 @@ import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,7 +19,7 @@ import javax.swing.UIManager;
 import obj.Record;
 
 /**
- * This screen displays the selected record, which the user can view, edit and save edits, or delete.
+ * The ViewEditRecord screen displays the selected record, which the user can view, edit and save edits, or delete.
  * 
  * References:
  * >> http://stackoverflow.com/questions/26420428/how-to-word-wrap-text-in-jlabel
@@ -28,9 +30,11 @@ import obj.Record;
 
 public class ViewEditRecord extends gui.Record {
 	
+	private final static Logger LOGGER = Logger.getLogger(ViewEditRecord.class.getName());
 	private Record record;
 	
-	private JFrame frame;
+	private JFrame frame, small;
+	int n;
 	private JPanel pCard, pView, pEdit;
 	private CardLayout layout;
 	private JLabel l2Patient, l2RecordDate, l2Doctor, l2Diagnosis, l2Attachment;
@@ -47,43 +51,126 @@ public class ViewEditRecord extends gui.Record {
 	}
 	
 	/**
-	 * The ButtonListener class is a helper class that directs
-	 * the program to perform certain actions, e.g. get information
-	 * or save changes, depending on the buttons that the user clicks on.
+	 * The cancel() method prompts the user for confirmation before discarding edits.
+	 */
+	private void cancel() {
+		n = JOptionPane.showConfirmDialog(small, "Changes will be discarded.\nCancel anyway?", "Discard edits", JOptionPane.YES_NO_OPTION);
+		if (n == JOptionPane.YES_OPTION) {
+			LOGGER.info("Edits discarded");
+			layout.show(pCard, "View");
+			pCard.validate();
+		}
+	}
+	
+	/**
+	 * The validDate() method imposes constraints on the input dates.
+	 */
+	private boolean validDate() {
+		
+		boolean check = true;
+		
+		if (cboxRecordDate.getSelectedItem().toString() == "31") {
+			if (cboxRecordMonth.getSelectedItem().toString() == "February" ||
+				cboxRecordMonth.getSelectedItem().toString() == "April" ||
+				cboxRecordMonth.getSelectedItem().toString() == "June" ||
+				cboxRecordMonth.getSelectedItem().toString() == "September" ||
+				cboxRecordMonth.getSelectedItem().toString() == "November") {
+				JOptionPane.showMessageDialog(small, "There is no 31st day in " + cboxRecordMonth.getSelectedItem().toString());
+				check = false;
+			}
+		}
+		
+		if (cboxRecordMonth.getSelectedItem().toString() == "February" && cboxRecordDate.getSelectedItem().toString() == "29") {
+			if (Integer.valueOf(cboxRecordYear.getSelectedItem().toString()) % 4 != 0) {
+				JOptionPane.showMessageDialog(small, cboxRecordYear.getSelectedItem().toString() + " is not a leap year");
+				check = false;
+			}
+		}
+		
+		return check;
+	}
+	
+	/**
+	 * The save() method logs the edits made before saving.
+	 */
+	private void save() {
+		
+		if (validDate()) {
+			
+			if (!cboxRecordDate.getSelectedItem().toString().equals(record.getRecordDate())) {
+				LOGGER.info("Record date: changed from " + record.getRecordDate() + " to " + cboxRecordDate.getSelectedItem().toString());
+			}
+			
+			if (!cboxRecordMonth.getSelectedItem().toString().equals(record.getRecordMonth())) {
+				LOGGER.info("Record month: changed from " + record.getRecordMonth() + " to " + cboxRecordMonth.getSelectedItem().toString());
+			}
+			
+			if (!cboxRecordYear.getSelectedItem().toString().equals(record.getRecordYear())) {
+				LOGGER.info("Record year: changed from " + record.getRecordYear() + " to " + cboxRecordYear.getSelectedItem().toString());
+			}
+			
+			if (!tDoctor.getText().equals(record.getDoctor())) {
+				LOGGER.info("Doctor: changed from " + record.getDoctor() + " to " + tDoctor.getText());
+			}
+			
+			if (!cboxDiagnosis.getSelectedItem().toString().equals(record.getDiagnosis())) {
+				LOGGER.warning("Diagnosis: changed from " + record.getDiagnosis() + " to " + cboxDiagnosis.getSelectedItem().toString());
+			}
+			
+			if (!tNotes.getText().equals(record.getNotes())) {
+				LOGGER.info("Notes: changed from " + record.getNotes() + " to " + tNotes.getText());
+			}
+			
+			if (!tAttachment.getText().equals(record.getAttachment())) {
+				LOGGER.info("Attachment: changed from " + record.getAttachment() + " to " + tAttachment.getText());
+			}
+			
+			String[] editedRecord = new String[9];
+			editedRecord[0] = record.getPatientFirstName();
+			editedRecord[1] = record.getPatientLastName();
+			editedRecord[2] = cboxRecordDate.getSelectedItem().toString();
+			editedRecord[3] = cboxRecordMonth.getSelectedItem().toString();
+			editedRecord[4] = cboxRecordYear.getSelectedItem().toString();
+			editedRecord[5] = tDoctor.getText();
+			editedRecord[6] = cboxDiagnosis.getSelectedItem().toString();
+			editedRecord[7] = t2Notes.getText();
+			editedRecord[8] = tAttachment.getText();
+			
+			record = new Record(editedRecord);
+			// Save to database
+			draw(record);
+			layout.show(pCard, "View");
+			
+			LOGGER.info("Saved edits to record for " + record.getPatientFullName());
+		}
+	}
+	
+	/**
+	 * The ButtonListener class is a helper class that directs the program to 
+	 * perform certain actions, e.g. get information or save changes, depending 
+	 * on the buttons that the user clicks on.
 	 */
 	private class ButtonListener implements ActionListener {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
 			switch(e.getActionCommand()) {
 			case "Edit" : 
 				layout.show(pCard, "Edit");
 				break;
 			case "Cancel" :
-				layout.show(pCard, "View");
+				cancel();
 				break;
-			case "Save" :
-				// Save to database
-				String[] editedRecord = new String[9];
-				editedRecord[0] = record.getPatientFirstName();
-				editedRecord[1] = record.getPatientLastName();
-				editedRecord[2] = cboxRecordDate.getSelectedItem().toString();
-				editedRecord[3] = cboxRecordMonth.getSelectedItem().toString();
-				editedRecord[4] = cboxRecordYear.getSelectedItem().toString();
-				editedRecord[5] = tDoctor.getText();
-				editedRecord[6] = cboxDiagnosis.getSelectedItem().toString();
-				editedRecord[7] = t2Notes.getText();
-				editedRecord[8] = tAttachment.getText();
-				record = new Record(editedRecord);
-				draw(record);
-				layout.show(pCard, "View");
+			case "Save" :		
+				save();
 				break;
 			case "Delete" :
-				JFrame small = new JFrame();
-				int n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this record?", "Delete Record", JOptionPane.YES_NO_OPTION);
+				n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this record?", "Delete Record", JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
 					// Delete from database
 					JOptionPane.showMessageDialog(small, "Record deleted");
+					LOGGER.severe("Record for " + record.getPatientFullName() + " has been deleted");
 					frame.dispose();					
 				}
 				if (n == JOptionPane.NO_OPTION) {
@@ -104,7 +191,7 @@ public class ViewEditRecord extends gui.Record {
 	public void draw(Record record) {
 	
 		frame = new JFrame("View/Edit Record -- " + record.getPatientFullName());
-		frame.setMinimumSize(dimension);
+		frame.setMinimumSize(DIMENSION);
 		layout = new CardLayout();
 		pCard = new JPanel(layout);
 		pView = new JPanel(new GridBagLayout());

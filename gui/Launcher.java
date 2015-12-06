@@ -2,6 +2,11 @@ package gui;
 
 import java.awt.EventQueue;
 
+/**
+ * The Launcher class contains the main() method for the application.
+ * @author yinyee
+ *
+ */
 public class Launcher {
 	
 	public static void main (String[] args) {

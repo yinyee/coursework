@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -16,12 +17,12 @@ import org.w3c.dom.NodeList;
 import gui.Dashboard;
 
 /**
+ * The Interpreter class acts as the bridge between data stored in .xml files and the application itself.
+ * 
  * References:
  * >> http://stackoverflow.com/questions/5386991/java-most-efficient-method-to-iterate-over-all-elements-in-a-org-w3c-dom-docume
  * @author yinyee
- *
  */
-
 public class Interpreter {
 	
 	private NodeList searchSpace;
@@ -34,8 +35,7 @@ public class Interpreter {
 	 * @param domain
 	 * @param username
 	 * @param password
-	 */
-	
+	 */	
 	public String verify(String domain, String username, String password, JFrame login) {
 		String message = "";
 		Document doc = parse(domain);
@@ -68,7 +68,6 @@ public class Interpreter {
 	 * @param searchField
 	 * @param searchTerm
 	 */
-	
 	public String[][] searchPatient(String domain, String searchField, String searchTerm) {
 		
 		Document doc = parse(domain);
@@ -82,11 +81,41 @@ public class Interpreter {
 		case "Last name" :
 			tagName = "lastName";
 			break;
-		case"Gender" :
+		case "Gender" :
 			tagName = "gender";
+			break;
+		case "Birth date" :
+			tagName = "birthDate";
+			break;
+		case "Birth month" :
+			tagName = "birthMonth";
+			break;
+		case "Birth year" :
+			tagName = "birthYear";
+			break;
+		case "Email address" :
+			tagName = "emailAddress";
+			break;
+		case "Mobile phone number" :
+			tagName = "mobilePhoneNumber";
+			break;
+		case "Home phone number" :
+			tagName = "homePhoneNumber";
+			break;
+		case "House number or name" :
+			tagName = "numberOrName";
+			break;
+		case "Street" :
+			tagName = "street";
+			break;
+		case "City" :
+			tagName = "city";
 			break;
 		case "Postal code" :
 			tagName = "postalCode";
+			break;
+		case "Country" :
+			tagName = "country";
 			break;
 		}
 		
@@ -101,7 +130,7 @@ public class Interpreter {
 		}
 		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
-				
+		
 		int rowCount = 0;
 		
 		for (int i = 0; i < searchResults.size(); i++) { // Loop through the number of search results
@@ -130,12 +159,12 @@ public class Interpreter {
 			String[] rowArray = new String[table.get(i).size()];
 			table.get(i).toArray(rowArray);
 			array[i] = rowArray;
-		}	
+		}
 		return array;
 	}
 	
 	/**
-	 * The retrieveRecords method is written specifically for the Profile class.
+	 * The retrieveRecords method is written specifically for the ViewEditPatient class.
 	 * It retrieves existing records associated with the specified patient.
 	 * @param domain
 	 * @param firstName
@@ -181,9 +210,6 @@ public class Interpreter {
 			}
 		}
 				
-		/**
-		 * Unpack the nested ArrayLists into a 2D Array to be output to the JTable.
-		 */
 		String[][] array = new String[rowCount][colCount];
 		for (int i = 0; i < rowCount; i++) {
 			String[] rowArray = new String[table.get(i).size()];
@@ -214,6 +240,10 @@ public class Interpreter {
 		return doc;
 	}
 
+	/**
+	 * 
+	 * @param output
+	 */
 	public void write(File output) {
 		
 		try {

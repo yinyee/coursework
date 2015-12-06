@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,8 +21,7 @@ import javax.swing.JTextField;
 import obj.Patient;
 
 /**
- * The Registration screen triggers when the "Register" button
- * in the Dashboard is clicked.
+ * The NewPatient screen launches when the "Register" button in the Dashboard is clicked.
  *  
  *  References used:
  *  >> https://docs.oracle.com/javase/tutorial/uiswing/components/tabbedpane.html
@@ -32,8 +32,9 @@ import obj.Patient;
 
 public class NewPatient extends gui.Patient {
 	
-	private final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-	private final String[] gender = {"Female", "Male"};
+	private final static Logger LOGGER = Logger.getLogger(NewPatient.class.getName());
+	private final static String[] MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	private final static String[] GENDER = {"Female", "Male"};
 	
 	private JFrame frame;
 	private JLabel lFirstName, lLastName, lGender, lBirthDate, lPhoto;
@@ -47,8 +48,26 @@ public class NewPatient extends gui.Patient {
 		draw();
 	}
 	
-	
+	/**
+	 * The save() method logs the details of the new patient before saving.
+	 */
 	private void save() {
+		
+		LOGGER.info("First name: " + tFirstName.getText());
+		LOGGER.info("Last name: " + tLastName.getText());
+		LOGGER.info("Gender: " + cboxGender.getSelectedItem().toString());
+		LOGGER.info("Birth date: " + cboxBirthDate.getSelectedItem().toString());
+		LOGGER.info("Birth month: " + cboxBirthMonth.getSelectedItem().toString());
+		LOGGER.info("Birth year: "+ cboxBirthYear.getSelectedItem().toString());
+		LOGGER.info("Email address: " + tEmailAddress.getText());
+		LOGGER.info("Mobile phone number: " + tMobilePhoneNumber.getText());
+		LOGGER.info("Home phone number: " + tHomePhoneNumber.getText());
+		LOGGER.info("House number and name: " + tHouseNumberOrName.getText());
+		LOGGER.info("Street: " + tStreet.getText());
+		LOGGER.info("City: " + tCity.getText());
+		LOGGER.info("Postal code: " + tPostalCode.getText());
+		LOGGER.info("Country: " + tCountry.getText());
+		LOGGER.info("Photo: " + tPhoto.getText());
 		
 		String[] newPatient = new String[15];
 		newPatient[0] = tFirstName.getText();
@@ -60,14 +79,16 @@ public class NewPatient extends gui.Patient {
 		newPatient[6] = tEmailAddress.getText();
 		newPatient[7] = tMobilePhoneNumber.getText();
 		newPatient[8] = tHomePhoneNumber.getText();
-		newPatient[9] = tHomeNumberOrName.getText();
-		newPatient[10] = tHomeStreet.getText();
-		newPatient[11] = tHomeCity.getText();
-		newPatient[12] = tHomePostalCode.getText();
-		newPatient[13] = tHomeCountry.getText();
+		newPatient[9] = tHouseNumberOrName.getText();
+		newPatient[10] = tStreet.getText();
+		newPatient[11] = tCity.getText();
+		newPatient[12] = tPostalCode.getText();
+		newPatient[13] = tCountry.getText();
 		newPatient[14] = tPhoto.getText();
 		
-		ViewEditPatient window = new ViewEditPatient(new Patient(newPatient));
+		obj.Patient patient = new Patient(newPatient);
+		ViewEditPatient window = new ViewEditPatient(patient);
+		LOGGER.info("New patient " + patient.getFullName() + " saved to database");
 		// output to string and save in database
 	}
 	
@@ -100,7 +121,7 @@ public class NewPatient extends gui.Patient {
 	private void draw() {
 		
 		frame = new JFrame("New Patient");
-		frame.setMaximumSize(dimension);
+		frame.setMaximumSize(DIMENSION);
 		
 		// Subclass-specific components
 		// Personal details tab
@@ -109,14 +130,14 @@ public class NewPatient extends gui.Patient {
 		lLastName = new JLabel("Last name");		
 		tLastName = new JTextField();
 		lGender = new JLabel("Gender");
-		cboxGender = new JComboBox<String>(gender);
+		cboxGender = new JComboBox<String>(GENDER);
 		lBirthDate = new JLabel("Date of birth");
 		String[] dates = new String[31];
 		for (int i = 0; i < 31; i++) {
 			dates[i] = Integer.toString(i + 1);
 		}
 		cboxBirthDate = new JComboBox<String>(dates);
-		cboxBirthMonth = new JComboBox<String>(months);		
+		cboxBirthMonth = new JComboBox<String>(MONTHS);		
 		String[] years = new String[100];
 		for (int i = 0; i < 100; i++) {
 			years[i] = Integer.toString(i + 1916);
@@ -149,14 +170,14 @@ public class NewPatient extends gui.Patient {
 		clFirstName.gridwidth = 1;
 		clFirstName.gridheight = 1;
 		clFirstName.fill = GridBagConstraints.HORIZONTAL;
-		clFirstName.insets = standardInsets;
+		clFirstName.insets = STANDARDINSETS;
 		
 		clLastName.gridx = 2;
 		clLastName.gridy = 0;
 		clLastName.gridwidth = 1;
 		clLastName.gridheight = 1;
 		clLastName.fill = GridBagConstraints.HORIZONTAL;
-		clLastName.insets = standardInsets;
+		clLastName.insets = STANDARDINSETS;
 
 		ctLastName.gridx = 3;
 		ctLastName.gridy = 0;
@@ -164,63 +185,63 @@ public class NewPatient extends gui.Patient {
 		ctLastName.gridheight = 1;
 		ctLastName.weightx = 1.;
 		ctLastName.fill = GridBagConstraints.HORIZONTAL;
-		ctLastName.insets = standardInsets;
+		ctLastName.insets = STANDARDINSETS;
 
 		clGender.gridx = 0;
 		clGender.gridy = 1;
 		clGender.gridwidth = 1;
 		clGender.gridheight = 1;
 		clGender.fill = GridBagConstraints.HORIZONTAL;
-		clGender.insets = standardInsets;
+		clGender.insets = STANDARDINSETS;
 
 		clBirthDate.gridx = 0;
 		clBirthDate.gridy = 2;
 		clBirthDate.gridwidth = 1;
 		clBirthDate.gridheight = 1;
 		clBirthDate.fill = GridBagConstraints.HORIZONTAL;
-		clBirthDate.insets = standardInsets;
+		clBirthDate.insets = STANDARDINSETS;
 
 		ccboxBirthDate.gridx = 2;
 		ccboxBirthDate.gridy = 2;
 		ccboxBirthDate.gridwidth = 1;
 		ccboxBirthDate.gridheight = 1;
 		ccboxBirthDate.anchor = GridBagConstraints.CENTER;
-		ccboxBirthDate.insets = standardInsets;
+		ccboxBirthDate.insets = STANDARDINSETS;
 
 		ccboxBirthYear.gridx = 3;
 		ccboxBirthYear.gridy = 2;
 		ccboxBirthYear.gridwidth = 1;
 		ccboxBirthYear.gridheight = 1;
 		ccboxBirthYear.anchor = GridBagConstraints.LINE_START;
-		ccboxBirthYear.insets = standardInsets;
+		ccboxBirthYear.insets = STANDARDINSETS;
 
 		clPhoto.gridx = 0;
 		clPhoto.gridy = 3;
 		clPhoto.gridwidth = 1;
 		clPhoto.gridheight = 1;
 		clPhoto.fill = GridBagConstraints.HORIZONTAL;
-		clPhoto.insets = standardInsets;
+		clPhoto.insets = STANDARDINSETS;
 
 		ctPhoto.gridx = 1;
 		ctPhoto.gridy = 3;
 		ctPhoto.gridwidth = 2;
 		ctPhoto.gridheight = 1;
 		ctPhoto.fill = GridBagConstraints.HORIZONTAL;
-		ctPhoto.insets = standardInsets;
+		ctPhoto.insets = STANDARDINSETS;
 
 		cbUpload.gridx = 3;
 		cbUpload.gridy = 3;
 		cbUpload.gridwidth = 1;
 		cbUpload.gridheight = 1;
 		cbUpload.anchor = GridBagConstraints.LINE_END;
-		cbUpload.insets = standardInsets;
+		cbUpload.insets = STANDARDINSETS;
 
 		cbCancel.gridx = 3;
 		cbCancel.gridy = 4;
 		cbCancel.gridwidth = 1;
 		cbCancel.gridheight = 1;
 		cbCancel.anchor = GridBagConstraints.LINE_END;
-		cbCancel.insets = standardInsets;
+		cbCancel.insets = STANDARDINSETS;
 		
 		pPersonalDetails.add(lFirstName, clFirstName);
 		pPersonalDetails.add(lLastName, clLastName);
@@ -255,15 +276,15 @@ public class NewPatient extends gui.Patient {
 		pContactDetails.add(sHorizontal, csHorizontal);
 		pContactDetails.add(lHomeAddress, clHomeAddress);
 		pContactDetails.add(lHomeNumberOrName, clHomeNumberOrName);
-		pContactDetails.add(tHomeNumberOrName, cl2HomeNumberOrName);
+		pContactDetails.add(tHouseNumberOrName, cl2HomeNumberOrName);
 		pContactDetails.add(lHomeStreet, clHomeStreet);
-		pContactDetails.add(tHomeStreet, cl2HomeStreet);
+		pContactDetails.add(tStreet, cl2HomeStreet);
 		pContactDetails.add(lHomeCity, clHomeCity);
-		pContactDetails.add(tHomeCity, cl2HomeCity);
+		pContactDetails.add(tCity, cl2HomeCity);
 		pContactDetails.add(lHomePostalCode, clHomePostalCode);
-		pContactDetails.add(tHomePostalCode, cl2HomePostalCode);
+		pContactDetails.add(tPostalCode, cl2HomePostalCode);
 		pContactDetails.add(lHomeCountry, clHomeCountry);		
-		pContactDetails.add(tHomeCountry, cl2HomeCountry);
+		pContactDetails.add(tCountry, cl2HomeCountry);
 		pContactDetails.add(bCancel1, cbCancel1);
 		pContactDetails.add(bSave, cbEditSave);
 		

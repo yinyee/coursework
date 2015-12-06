@@ -26,8 +26,8 @@ import io.Interpreter;
 public class Login {
 	
 	private static Login instance = null;
-	private final static String file = "data/login.xml";
-	private final static Insets standardInsets = new Insets(5, 5, 5, 5);
+	private final static String LOGIN = "data/login.xml";
+	private final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
 	private String username, password;
 	
 	private JFrame frame;
@@ -50,19 +50,29 @@ public class Login {
 		return instance;
 	}
 	
-	
+	/**
+	 * The login() method checks the username and password provided by the user 
+	 * against the login.xml file.
+	 */
 	private void login() {		 
 		username = tUsername.getText();
 		password = tPassword.getText(); 
 		Interpreter interpreter = new Interpreter();
-		lMessage.setText(interpreter.verify(file, username, password, this.frame));
+		lMessage.setText(interpreter.verify(LOGIN, username, password, this.frame));
 		lMessage.validate();
 	}
 	
+	private class ButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			login();
+		}
+	}
+
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
-	
 	private void draw() {
 		
 		frame = new JFrame("Patient Registry System");
@@ -90,42 +100,42 @@ public class Login {
 		clMessage.gridwidth = 2;
 		clMessage.gridheight = 1;
 		clMessage.fill = GridBagConstraints.HORIZONTAL;
-		clMessage.insets = standardInsets;
+		clMessage.insets = STANDARDINSETS;
 
 		clUsername.gridx = 0;
 		clUsername.gridy = 1;
 		clUsername.gridwidth = 1;
 		clUsername.gridheight = 1;
 		clUsername.fill = GridBagConstraints.HORIZONTAL;
-		clUsername.insets = standardInsets;
+		clUsername.insets = STANDARDINSETS;
 		
 		clPassword.gridx = 0;
 		clPassword.gridy = 2;
 		clPassword.gridwidth = 1;
 		clPassword.gridheight = 1;
 		clPassword.fill = GridBagConstraints.HORIZONTAL;
-		clPassword.insets = standardInsets;
+		clPassword.insets = STANDARDINSETS;
 		
 		ctUsername.gridx = 1;
 		ctUsername.gridy = 1;
 		ctUsername.gridwidth = 1;
 		ctUsername.gridheight = 1;
 		ctUsername.fill = GridBagConstraints.HORIZONTAL;
-		ctUsername.insets = standardInsets;
+		ctUsername.insets = STANDARDINSETS;
 		
 		ctPassword.gridx = 1;
 		ctPassword.gridy = 2;
 		ctPassword.gridwidth = 1;
 		ctPassword.gridheight = 1;
 		ctPassword.fill = GridBagConstraints.HORIZONTAL;
-		ctPassword.insets = standardInsets;
+		ctPassword.insets = STANDARDINSETS;
 		
 		cbLogin.gridx = 1;
 		cbLogin.gridy = 3;
 		cbLogin.gridwidth = 1;
 		cbLogin.gridheight = 1;
 		cbLogin.fill = GridBagConstraints.HORIZONTAL;
-		cbLogin.insets = standardInsets;
+		cbLogin.insets = STANDARDINSETS;
 		
 		panel.add(lMessage, clMessage);
 		panel.add(lUsername, clUsername);
@@ -138,14 +148,6 @@ public class Login {
 		frame.pack();
 		frame.setVisible(true);
 		
-	}
-	
-	private class ButtonListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			login();
-		}
 	}
 	
 }

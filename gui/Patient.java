@@ -10,16 +10,21 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-
+/**
+ * The Patient class has been declared abstract to prevent it from being instantiated.
+ * It has two subclasses -- NewPatient and ViewEditPatient.
+ * @author yinyee
+ *
+ */
 public abstract class Patient {
 
-	protected final Dimension dimension = new Dimension(500, 450);
-	protected final Insets standardInsets = new Insets(5, 5, 5, 5);
+	protected final static Dimension DIMENSION = new Dimension(500, 450);
+	protected final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
 	
 	protected JTabbedPane tabbedPane;
 	protected JPanel pPersonalDetails, pContactDetails;
 	protected JLabel lContactDetails, lEmailAddress, lMobilePhoneNumber, lHomeAddress, lHomePhoneNumber, lHomeNumberOrName, lHomeStreet, lHomeCity, lHomePostalCode, lHomeCountry;
-	protected JTextField tEmailAddress, tMobilePhoneNumber, tHomePhoneNumber, tHomeNumberOrName, tHomeStreet, tHomeCity, tHomePostalCode, tHomeCountry;	
+	protected JTextField tEmailAddress, tMobilePhoneNumber, tHomePhoneNumber, tHouseNumberOrName, tStreet, tCity, tPostalCode, tCountry;	
 	protected JSeparator sHorizontal;
 	
 	protected GridBagConstraints ctName, ccboxGender, ccboxBirthMonth;
@@ -28,6 +33,9 @@ public abstract class Patient {
 	clHomePhoneNumber, cl2HomePhoneNumber, csHorizontal, clHomeAddress, clHomeNumberOrName, cl2HomeNumberOrName, clHomeStreet, 
 	cl2HomeStreet, clHomeCity, cl2HomeCity, clHomePostalCode, cl2HomePostalCode, clHomeCountry, cl2HomeCountry, cbCancel1, cbEditSave;
 
+	/**
+	 * The constructor defines the common GUI elements and attributes.
+	 */
 	public Patient() {
 		
 		tabbedPane = new JTabbedPane();		
@@ -46,21 +54,21 @@ public abstract class Patient {
 		ctName.gridheight = 1;
 		ctName.weightx = 1.;
 		ctName.fill = GridBagConstraints.HORIZONTAL;
-		ctName.insets = standardInsets;
+		ctName.insets = STANDARDINSETS;
 
 		ccboxGender.gridx = 1;
 		ccboxGender.gridy = 1;
 		ccboxGender.gridwidth = 1;
 		ccboxGender.gridheight = 1;
 		ccboxGender.anchor = GridBagConstraints.LINE_START;
-		ccboxGender.insets = standardInsets;
+		ccboxGender.insets = STANDARDINSETS;
 
 		ccboxBirthMonth.gridx = 1;
 		ccboxBirthMonth.gridy = 2;
 		ccboxBirthMonth.gridwidth = 1;
 		ccboxBirthMonth.gridheight = 1;
 		ccboxBirthMonth.anchor = GridBagConstraints.LINE_START;
-		ccboxBirthMonth.insets = standardInsets;
+		ccboxBirthMonth.insets = STANDARDINSETS;
 
 		// Contact details tab
 		lContactDetails = new JLabel("CONTACT DETAILS");
@@ -77,11 +85,11 @@ public abstract class Patient {
 		tEmailAddress = new JTextField();
 		tMobilePhoneNumber = new JTextField();
 		tHomePhoneNumber = new JTextField();
-		tHomeNumberOrName = new JTextField();
-		tHomeStreet = new JTextField();
-		tHomeCity = new JTextField();
-		tHomePostalCode = new JTextField();
-		tHomeCountry = new JTextField();
+		tHouseNumberOrName = new JTextField();
+		tStreet = new JTextField();
+		tCity = new JTextField();
+		tPostalCode = new JTextField();
+		tCountry = new JTextField();
 		
 		clContactDetails = new GridBagConstraints();
 		clEmailAddress = new GridBagConstraints();
@@ -110,14 +118,14 @@ public abstract class Patient {
 		clContactDetails.gridwidth = 1;
 		clContactDetails.gridheight = 1;
 		clContactDetails.fill = GridBagConstraints.HORIZONTAL;
-		clContactDetails.insets = standardInsets;
+		clContactDetails.insets = STANDARDINSETS;
 
 		clEmailAddress.gridx = 0;
 		clEmailAddress.gridy = 1;
 		clEmailAddress.gridwidth = 1;
 		clEmailAddress.gridheight = 1;
 		clEmailAddress.fill = GridBagConstraints.HORIZONTAL;
-		clEmailAddress.insets = standardInsets;
+		clEmailAddress.insets = STANDARDINSETS;
 				
 		cl2EmailAddress.gridx = 1;
 		cl2EmailAddress.gridy = 1;
@@ -125,14 +133,14 @@ public abstract class Patient {
 		cl2EmailAddress.gridheight = 1;
 		cl2EmailAddress.weightx = 0.6;
 		cl2EmailAddress.fill = GridBagConstraints.HORIZONTAL;
-		cl2EmailAddress.insets = standardInsets;
+		cl2EmailAddress.insets = STANDARDINSETS;
 		
 		clMobilePhoneNumber.gridx = 0;
 		clMobilePhoneNumber.gridy = 2;
 		clMobilePhoneNumber.gridwidth = 1;
 		clMobilePhoneNumber.gridheight = 1;
 		clMobilePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
-		clMobilePhoneNumber.insets = standardInsets;
+		clMobilePhoneNumber.insets = STANDARDINSETS;
 		
 		cl2MobilePhoneNumber.gridx = 1;
 		cl2MobilePhoneNumber.gridy = 2;
@@ -140,14 +148,14 @@ public abstract class Patient {
 		cl2MobilePhoneNumber.gridheight = 1;
 		cl2MobilePhoneNumber.weightx = 0.6;
 		cl2MobilePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
-		cl2MobilePhoneNumber.insets = standardInsets;
+		cl2MobilePhoneNumber.insets = STANDARDINSETS;
 		
 		clHomePhoneNumber.gridx = 0;
 		clHomePhoneNumber.gridy = 3;
 		clHomePhoneNumber.gridwidth = 1;
 		clHomePhoneNumber.gridheight = 1;
 		clHomePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
-		clHomePhoneNumber.insets = standardInsets;
+		clHomePhoneNumber.insets = STANDARDINSETS;
 		
 		cl2HomePhoneNumber.gridx = 1;
 		cl2HomePhoneNumber.gridy = 3;
@@ -155,28 +163,28 @@ public abstract class Patient {
 		cl2HomePhoneNumber.gridheight = 1;
 		cl2HomePhoneNumber.weightx = 0.6;
 		cl2HomePhoneNumber.fill = GridBagConstraints.HORIZONTAL;
-		cl2HomePhoneNumber.insets = standardInsets;
+		cl2HomePhoneNumber.insets = STANDARDINSETS;
 
 		csHorizontal.gridx = 0;
 		csHorizontal.gridy = 4;
 		csHorizontal.gridwidth = 4;
 		csHorizontal.gridheight = 1;
 		csHorizontal.fill = GridBagConstraints.HORIZONTAL;
-		csHorizontal.insets = standardInsets;
+		csHorizontal.insets = STANDARDINSETS;
 
 		clHomeAddress.gridx = 0;
 		clHomeAddress.gridy = 5;
 		clHomeAddress.gridwidth = 1;
 		clHomeAddress.gridheight = 1;
 		clHomeAddress.fill = GridBagConstraints.HORIZONTAL;
-		clHomeAddress.insets = standardInsets;
+		clHomeAddress.insets = STANDARDINSETS;
 		
 		clHomeNumberOrName.gridx = 0;
 		clHomeNumberOrName.gridy = 6;
 		clHomeNumberOrName.gridwidth = 1;
 		clHomeNumberOrName.gridheight = 1;
 		clHomeNumberOrName.fill = GridBagConstraints.HORIZONTAL;
-		clHomeNumberOrName.insets = standardInsets;
+		clHomeNumberOrName.insets = STANDARDINSETS;
 
 		cl2HomeNumberOrName.gridx = 1;
 		cl2HomeNumberOrName.gridy = 6;
@@ -184,14 +192,14 @@ public abstract class Patient {
 		cl2HomeNumberOrName.gridheight = 1;
 		cl2HomeNumberOrName.weightx = 0.6;
 		cl2HomeNumberOrName.fill = GridBagConstraints.HORIZONTAL;
-		cl2HomeNumberOrName.insets = standardInsets;
+		cl2HomeNumberOrName.insets = STANDARDINSETS;
 
 		clHomeStreet.gridx = 0;
 		clHomeStreet.gridy = 7;
 		clHomeStreet.gridwidth = 1;
 		clHomeStreet.gridheight = 1;
 		clHomeStreet.fill = GridBagConstraints.HORIZONTAL;
-		clHomeStreet.insets = standardInsets;
+		clHomeStreet.insets = STANDARDINSETS;
 
 		cl2HomeStreet.gridx = 1;
 		cl2HomeStreet.gridy = 7;
@@ -199,14 +207,14 @@ public abstract class Patient {
 		cl2HomeStreet.gridheight = 1;
 		cl2HomeStreet.weightx = 0.6;
 		cl2HomeStreet.fill = GridBagConstraints.HORIZONTAL;
-		cl2HomeStreet.insets = standardInsets;
+		cl2HomeStreet.insets = STANDARDINSETS;
 		
 		clHomeCity.gridx = 0;
 		clHomeCity.gridy = 8;
 		clHomeCity.gridwidth = 1;
 		clHomeCity.gridheight = 1;
 		clHomeCity.fill = GridBagConstraints.HORIZONTAL;
-		clHomeCity.insets = standardInsets;
+		clHomeCity.insets = STANDARDINSETS;
 
 		cl2HomeCity.gridx = 1;
 		cl2HomeCity.gridy = 8;
@@ -214,14 +222,14 @@ public abstract class Patient {
 		cl2HomeCity.gridheight = 1;
 		cl2HomeCity.weightx = 0.6;
 		cl2HomeCity.fill = GridBagConstraints.HORIZONTAL;
-		cl2HomeCity.insets = standardInsets;
+		cl2HomeCity.insets = STANDARDINSETS;
 
 		clHomePostalCode.gridx = 0;
 		clHomePostalCode.gridy = 9;
 		clHomePostalCode.gridwidth = 1;
 		clHomePostalCode.gridheight = 1;
 		clHomePostalCode.fill = GridBagConstraints.HORIZONTAL;
-		clHomePostalCode.insets = standardInsets;
+		clHomePostalCode.insets = STANDARDINSETS;
 
 		cl2HomePostalCode.gridx = 1;
 		cl2HomePostalCode.gridy = 9;
@@ -229,14 +237,14 @@ public abstract class Patient {
 		cl2HomePostalCode.gridheight = 1;
 		cl2HomePostalCode.weightx = 0.6;
 		cl2HomePostalCode.fill = GridBagConstraints.HORIZONTAL;
-		cl2HomePostalCode.insets = standardInsets;
+		cl2HomePostalCode.insets = STANDARDINSETS;
 
 		clHomeCountry.gridx = 0;
 		clHomeCountry.gridy = 10;
 		clHomeCountry.gridwidth = 1;
 		clHomeCountry.gridheight = 1;
 		clHomeCountry.fill = GridBagConstraints.HORIZONTAL;
-		clHomeCountry.insets = standardInsets;
+		clHomeCountry.insets = STANDARDINSETS;
 
 		cl2HomeCountry.gridx = 1;
 		cl2HomeCountry.gridy = 10;
@@ -244,21 +252,21 @@ public abstract class Patient {
 		cl2HomeCountry.gridheight = 1;
 		cl2HomeCountry.weightx = 0.6;
 		cl2HomeCountry.fill = GridBagConstraints.HORIZONTAL;
-		cl2HomeCountry.insets = standardInsets;
+		cl2HomeCountry.insets = STANDARDINSETS;
 			
 		cbCancel1.gridx = 2;
 		cbCancel1.gridy = 11;
 		cbCancel1.gridwidth = 1;
 		cbCancel1.gridheight = 1;
 		cbCancel1.anchor = GridBagConstraints.LINE_END;
-		cbCancel1.insets = standardInsets;
+		cbCancel1.insets = STANDARDINSETS;
 		
 		cbEditSave.gridx = 2;
 		cbEditSave.gridy = 12;
 		cbEditSave.gridwidth = 1;
 		cbEditSave.gridheight = 1;
 		cbEditSave.anchor = GridBagConstraints.LINE_END;
-		cbEditSave.insets = standardInsets;
+		cbEditSave.insets = STANDARDINSETS;
 
 	}
 	
