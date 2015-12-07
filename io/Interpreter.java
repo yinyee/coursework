@@ -227,6 +227,20 @@ public class Interpreter {
 		return array;
 	}
 	
+	public void deleteRecord(String domain, String[] target) {
+		
+		Document doc = parse(domain);
+		doc.getDocumentElement().normalize();
+				
+		NodeList database = doc.getElementsByTagName("record");
+		for (int i = 0; i < database.getLength(); i++) {
+			NodeList record = database.item(i).getChildNodes();
+			for (int j = 0; j < record.getLength(); j++) {
+				System.out.println(record.item(i).getTextContent());
+			}
+		}
+	}
+	
 	/**
 	 * The parse() method is a helper method for the Interpreter class.  It returns
 	 * a parsed XML DOM to the caller.
