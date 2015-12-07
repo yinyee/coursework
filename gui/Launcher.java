@@ -14,6 +14,7 @@ public class Launcher {
 			public void run() {
 				try {
 					Login window = Login.getInstance();
+					window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

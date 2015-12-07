@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import io.Interpreter;
+
 import obj.Patient;
 
 import javax.swing.JSeparator;
@@ -32,17 +33,20 @@ import java.util.logging.Logger;
  * 2.	Register a new patient 
  * 
  * References:
- * >> http://stackoverflow.com/questions/10321038/jtable-clickable-column-sorting-sorting-sorts-content-of-cells-but-doesnt-upd
- * >> https://www.clear.rice.edu/comp310/JavaResources/frame_close.html
- * >> http://stackoverflow.com/questions/9919230/disable-user-edit-in-jtable
+ * - http://stackoverflow.com/questions/10321038/jtable-clickable-column-sorting-sorting-sorts-content-of-cells-but-doesnt-upd
+ * - https://www.clear.rice.edu/comp310/JavaResources/frame_close.html
+ * - http://stackoverflow.com/questions/9919230/disable-user-edit-in-jtable
+ * - https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
+ * - https://moodle.ucl.ac.uk/pluginfile.php/3177853/mod_resource/content/1/GC02-week7-DesignPatterns-2015-16.pdf
  * @author yinyee
  *
  */
 
-public class Dashboard {
+public class Dashboard extends JFrame {
 	
+	private static final long serialVersionUID = 1L;
 	private static Dashboard instance = null;
-	private final static String DATABASE = "data/patient.xml";
+	public final static String PATIENT = "data/patient.xml";
 	
 	private final static Logger LOGGER = Logger.getLogger(Dashboard.class.getName());
 	private final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
@@ -53,7 +57,7 @@ public class Dashboard {
 	private String searchField, searchText;
 	private String[][] searchResults;
 	
-	private JFrame frame, small;
+	private JFrame small;
 	int n;
 	private JLabel lWelcome, lSearch, lRegister, lResults;
 	private JTextField tSearch;
@@ -83,7 +87,8 @@ public class Dashboard {
 	 */
 	private void newPatient() {
 		try {
-			NewPatient rWindow = new NewPatient();
+			NewPatient npWindow = new NewPatient();
+			npWindow.setVisible(true);
 		} catch (Exception f) {
 			f.printStackTrace();
 		}
@@ -100,13 +105,11 @@ public class Dashboard {
 		LOGGER.info("Searching patient database for " + searchField + " containing " + searchText);
 		
 		Interpreter interpreter = new Interpreter();	
-		if (interpreter.searchPatient(DATABASE, searchField, searchText).length == 0) {
-			
-			JOptionPane.showMessageDialog(small, "There is no patient with the " + searchField + " of " + searchText);
-			
+		if (interpreter.searchPatients(PATIENT, searchField, searchText) == null) {
+			JOptionPane.showMessageDialog(small, "There are no matches for\n" + searchField + " containing " + searchText);
 		} else {
 			
-			searchResults = interpreter.searchPatient(DATABASE, searchField, searchText);
+			searchResults = interpreter.searchPatients(PATIENT, searchField, searchText);
 			
 			tbResults = new JTable(searchResults, HEADER) {
 				private static final long serialVersionUID = 1L;
@@ -122,7 +125,7 @@ public class Dashboard {
 			scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			
-			frame.validate();
+			this.validate();
 
 		}		
 	}
@@ -133,8 +136,9 @@ public class Dashboard {
 	 */
 	private void viewEditPatient() {
 		try {
-			String[] selection = searchResults[tbResults.getSelectedRow()];					
+			String[] selection = searchResults[tbResults.getSelectedRow()];
 			ViewEditPatient vepWindow = new ViewEditPatient(new Patient(selection));
+			vepWindow.setVisible(true);
 		} catch (Exception f) {
 			JOptionPane.showMessageDialog(small, "Please select a patient from\nthe search results table.");
 			f.printStackTrace();
@@ -145,7 +149,7 @@ public class Dashboard {
 	 * The logout option exits the program with a goodbye message.
 	 */
 	private void logout() {
-		JOptionPane.showMessageDialog(small, "You have logged out successfully\n Thank you for using the patient\nregistry system.");
+		JOptionPane.showMessageDialog(small, "You have logged out successfully.\n Thank you for using the patient\nregistry system.");
 		System.exit(0);
 	}
 	
@@ -180,7 +184,7 @@ public class Dashboard {
 	 */
 	private void draw() {
 		
-		frame = new JFrame("Dashboard");
+		this.setTitle("Patient Management System -- Dashboard");
 		lWelcome = new JLabel("Welcome, Administrator");
 		lSearch = new JLabel("Search patients");
 		cboxSearch = new JComboBox<String>(SEARCHFIELDS);
@@ -210,7 +214,7 @@ public class Dashboard {
 		bLogout.addActionListener(bListener);
 		bLogout.setActionCommand("Logout");
 		
-		Container panel = frame.getContentPane();
+		Container panel = this.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		
 		GridBagConstraints clWelcome = new GridBagConstraints();
@@ -313,7 +317,7 @@ public class Dashboard {
 		cbOpen.insets = STANDARDINSETS;
 
 		cbLogout.gridx = 3;
-		cbLogout.gridy = 0;
+		cbLogout.gridy = 10;
 		cbLogout.gridwidth = 1;
 		cbLogout.gridheight = 1;
 		cbLogout.weighty = 0.7;
@@ -334,9 +338,8 @@ public class Dashboard {
 		panel.add(bOpen, cbOpen);
 		panel.add(bLogout, cbLogout);
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.pack();
 		
 	}
 			

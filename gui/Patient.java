@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -16,8 +17,9 @@ import javax.swing.JTextField;
  * @author yinyee
  *
  */
-public abstract class Patient {
+public abstract class Patient extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	protected final static Dimension DIMENSION = new Dimension(500, 450);
 	protected final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
 	
@@ -31,7 +33,7 @@ public abstract class Patient {
 	
 	protected GridBagConstraints clContactDetails, clEmailAddress, cl2EmailAddress, clMobilePhoneNumber, cl2MobilePhoneNumber,
 	clHomePhoneNumber, cl2HomePhoneNumber, csHorizontal, clHomeAddress, clHomeNumberOrName, cl2HomeNumberOrName, clHomeStreet, 
-	cl2HomeStreet, clHomeCity, cl2HomeCity, clHomePostalCode, cl2HomePostalCode, clHomeCountry, cl2HomeCountry, cbCancel1, cbEditSave;
+	cl2HomeStreet, clHomeCity, cl2HomeCity, clHomePostalCode, cl2HomePostalCode, clHomeCountry, cl2HomeCountry, cbCancel, cbEditSave;
 
 	/**
 	 * The constructor defines the common GUI elements and attributes.
@@ -110,7 +112,7 @@ public abstract class Patient {
 		cl2HomePostalCode = new GridBagConstraints();
 		clHomeCountry = new GridBagConstraints();
 		cl2HomeCountry = new GridBagConstraints();
-		cbCancel1 = new GridBagConstraints();
+		cbCancel = new GridBagConstraints();
 		cbEditSave = new GridBagConstraints();
 
 		clContactDetails.gridx = 0;
@@ -254,12 +256,12 @@ public abstract class Patient {
 		cl2HomeCountry.fill = GridBagConstraints.HORIZONTAL;
 		cl2HomeCountry.insets = STANDARDINSETS;
 			
-		cbCancel1.gridx = 2;
-		cbCancel1.gridy = 11;
-		cbCancel1.gridwidth = 1;
-		cbCancel1.gridheight = 1;
-		cbCancel1.anchor = GridBagConstraints.LINE_END;
-		cbCancel1.insets = STANDARDINSETS;
+		cbCancel.gridx = 2;
+		cbCancel.gridy = 11;
+		cbCancel.gridwidth = 1;
+		cbCancel.gridheight = 1;
+		cbCancel.anchor = GridBagConstraints.LINE_END;
+		cbCancel.insets = STANDARDINSETS;
 		
 		cbEditSave.gridx = 2;
 		cbEditSave.gridy = 12;

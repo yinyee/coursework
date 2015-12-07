@@ -9,6 +9,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 
@@ -20,12 +22,14 @@ import obj.util.Diseases;
  * @author yinyee
  *
  */
-public abstract class Record {
+public abstract class Record extends JFrame {
 	
-	protected final static Dimension DIMENSION = new Dimension(450, 450);
+	private static final long serialVersionUID = 1L;
+	protected final static Dimension DIMENSION = new Dimension(450, 500);
 	protected final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
-	protected final static String[] MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-	
+	protected final static String[] MONTHS = {"---", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	protected final JFileChooser fChooser = new JFileChooser(); 
+			
 	protected Diseases diseases;
 	
 	protected JLabel lPatient,lRecordDate, lDoctor, lDiagnosis, lNotes, lAttachment;
@@ -34,7 +38,7 @@ public abstract class Record {
 	
 	protected GridBagConstraints clPatient, cl2Patient, clRecordDate, ccboxRecordDate, ccboxRecordMonth, ccboxRecordYear, 
 	clDoctor, cl2Doctor, csHorizontal, clDiagnosis, ccboxDiagnosis, cbGet, clNotes, cl2Notes, clAttachment, cl2Attachment,
-	cbEditSave, cbCancel, cbDelete;
+	cbEditSave, cbCancel, cbDelete, cbUpload;
 	
 	/**
 	 * The constructor defines the common GUI elements and attributes.
@@ -48,17 +52,19 @@ public abstract class Record {
 		lNotes = new JLabel("Notes");
 		lAttachment = new JLabel("Attachment");
 		
-		String[] dates = new String[31];
+		String[] dates = new String[32];
+		dates[0] = "---";
 		for (int i = 0; i < 31; i++) {
-			dates[i] = Integer.toString(i + 1);
+			dates[i + 1] = Integer.toString(i + 1);
 		}
 		cboxRecordDate = new JComboBox<String>(dates);
 
 		cboxRecordMonth = new JComboBox<String>(MONTHS);
 		
-		String[] years = new String[100];
+		String[] years = new String[101];
+		years[0] = "---";
 		for (int i = 0; i < 100; i++) {
-			years[i] = Integer.toString(i + 1950);
+			years[i + 1] = Integer.toString(i + 1950);
 		}
 		cboxRecordYear = new JComboBox<String>(years);
 		
@@ -86,12 +92,12 @@ public abstract class Record {
 		cbEditSave = new GridBagConstraints();
 		cbCancel = new GridBagConstraints();
 		cbDelete = new GridBagConstraints();
+		cbUpload = new GridBagConstraints();
 
 		cbDelete.gridx = 3;
 		cbDelete.gridy = 0;
 		cbDelete.gridwidth = 1;
 		cbDelete.gridheight = 1;
-		cbDelete.weighty = 0.7;
 		cbDelete.anchor = GridBagConstraints.LINE_END;
 		cbDelete.insets = STANDARDINSETS;
 
@@ -190,7 +196,7 @@ public abstract class Record {
 		cl2Notes.gridy = 6;
 		cl2Notes.gridwidth = 3;
 		cl2Notes.gridheight = 2;
-		cl2Notes.fill = GridBagConstraints.BOTH;
+		cl2Notes.fill = GridBagConstraints.HORIZONTAL;
 		cl2Notes.insets = STANDARDINSETS;
 
 		clAttachment.gridx = 0;
@@ -198,15 +204,23 @@ public abstract class Record {
 		clAttachment.gridwidth = 1;
 		clAttachment.gridheight = 1;
 		clAttachment.fill = GridBagConstraints.HORIZONTAL;
+		clAttachment.anchor = GridBagConstraints.PAGE_START;
 		clAttachment.insets = STANDARDINSETS;
 
 		cl2Attachment.gridx = 1;
 		cl2Attachment.gridy = 8;
-		cl2Attachment.gridwidth = 3;
+		cl2Attachment.gridwidth = 2;
 		cl2Attachment.gridheight = 1;
 		cl2Attachment.fill = GridBagConstraints.HORIZONTAL;
 		cl2Attachment.insets = STANDARDINSETS;
-		
+
+		cbUpload.gridx = 3;
+		cbUpload.gridy = 8;
+		cbUpload.gridwidth = 1;
+		cbUpload.gridheight = 1;
+		cbUpload.anchor = GridBagConstraints.LINE_END;
+		cbUpload.insets = STANDARDINSETS;
+
 		cbCancel.gridx = 3;
 		cbCancel.gridy = 9;
 		cbCancel.gridwidth = 1;

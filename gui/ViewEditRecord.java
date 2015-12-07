@@ -2,11 +2,16 @@ package gui;
 
 import java.awt.CardLayout;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,6 +20,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import obj.Record;
 
@@ -22,19 +28,21 @@ import obj.Record;
  * The ViewEditRecord screen displays the selected record, which the user can view, edit and save edits, or delete.
  * 
  * References:
- * >> http://stackoverflow.com/questions/26420428/how-to-word-wrap-text-in-jlabel
- * >> https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/DialogDemoProject/src/components/DialogDemo.java
+ * - http://stackoverflow.com/questions/26420428/how-to-word-wrap-text-in-jlabel
+ * - https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/components/DialogDemoProject/src/components/DialogDemo.java
+ * - http://stackoverflow.com/questions/9596468/open-only-xml-file-in-jfilechooser
  * @author yinyee
  *
  */
 
 public class ViewEditRecord extends gui.Record {
 	
+	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(ViewEditRecord.class.getName());
-	private Record record;
+	private obj.Record record;
 	
-	private JFrame frame, small;
-	int n;
+	private JFrame small;
+	private int n;
 	private JPanel pCard, pView, pEdit;
 	private CardLayout layout;
 	private JLabel l2Patient, l2RecordDate, l2Doctor, l2Diagnosis, l2Attachment;
@@ -42,12 +50,13 @@ public class ViewEditRecord extends gui.Record {
 	private JTextField tDoctor, tAttachment;
 	private JTextArea tNotes, t2Notes;
 	private JSeparator seHorizontal;
-	private JButton bEdit, bGet, b2Get, bDelete, bCancel, bSave;
+	private JButton bEdit, bGet, b2Get, bDelete, bUpload, bCancel, bSave;
 	private ButtonListener bListener;
+	private ImageIcon iAttachment;
 	
 	public ViewEditRecord(Record record) {
 		this.record = record;
-		draw(this.record);
+		draw();
 	}
 	
 	/**
@@ -87,6 +96,12 @@ public class ViewEditRecord extends gui.Record {
 			}
 		}
 		
+		if (cboxRecordMonth.getSelectedItem().toString() == "February" && (cboxRecordDate.getSelectedItem().toString() == "30" ||
+				cboxRecordDate.getSelectedItem().toString() == "31")) {
+			JOptionPane.showMessageDialog(small, "There are no 30th or 31st days in February");
+			check = false;
+		}
+				
 		return check;
 	}
 	
@@ -136,12 +151,49 @@ public class ViewEditRecord extends gui.Record {
 			editedRecord[7] = t2Notes.getText();
 			editedRecord[8] = tAttachment.getText();
 			
-			record = new Record(editedRecord);
+			record = new obj.Record(editedRecord);
 			// Save to database
-			draw(record);
+			draw();
 			layout.show(pCard, "View");
 			
 			LOGGER.info("Saved edits to record for " + record.getPatientFullName());
+		}
+	}
+	/**
+	 * The delete() method prompts the user for confirmation before deleting the record.
+	 */
+	private void delete() {
+		n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this record?", "Delete Record", JOptionPane.YES_NO_OPTION);
+		if (n == JOptionPane.YES_OPTION) {
+			// Delete from database
+			JOptionPane.showMessageDialog(small, "Record deleted");
+			LOGGER.severe("Record for " + record.getPatientFullName() + " has been deleted");
+			this.dispose();					
+		}
+		if (n == JOptionPane.NO_OPTION) {
+			small.dispose();
+		}		
+	}
+	
+	/**
+	 * The upload() method allows the user to upload an attachment to the record.
+	 */
+	private void upload() {
+		try {
+			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().toString()));
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("jpg files (*.jpg)", "jpg");
+			fChooser.setFileFilter(filter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		int m = this.fChooser.showOpenDialog(new JFrame());
+		switch(m) {
+		case JFileChooser.APPROVE_OPTION :
+			tAttachment.setText(fChooser.getSelectedFile().toString());
+			break;
+		case JFileChooser.CANCEL_OPTION :
+			break;
 		}
 	}
 	
@@ -166,39 +218,50 @@ public class ViewEditRecord extends gui.Record {
 				save();
 				break;
 			case "Delete" :
-				n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this record?", "Delete Record", JOptionPane.YES_NO_OPTION);
-				if (n == JOptionPane.YES_OPTION) {
-					// Delete from database
-					JOptionPane.showMessageDialog(small, "Record deleted");
-					LOGGER.severe("Record for " + record.getPatientFullName() + " has been deleted");
-					frame.dispose();					
-				}
-				if (n == JOptionPane.NO_OPTION) {
-					small.dispose();
-				}
+				delete();
 				break;
 			case "Get" :
 				openWebpage(diseases.getDiseases().get(cboxDiagnosis.getSelectedItem()));
 				break;
+			case "Upload":
+				upload();
+				break;
 			}
 		}	
+	}
+	
+	/**
+	 * The scalePhoto() method loads and scales the patient's photo.
+	 */
+	private void scalePhoto() {
+		
+		try {
+			File file = new File(ViewEditPatient.class.getClassLoader().getResource(record.getAttachment()).toURI());
+			ImageIcon original = new ImageIcon(file.toString());
+			Image unscaled = original.getImage();
+			Image scaled = unscaled.getScaledInstance(200, 150, java.awt.Image.SCALE_SMOOTH);
+			iAttachment = new ImageIcon(scaled);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			LOGGER.info("Cannot load photo");
+		}
 	}
 		
 	/**
 	 * The draw() method contains code specific to this
 	 * particular subclass.	
 	 */
-	public void draw(Record record) {
+	public void draw() {
 	
-		frame = new JFrame("View/Edit Record -- " + record.getPatientFullName());
-		frame.setMinimumSize(DIMENSION);
+		this.setTitle("View/Edit Record -- " + record.getPatientFullName());
+		this.setMinimumSize(DIMENSION);
 		layout = new CardLayout();
 		pCard = new JPanel(layout);
 		pView = new JPanel(new GridBagLayout());
 		pEdit = new JPanel(new GridBagLayout());
 		
 		// View card
-		
+		scalePhoto();
 		l2Patient = new JLabel(record.getPatientFullName());
 		l2RecordDate = new JLabel(record.getFormattedDate());
 		l2Doctor = new JLabel(record.getDoctor());
@@ -211,7 +274,7 @@ public class ViewEditRecord extends gui.Record {
 		tNotes.setEditable(false);
 		tNotes.setLineWrap(true);
 		tNotes.setBackground(UIManager.getColor("Label.background"));
-		l2Attachment = new JLabel(record.getAttachment());
+		l2Attachment = new JLabel(iAttachment);
 		bEdit = new JButton("Edit");
 		bEdit.addActionListener(bListener);
 		bEdit.setActionCommand("Edit");
@@ -234,16 +297,20 @@ public class ViewEditRecord extends gui.Record {
 		
 		// Edit card
 		
+		bDelete = new JButton("Delete Record");
+		bDelete.addActionListener(bListener);
+		bDelete.setActionCommand("Delete");		
 		lePatient = new JLabel("Patient");
 		le2Patient = new JLabel(record.getPatientFullName());
 		leRecordDate = new JLabel("Date");
-		cboxRecordDate.setSelectedIndex(record.getRecordDateAsInt()-1);
-		cboxRecordMonth.setSelectedIndex(record.getRecordMonthAsInt());
+		cboxRecordDate.setSelectedItem(record.getRecordDate());
+		cboxRecordMonth.setSelectedItem(record.getRecordMonth());
+		cboxRecordYear.setSelectedItem(record.getRecordYear());
 		leDoctor = new JLabel("Doctor");
 		tDoctor = new JTextField(record.getDoctor());
 		seHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		leDiagnosis = new JLabel("Diagnosis");
-		cboxDiagnosis.setSelectedIndex(diseases.getDiseaseAsInt(record.getDiagnosis()));
+		cboxDiagnosis.setSelectedItem(record.getDiagnosis());
 		b2Get = new JButton("Info");
 		b2Get.addActionListener(bListener);
 		b2Get.setActionCommand("Get");
@@ -252,16 +319,17 @@ public class ViewEditRecord extends gui.Record {
 		t2Notes.setLineWrap(true);
 		leAttachment = new JLabel("Attachment");
 		tAttachment = new JTextField(record.getAttachment());
+		bUpload = new JButton("Upload");
+		bUpload.addActionListener(bListener);
+		bUpload.setActionCommand("Upload");
 		bCancel = new JButton("Cancel");
 		bCancel.addActionListener(bListener);
 		bCancel.setActionCommand("Cancel");
 		bSave = new JButton("Save");
 		bSave.addActionListener(bListener);
 		bSave.setActionCommand("Save");
-		bDelete = new JButton("Delete Record");
-		bDelete.addActionListener(bListener);
-		bDelete.setActionCommand("Delete");
-
+		
+		pEdit.add(bDelete, cbDelete);
 		pEdit.add(lePatient, clPatient);
 		pEdit.add(le2Patient, cl2Patient);
 		pEdit.add(leRecordDate, clRecordDate);
@@ -278,17 +346,16 @@ public class ViewEditRecord extends gui.Record {
 		pEdit.add(t2Notes, cl2Notes);
 		pEdit.add(leAttachment, clAttachment);
 		pEdit.add(tAttachment, cl2Attachment);
-		pEdit.add(bDelete, cbDelete);
+		pEdit.add(bUpload, cbUpload);
 		pEdit.add(bCancel, cbCancel);
 		pEdit.add(bSave, cbEditSave);
 		
 		pCard.add(pView, "View");
 		pCard.add(pEdit, "Edit");
 		
-		frame.getContentPane().add(pCard);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
+		this.getContentPane().add(pCard);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.pack();
 		
 	}
 

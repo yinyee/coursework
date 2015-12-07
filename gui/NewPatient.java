@@ -1,10 +1,9 @@
 package gui;
 
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -13,10 +12,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import obj.Patient;
 
@@ -31,21 +28,57 @@ import obj.Patient;
  */
 
 public class NewPatient extends gui.Patient {
-	
+
+	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(NewPatient.class.getName());
-	private final static String[] MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-	private final static String[] GENDER = {"Female", "Male"};
+	private final static String[] MONTHS = {"---", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	private final static String[] GENDER = {"---", "Female", "Male"};
+	private final JFileChooser fChooser = new JFileChooser();
 	
-	private JFrame frame;
+	private JFrame small;
 	private JLabel lFirstName, lLastName, lGender, lBirthDate, lPhoto;
 	private JTextField tFirstName, tLastName, tPhoto;
 	private JButton bUpload;
 	private JComboBox<String> cboxGender, cboxBirthDate, cboxBirthMonth, cboxBirthYear;
-	private JButton bCancel, bCancel1, bSave;
+	private JButton bCancel, bSave;
 	private ButtonListener listener;
 
 	public NewPatient() {
 		draw();
+	}
+	
+	private void cancel() {
+		this.dispose();
+	}
+	
+	private boolean validDate() {
+		
+		boolean check = true;
+		
+		if (cboxBirthDate.getSelectedItem().toString() == "31") {
+			if (cboxBirthMonth.getSelectedItem().toString() == "February" ||
+				cboxBirthMonth.getSelectedItem().toString() == "April" ||
+				cboxBirthMonth.getSelectedItem().toString() == "June" ||
+				cboxBirthMonth.getSelectedItem().toString() == "September" ||
+				cboxBirthMonth.getSelectedItem().toString() == "November") {
+				JOptionPane.showMessageDialog(small, "There is no 31st day in " + cboxBirthMonth.getSelectedItem().toString());
+				check = false;
+			}
+		}
+		
+		if (cboxBirthMonth.getSelectedItem().toString() == "February" && cboxBirthDate.getSelectedItem().toString() == "29") {
+			if (Integer.valueOf(cboxBirthYear.getSelectedItem().toString()) % 4 != 0) {
+				JOptionPane.showMessageDialog(small, cboxBirthYear.getSelectedItem().toString() + " is not a leap year");
+				check = false;
+			}
+		} else if (cboxBirthMonth.getSelectedItem().toString() == "February" && (cboxBirthDate.getSelectedItem().toString() == "30" ||
+				cboxBirthDate.getSelectedItem().toString() == "31")) {
+			JOptionPane.showMessageDialog(small, "There are no 30th or 31st days in February");
+			check = false;
+		}
+				
+		return check;
+
 	}
 	
 	/**
@@ -53,43 +86,70 @@ public class NewPatient extends gui.Patient {
 	 */
 	private void save() {
 		
-		LOGGER.info("First name: " + tFirstName.getText());
-		LOGGER.info("Last name: " + tLastName.getText());
-		LOGGER.info("Gender: " + cboxGender.getSelectedItem().toString());
-		LOGGER.info("Birth date: " + cboxBirthDate.getSelectedItem().toString());
-		LOGGER.info("Birth month: " + cboxBirthMonth.getSelectedItem().toString());
-		LOGGER.info("Birth year: "+ cboxBirthYear.getSelectedItem().toString());
-		LOGGER.info("Email address: " + tEmailAddress.getText());
-		LOGGER.info("Mobile phone number: " + tMobilePhoneNumber.getText());
-		LOGGER.info("Home phone number: " + tHomePhoneNumber.getText());
-		LOGGER.info("House number and name: " + tHouseNumberOrName.getText());
-		LOGGER.info("Street: " + tStreet.getText());
-		LOGGER.info("City: " + tCity.getText());
-		LOGGER.info("Postal code: " + tPostalCode.getText());
-		LOGGER.info("Country: " + tCountry.getText());
-		LOGGER.info("Photo: " + tPhoto.getText());
+		if (tFirstName.getText().equals("") || tLastName.getText().equals("") || cboxGender.getSelectedIndex() == 0 || cboxBirthDate.getSelectedIndex() == 0 || 
+				cboxBirthMonth.getSelectedIndex() == 0 || cboxBirthYear.getSelectedIndex() == 0 || tPhoto.getText().equals("")) {
+			JOptionPane.showMessageDialog(small, "The minimum information required\nto register a new patient are:\n"
+					+ "- first name\n- last name\n- gender\n- birth date\n- birth month\n- birth year\n- photo");
+		} else if (validDate()) {
+			
+			LOGGER.info("First name: " + tFirstName.getText());
+			LOGGER.info("Last name: " + tLastName.getText());
+			LOGGER.info("Gender: " + cboxGender.getSelectedItem().toString());
+			LOGGER.info("Birth date: " + cboxBirthDate.getSelectedItem().toString());
+			LOGGER.info("Birth month: " + cboxBirthMonth.getSelectedItem().toString());
+			LOGGER.info("Birth year: "+ cboxBirthYear.getSelectedItem().toString());
+			LOGGER.info("Email address: " + tEmailAddress.getText());
+			LOGGER.info("Mobile phone number: " + tMobilePhoneNumber.getText());
+			LOGGER.info("Home phone number: " + tHomePhoneNumber.getText());
+			LOGGER.info("House number and name: " + tHouseNumberOrName.getText());
+			LOGGER.info("Street: " + tStreet.getText());
+			LOGGER.info("City: " + tCity.getText());
+			LOGGER.info("Postal code: " + tPostalCode.getText());
+			LOGGER.info("Country: " + tCountry.getText());
+			LOGGER.info("Photo: " + tPhoto.getText());
+			
+			String[] newPatient = new String[15];
+			newPatient[0] = tFirstName.getText();
+			newPatient[1] = tLastName.getText();
+			newPatient[2] = cboxGender.getSelectedItem().toString();
+			newPatient[3] = cboxBirthDate.getSelectedItem().toString();
+			newPatient[4] = cboxBirthMonth.getSelectedItem().toString();
+			newPatient[5] = cboxBirthYear.getSelectedItem().toString();
+			newPatient[6] = tEmailAddress.getText();
+			newPatient[7] = tMobilePhoneNumber.getText();
+			newPatient[8] = tHomePhoneNumber.getText();
+			newPatient[9] = tHouseNumberOrName.getText();
+			newPatient[10] = tStreet.getText();
+			newPatient[11] = tCity.getText();
+			newPatient[12] = tPostalCode.getText();
+			newPatient[13] = tCountry.getText();
+			newPatient[14] = tPhoto.getText();
+			
+			obj.Patient patient = new Patient(newPatient);
+			LOGGER.info("New patient " + patient.getFullName() + " saved to database");
+			ViewEditPatient vepWindow = new ViewEditPatient(patient);
+			vepWindow.setVisible(true);
+			// output to string and save in database			
+		}		
+	}
+	
+	private void upload() {
+		try {
+			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().toString()));
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("jpg files (*.jpg)", "jpg");
+			fChooser.setFileFilter(filter);
+		} catch (Exception f) {
+			f.printStackTrace();
+		}
 		
-		String[] newPatient = new String[15];
-		newPatient[0] = tFirstName.getText();
-		newPatient[1] = tLastName.getText();
-		newPatient[2] = cboxGender.getSelectedItem().toString();
-		newPatient[3] = cboxBirthDate.getSelectedItem().toString();
-		newPatient[4] = cboxBirthMonth.getSelectedItem().toString();
-		newPatient[5] = cboxBirthYear.getSelectedItem().toString();
-		newPatient[6] = tEmailAddress.getText();
-		newPatient[7] = tMobilePhoneNumber.getText();
-		newPatient[8] = tHomePhoneNumber.getText();
-		newPatient[9] = tHouseNumberOrName.getText();
-		newPatient[10] = tStreet.getText();
-		newPatient[11] = tCity.getText();
-		newPatient[12] = tPostalCode.getText();
-		newPatient[13] = tCountry.getText();
-		newPatient[14] = tPhoto.getText();
-		
-		obj.Patient patient = new Patient(newPatient);
-		ViewEditPatient window = new ViewEditPatient(patient);
-		LOGGER.info("New patient " + patient.getFullName() + " saved to database");
-		// output to string and save in database
+		int m = this.fChooser.showOpenDialog(new JFrame());
+		switch(m) {
+		case JFileChooser.APPROVE_OPTION :
+			tPhoto.setText(fChooser.getSelectedFile().toString());
+			break;
+		case JFileChooser.CANCEL_OPTION :
+			break;
+		}
 	}
 	
 	/**
@@ -103,13 +163,13 @@ public class NewPatient extends gui.Patient {
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand()) {
 			case "Upload" :
-//				JOptionPane uploader = new JOptionPane(fileUploader);
+				upload();
 				break;
 			case "Save" :
 				save();
 				break;
 			case "Cancel" :
-				frame.dispose();
+				cancel();
 			}
 		}
 	}
@@ -120,8 +180,8 @@ public class NewPatient extends gui.Patient {
 	
 	private void draw() {
 		
-		frame = new JFrame("New Patient");
-		frame.setMaximumSize(DIMENSION);
+		this.setTitle("Register New Patient");
+		this.setMaximumSize(DIMENSION);
 		
 		// Subclass-specific components
 		// Personal details tab
@@ -132,15 +192,17 @@ public class NewPatient extends gui.Patient {
 		lGender = new JLabel("Gender");
 		cboxGender = new JComboBox<String>(GENDER);
 		lBirthDate = new JLabel("Date of birth");
-		String[] dates = new String[31];
+		String[] dates = new String[32];
+		dates[0] = "---";
 		for (int i = 0; i < 31; i++) {
-			dates[i] = Integer.toString(i + 1);
+			dates[i + 1] = Integer.toString(i + 1);
 		}
 		cboxBirthDate = new JComboBox<String>(dates);
 		cboxBirthMonth = new JComboBox<String>(MONTHS);		
-		String[] years = new String[100];
+		String[] years = new String[101];
+		years[0] = "---";
 		for (int i = 0; i < 100; i++) {
-			years[i] = Integer.toString(i + 1916);
+			years[i + 1] = Integer.toString(i + 1916);
 		}
 		cboxBirthYear = new JComboBox<String>(years);
 		lPhoto = new JLabel("Photo");
@@ -149,9 +211,6 @@ public class NewPatient extends gui.Patient {
 		bUpload = new JButton("Upload");
 		bUpload.addActionListener(listener);
 		bUpload.setActionCommand("Upload");
-		bCancel = new JButton("Cancel");
-		bCancel.addActionListener(listener);
-		bCancel.setActionCommand("Cancel");
 		
 		GridBagConstraints clFirstName = new GridBagConstraints();
 		GridBagConstraints clLastName = new GridBagConstraints();
@@ -163,7 +222,6 @@ public class NewPatient extends gui.Patient {
 		GridBagConstraints clPhoto = new GridBagConstraints();
 		GridBagConstraints ctPhoto = new GridBagConstraints();
 		GridBagConstraints cbUpload = new GridBagConstraints();
-		GridBagConstraints cbCancel = new GridBagConstraints();
 
 		clFirstName.gridx = 0;
 		clFirstName.gridy = 0;
@@ -236,13 +294,6 @@ public class NewPatient extends gui.Patient {
 		cbUpload.anchor = GridBagConstraints.LINE_END;
 		cbUpload.insets = STANDARDINSETS;
 
-		cbCancel.gridx = 3;
-		cbCancel.gridy = 4;
-		cbCancel.gridwidth = 1;
-		cbCancel.gridheight = 1;
-		cbCancel.anchor = GridBagConstraints.LINE_END;
-		cbCancel.insets = STANDARDINSETS;
-		
 		pPersonalDetails.add(lFirstName, clFirstName);
 		pPersonalDetails.add(lLastName, clLastName);
 		pPersonalDetails.add(lGender, clGender);
@@ -256,12 +307,11 @@ public class NewPatient extends gui.Patient {
 		pPersonalDetails.add(lPhoto, clPhoto);
 		pPersonalDetails.add(tPhoto, ctPhoto);
 		pPersonalDetails.add(bUpload, cbUpload);
-		pPersonalDetails.add(bCancel, cbCancel);
 
 		// Contact details tab
-		bCancel1 = new JButton("Cancel");
-		bCancel1.addActionListener(listener);
-		bCancel1.setActionCommand("Cancel");
+		bCancel = new JButton("Cancel");
+		bCancel.addActionListener(listener);
+		bCancel.setActionCommand("Cancel");
 		bSave = new JButton("Save");
 		bSave.addActionListener(listener);
 		bSave.setActionCommand("Save");
@@ -285,16 +335,15 @@ public class NewPatient extends gui.Patient {
 		pContactDetails.add(tPostalCode, cl2HomePostalCode);
 		pContactDetails.add(lHomeCountry, clHomeCountry);		
 		pContactDetails.add(tCountry, cl2HomeCountry);
-		pContactDetails.add(bCancel1, cbCancel1);
+		pContactDetails.add(bCancel, cbCancel);
 		pContactDetails.add(bSave, cbEditSave);
 		
 		tabbedPane.addTab("Personal Details", pPersonalDetails);
 		tabbedPane.addTab("Contact Details", pContactDetails);
 		
-		frame.getContentPane().add(tabbedPane);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
+		this.getContentPane().add(tabbedPane);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.pack();
 		
 	}
 	

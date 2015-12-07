@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -20,7 +19,8 @@ import gui.Dashboard;
  * The Interpreter class acts as the bridge between data stored in .xml files and the application itself.
  * 
  * References:
- * >> http://stackoverflow.com/questions/5386991/java-most-efficient-method-to-iterate-over-all-elements-in-a-org-w3c-dom-docume
+ * - http://stackoverflow.com/questions/5386991/java-most-efficient-method-to-iterate-over-all-elements-in-a-org-w3c-dom-docume
+ * - http://docs.oracle.com/javase/tutorial/displayCode.html?code=http://docs.oracle.com/javase/tutorial/uiswing/examples/components/IconDemoProject/src/components/IconDemoApp.java
  * @author yinyee
  */
 public class Interpreter {
@@ -49,6 +49,7 @@ public class Interpreter {
 				if (username.equals(searchSpace.item(i).getFirstChild().getTextContent())) {
 					if (password.equals(searchSpace.item(i).getLastChild().getTextContent())) {
 						Dashboard dWindow = Dashboard.getInstance();
+						dWindow.setVisible(true);
 						login.dispose();
 					} else {
 						message = "Password is incorrect";
@@ -66,15 +67,15 @@ public class Interpreter {
 	 * 
 	 * @param domain
 	 * @param searchField
-	 * @param searchTerm
+	 * @param searchText
 	 */
-	public String[][] searchPatient(String domain, String searchField, String searchTerm) {
+	public String[][] searchPatients(String domain, String searchField, String searchText) {
 		
 		Document doc = parse(domain);
 		doc.getDocumentElement().normalize();
 		
 		String tagName = null;
-		switch(searchField) {
+		switch (searchField) {
 		case "First name" :
 			tagName = "firstName";
 			break;
@@ -119,47 +120,50 @@ public class Interpreter {
 			break;
 		}
 		
-		NodeList searchSpace = doc.getElementsByTagName(tagName);
-		
+		NodeList searchSpace = doc.getElementsByTagName(tagName);	
 		ArrayList<Node> searchResults = new ArrayList<Node>();
-		
 		for (int i = 0; i < searchSpace.getLength(); i++) {
-			if (searchSpace.item(i).getFirstChild().getTextContent().contains(searchTerm)) {
+			if (searchSpace.item(i).getFirstChild().getTextContent().contains(searchText)) {
 				searchResults.add(searchSpace.item(i).getParentNode());
 			}
 		}
 		
-		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
-		
-		int rowCount = 0;
-		
-		for (int i = 0; i < searchResults.size(); i++) { // Loop through the number of search results
-			NodeList patient = searchResults.get(i).getChildNodes(); // Load each result
-			ArrayList<String> row = new ArrayList<String>();
-			for (int j = 0; j < patient.getLength(); j++) { // Loop through the fields
-				Node currentNode = patient.item(j);
-				if (currentNode.getNodeType() == Node.ELEMENT_NODE) { // Add if node is an element
-					row.add(currentNode.getFirstChild().getTextContent());
+		String[][] array;		
+		if (searchResults.isEmpty()) {
+			array = null;
+		} else {
+			
+			ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();		
+			int rowCount = 0;			
+			for (int j = 0; j < searchResults.size(); j++) { // Loop through the number of search results
+				NodeList patient = searchResults.get(j).getChildNodes(); // Load each result
+				ArrayList<String> row = new ArrayList<String>();
+				for (int k = 0; k < patient.getLength(); k++) { // Loop through the fields
+					Node currentNode = patient.item(k);
+					if (currentNode.getNodeType() == Node.ELEMENT_NODE) { // Add if node is an element
+						row.add(currentNode.getFirstChild().getTextContent());
+					}
+				}
+				table.add(row); // Add row
+				rowCount++;
+			}
+			
+			int colCount = 0;
+			NodeList headerNodes = searchResults.get(0).getChildNodes();
+			for (int x = 0; x < headerNodes.getLength(); x++) {
+				if(headerNodes.item(x).getNodeType() == Node.ELEMENT_NODE) {
+					colCount++;
 				}
 			}
-			table.add(row); // Add row
-			rowCount++;
-		}
-		
-		int colCount = 0;
-		NodeList headerNodes = searchResults.get(0).getChildNodes();
-		for (int i = 0; i < headerNodes.getLength(); i++) {
-			if(headerNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				colCount++;
+					
+			array = new String[rowCount][colCount];
+			for (int y = 0; y < rowCount; y++) {
+				String[] rowArray = new String[table.get(y).size()];
+				table.get(y).toArray(rowArray);
+				array[y] = rowArray;
 			}
-		}
-				
-		String[][] array = new String[rowCount][colCount];
-		for (int i = 0; i < rowCount; i++) {
-			String[] rowArray = new String[table.get(i).size()];
-			table.get(i).toArray(rowArray);
-			array[i] = rowArray;
-		}
+
+		}		
 		return array;
 	}
 	
@@ -174,49 +178,52 @@ public class Interpreter {
 		
 		Document doc = parse(domain);
 		doc.getDocumentElement().normalize();
-		
+				
 		NodeList searchSpace = doc.getElementsByTagName("record");
-		ArrayList<Node> searchResults = new ArrayList<Node>();
 		
+		ArrayList<Node> searchResults = new ArrayList<Node>();
 		for (int i = 0; i < searchSpace.getLength(); i++) {
 			if (searchSpace.item(i).getFirstChild().getNextSibling().getTextContent().equals(firstName) &&
 					searchSpace.item(i).getFirstChild().getNextSibling().getNextSibling().getNextSibling().getTextContent().equals(lastName)) {
 				searchResults.add(searchSpace.item(i));
-
 			}
-		}
+		}		
 		
-		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
-		int rowCount = 0;
-		
-		for (int i = 0; i < searchResults.size(); i++) { // Loop through the number of search results
-			NodeList record = searchResults.get(i).getChildNodes(); // Load each result
-			ArrayList<String> row = new ArrayList<String>();
-			for (int j = 0; j < record.getLength(); j++) { // Loop through the fields
-				Node currentNode = record.item(j);
-				if (currentNode.getNodeType() == Node.ELEMENT_NODE) { // Add if node is an element
-					row.add(currentNode.getFirstChild().getTextContent());
+		String[][] array;
+		if (searchResults.isEmpty()) {
+			array = null;
+		} else {
+			ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
+			int rowCount = 0;
+			
+			for (int i = 0; i < searchResults.size(); i++) { // Loop through the number of search results
+				NodeList record = searchResults.get(i).getChildNodes(); // Load each result
+				ArrayList<String> row = new ArrayList<String>();
+				for (int j = 0; j < record.getLength(); j++) { // Loop through the fields
+					Node currentNode = record.item(j);
+					if (currentNode.getNodeType() == Node.ELEMENT_NODE) { // Add if node is an element
+						row.add(currentNode.getFirstChild().getTextContent());
+					}
+				}
+				table.add(row); // Add row
+				rowCount++;
+			}
+			
+			int colCount = 0;
+			NodeList headerNodes = searchResults.get(0).getChildNodes();
+			for (int i = 0; i < headerNodes.getLength(); i++) {
+				if(headerNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
+					colCount++;
 				}
 			}
-			table.add(row); // Add row
-			rowCount++;
-		}
-		
-		int colCount = 0;
-		NodeList headerNodes = searchResults.get(0).getChildNodes();
-		for (int i = 0; i < headerNodes.getLength(); i++) {
-			if(headerNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				colCount++;
+					
+			array = new String[rowCount][colCount];
+			for (int i = 0; i < rowCount; i++) {
+				String[] rowArray = new String[table.get(i).size()];
+				table.get(i).toArray(rowArray);
+				array[i] = rowArray;
 			}
 		}
-				
-		String[][] array = new String[rowCount][colCount];
-		for (int i = 0; i < rowCount; i++) {
-			String[] rowArray = new String[table.get(i).size()];
-			table.get(i).toArray(rowArray);
-			array[i] = rowArray;
-		}
-		
 		return array;
 	}
 	

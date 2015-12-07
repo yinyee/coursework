@@ -18,19 +18,19 @@ import io.Interpreter;
  * The Login class is based on the Singleton design pattern.
  * 
  * References used for this section include:
- *  >> https://docs.oracle.com/javase/tutorial/uiswing/layout/gridbag.html
- *  >> https://moodle.ucl.ac.uk/pluginfile.php/3177853/mod_resource/content/1/GC02-week7-DesignPatterns-2015-16.pdf
- *  >> http://stackoverflow.com/questions/2850674/where-to-put-a-textfile-i-want-to-use-in-eclipse
+ * - https://docs.oracle.com/javase/tutorial/uiswing/layout/gridbag.html
+ * - https://moodle.ucl.ac.uk/pluginfile.php/3177853/mod_resource/content/1/GC02-week7-DesignPatterns-2015-16.pdf
+ * - http://stackoverflow.com/questions/2850674/where-to-put-a-textfile-i-want-to-use-in-eclipse
  *   */
 
-public class Login {
+public class Login extends JFrame {
 	
+	private static final long serialVersionUID = 1L;
 	private static Login instance = null;
 	private final static String LOGIN = "data/login.xml";
 	private final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
 	private String username, password;
 	
-	private JFrame frame;
 	private JLabel lMessage, lUsername, lPassword;
 	private JTextField tUsername, tPassword;
 	private JButton bLogin;
@@ -58,7 +58,7 @@ public class Login {
 		username = tUsername.getText();
 		password = tPassword.getText(); 
 		Interpreter interpreter = new Interpreter();
-		lMessage.setText(interpreter.verify(LOGIN, username, password, this.frame));
+		lMessage.setText(interpreter.verify(LOGIN, username, password, this));
 		lMessage.validate();
 	}
 	
@@ -75,10 +75,9 @@ public class Login {
 	 */
 	private void draw() {
 		
-		frame = new JFrame("Patient Registry System");
-		frame.setMinimumSize(new Dimension(300, 300));
-		Container panel = frame.getContentPane();
-		lMessage = new JLabel("Please log in to continue:");
+		this.setMinimumSize(new Dimension(300, 300));
+		Container panel = this.getContentPane();
+		lMessage = new JLabel("Please enter your login details");
 		lUsername = new JLabel("Username");
 		lPassword = new JLabel("Password");
 		tUsername = new JTextField();
@@ -144,9 +143,8 @@ public class Login {
 		panel.add(tPassword, ctPassword);
 		panel.add(bLogin, cbLogin);
 		
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.pack();
 		
 	}
 	

@@ -3,10 +3,14 @@ package gui;
 import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,20 +33,24 @@ import obj.Record;
  * In addition to viewing the profile, the user can edit and save the 
  * edited profile, as well as delete the patient's profile.
  * 
+ * References:
+ * http://docs.oracle.com/javase/tutorial/displayCode.html?code=http://docs.oracle.com/javase/tutorial/uiswing/examples/components/IconDemoProject/src/components/IconDemoApp.java
+ * 
  * @author yinyee
  *
  */
 
 public class ViewEditPatient extends gui.Patient {
 	
-	private Patient patient;
+	private static final long serialVersionUID = 1L;
+	private obj.Patient patient;
 	private String[][] records;
 	
 	private final static Logger LOGGER = Logger.getLogger(ViewEditPatient.class.getName());
-	private final static String DATABASE = "data/records.xml";
+	public final static String RECORDS = "data/records.xml";
 	private final static String[] HEADER = {"First name", "Last name", "Record date", "Record month", "Record year", "Doctor", "Diagnosis", "Notes", "Attachment"};
 	
-	private JFrame frame, small;
+	private JFrame small;
 	private int n;
 	private JPanel pView, pEdit;
 	private CardLayout layout;
@@ -53,13 +61,27 @@ public class ViewEditPatient extends gui.Patient {
 	private JScrollPane scrRecord;
 	private JButton bAdd, bView, bEdit, bCancel, bSave, bDelete;
 	private ButtonListener bListener;
+	private ImageIcon iPhoto;
 		
-	public ViewEditPatient(Patient patient) {
+	public ViewEditPatient(obj.Patient patient) {
 		this.patient = patient;
-		if (loadRecords(patient) != null) {
-			this.records = loadRecords(patient);
-		}
-		draw(patient);
+		if (loadRecords(this.patient) != null) {
+			this.records = loadRecords(this.patient);
+			tbRecord = new JTable(this.records, HEADER) {
+				private static final long serialVersionUID = 1L;
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+		} else {
+			tbRecord = new JTable(5, 10) {
+				private static final long serialVersionUID = 1L;
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+		}	
+		draw();
 	}
 	
 	/**
@@ -69,14 +91,15 @@ public class ViewEditPatient extends gui.Patient {
 	private String[][] loadRecords(Patient patient) {
 		
 		Interpreter interpreter = new Interpreter();
-		return interpreter.retrieveRecords(DATABASE, patient.getFirstName(), patient.getLastName());
+		return interpreter.retrieveRecords(RECORDS, patient.getFirstName(), patient.getLastName());
 	}
 	
 	/**
 	 * The newRecord() method launches a new NewRecord screen.
 	 */
 	private void newRecord() {
-		NewRecord nrWindow = new NewRecord(patient);
+		NewRecord nrWindow = new NewRecord(this.patient);
+		nrWindow.setVisible(true);
 	}
 	
 	/**
@@ -86,7 +109,8 @@ public class ViewEditPatient extends gui.Patient {
 	private void viewRecord() {
 		try {
 			String[] selection = records[tbRecord.getSelectedRow()];
-			ViewEditRecord verWindow = new ViewEditRecord(new Record(selection));					
+			ViewEditRecord verWindow = new ViewEditRecord(new Record(selection));
+			verWindow.setVisible(true);
 		} catch (Exception f) {
 			JOptionPane.showMessageDialog(small, "Please select a record.");
 			f.printStackTrace();
@@ -108,33 +132,32 @@ public class ViewEditPatient extends gui.Patient {
 	 * The save() method logs the edits made before saving.
 	 */
 	private void save() {
-		
-		if (tEmailAddress.equals(patient.getEmailAddress())) {
+
+		if (!tEmailAddress.getText().equals(patient.getEmailAddress())) {
 			LOGGER.info("Email address: changed from " + patient.getEmailAddress() + " to " + tEmailAddress.getText());
 		}
-		if (tMobilePhoneNumber.equals(patient.getMobilePhoneNumber())) {
+		if (!tMobilePhoneNumber.getText().equals(patient.getMobilePhoneNumber())) {
 			LOGGER.info("Mobile phone number: changed from " + patient.getMobilePhoneNumber() + " to " + tMobilePhoneNumber.getText());
 		}
-		if (tHomePhoneNumber.equals(patient.getHomePhoneNumber())) {
+		if (!tHomePhoneNumber.getText().equals(patient.getHomePhoneNumber())) {
 			LOGGER.info("Home phone number: changed from " + patient.getHomePhoneNumber() + " to " + tHomePhoneNumber.getText());
 		}
-		if (tHouseNumberOrName.equals(patient.getHouseNumberOrName())) {
+		if (!tHouseNumberOrName.getText().equals(patient.getHouseNumberOrName())) {
 			LOGGER.info("House number or name: changed from " + patient.getHouseNumberOrName() + " to " + tHouseNumberOrName.getText());
 		}
-		if (tStreet.equals(patient.getStreet())) {
+		if (!tStreet.getText().equals(patient.getStreet())) {
 			LOGGER.info("Street: changed from " + patient.getStreet() + " to " + tStreet.getText());
 		}
-		if (tCity.equals(patient.getCity())) {
+		if (!tCity.getText().equals(patient.getCity())) {
 			LOGGER.info("City: changed from " + patient.getCity() + " to " + tCity.getText());
 		}
-		if (tPostalCode.equals(patient.getPostalCode())) {
+		if (!tPostalCode.getText().equals(patient.getPostalCode())) {
 			LOGGER.info("Postal code: changed from " + patient.getPostalCode() + " to " + tPostalCode.getText());
 		}
-		if (tCountry.equals(patient.getCountry())) {
+		if (!tCountry.getText().equals(patient.getCountry())) {
 			LOGGER.info("Country: changed from " + patient.getCountry() + " to " + tCountry.getText());
 		}
-
-		// Save to file!! lPhoto is temp				
+			
 		String[] edittedPatient = new String[15];
 		edittedPatient[0] = patient.getFirstName();
 		edittedPatient[1] = patient.getLastName();
@@ -150,12 +173,11 @@ public class ViewEditPatient extends gui.Patient {
 		edittedPatient[11] = tCity.getText();
 		edittedPatient[12] = tPostalCode.getText();
 		edittedPatient[13] = tCountry.getText();
-		edittedPatient[14] = lPhoto.getText();
+		edittedPatient[14] = patient.getPhoto();
 		
-		patient = new Patient(edittedPatient);
-		draw(patient);
+		this.patient = new obj.Patient(edittedPatient);		
+		draw();
 		layout.show(pContactDetails, "View");
-		pContactDetails.validate();
 		
 		LOGGER.info("Saved edits to patient " + patient.getFullName());
 	}
@@ -170,7 +192,7 @@ public class ViewEditPatient extends gui.Patient {
 			// Delete from database
 			LOGGER.severe(patient.getFullName() + "deleted");
 			JOptionPane.showMessageDialog(small, "Patient deleted");
-			frame.dispose();					
+			this.dispose();					
 		}
 	}
 	
@@ -207,14 +229,31 @@ public class ViewEditPatient extends gui.Patient {
 			}		
 		}
 	}
-		
+	
+	/**
+	 * The scalePhoto() method loads and scales the patient's photo.
+	 */
+	private void scalePhoto() {
+	
+		try {
+			File file = new File(ViewEditPatient.class.getClassLoader().getResource(patient.getPhoto()).toURI());
+			ImageIcon original = new ImageIcon(file.toString());
+			Image unscaled = original.getImage();
+			Image scaled = unscaled.getScaledInstance(75, 100, java.awt.Image.SCALE_SMOOTH);
+			iPhoto = new ImageIcon(scaled);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			LOGGER.info("Cannot load photo");
+		}
+	}
+	
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
-	private void draw(Patient patient) {
-		
-		frame = new JFrame("Patient Profile - " + patient.getFullName());
-		frame.setMaximumSize(DIMENSION);
+	private void draw() {
+
+		this.setTitle("View/Edit -- " + patient.getFullName());
+		this.setMaximumSize(DIMENSION);
 		tabbedPane = new JTabbedPane();
 		pPersonalDetails = new JPanel(new GridBagLayout());
 		layout = new CardLayout();
@@ -223,20 +262,15 @@ public class ViewEditPatient extends gui.Patient {
 		pEdit = new JPanel(new GridBagLayout());
 
 		// Main tab
-		lPhoto = new JLabel();
+		scalePhoto();
+		lPhoto = new JLabel(iPhoto);
 		lFullName = new JLabel(patient.getFullName());
 		lGender = new JLabel(patient.getGender());
 		lBirthDate = new JLabel("Born " + patient.getFormattedBirthDate());
 		sMainHorizontal = new JSeparator(JSeparator.HORIZONTAL);
 		lRecord = new JLabel("MEDICAL RECORD");
-		tbRecord = new JTable(records, HEADER) {
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-		tbRecord.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tbRecord.setMinimumSize(tbRecord.getPreferredSize());
+		tbRecord.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tbRecord.setAutoCreateRowSorter(true);
 		scrRecord = new JScrollPane(tbRecord);
 		scrRecord.setViewportView(tbRecord);
@@ -406,7 +440,7 @@ public class ViewEditPatient extends gui.Patient {
 		pEdit.add(tPostalCode, cl2HomePostalCode);
 		pEdit.add(leHomeCountry, clHomeCountry);
 		pEdit.add(tCountry, cl2HomeCountry);
-		pEdit.add(bCancel, cbCancel1);
+		pEdit.add(bCancel, cbCancel);
 		pEdit.add(bSave, cbEditSave);
 		
 		pContactDetails.add(pView, "View");
@@ -415,10 +449,9 @@ public class ViewEditPatient extends gui.Patient {
 		tabbedPane.addTab("Main", pPersonalDetails);
 		tabbedPane.addTab("Additional", pContactDetails);
 		
-		frame.getContentPane().add(tabbedPane);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
+		this.getContentPane().add(tabbedPane);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.pack();
 		
 	}
 
