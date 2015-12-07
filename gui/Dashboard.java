@@ -45,6 +45,7 @@ import java.util.logging.Logger;
  * - http://stackoverflow.com/questions/9919230/disable-user-edit-in-jtable
  * - https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
  * - https://moodle.ucl.ac.uk/pluginfile.php/3177853/mod_resource/content/1/GC02-week7-DesignPatterns-2015-16.pdf
+ * - https://docs.oracle.com/javase/tutorial/essential/io/pathOps.html
  * @author yinyee
  *
  */
@@ -55,6 +56,7 @@ public class Dashboard extends JFrame implements MouseListener {
 	private static Dashboard instance = null;
 	private JFileChooser fChooser = new JFileChooser();
 	public final static String PATIENT = "data/patient.xml";
+	public final static String EXPORT = "data/export.xml";
 	
 	private final static Logger LOGGER = Logger.getLogger(Dashboard.class.getName());
 	private final static Insets STANDARDINSETS = new Insets(5, 5, 5, 5);
@@ -67,7 +69,6 @@ public class Dashboard extends JFrame implements MouseListener {
 	
 	private JFrame small;
 	private Container panel;
-	int n;
 	private JLabel lWelcome, lSearch, lRegister, lResults;
 	private JTextField tSearch;
 	private JComboBox<String> cboxSearch;
@@ -83,10 +84,12 @@ public class Dashboard extends JFrame implements MouseListener {
 	private Dashboard() {
 		
 		this.addMouseListener(this);
+		
+		// Inititalise GUI elements
 		this.setTitle("Patient Management System -- Dashboard");
+		this.setLocationRelativeTo(null);
 		panel = this.getContentPane();
 		panel.setLayout(new GridBagLayout());
-
 		lWelcome = new JLabel("Welcome, Administrator");
 		lSearch = new JLabel("Search patients");
 		cboxSearch = new JComboBox<String>(SEARCHFIELDS);
@@ -106,8 +109,7 @@ public class Dashboard extends JFrame implements MouseListener {
 		bOpen = new JButton("Open patient profile");
 		bLogout = new JButton("Log out");
 		bImport = new JButton("Import");
-		bExport = new JButton("Export");
-		
+		bExport = new JButton("Export");	
 		bListener = new ButtonListener();
 		bSearch.addActionListener(bListener);
 		bSearch.setActionCommand("Search");
@@ -143,6 +145,7 @@ public class Dashboard extends JFrame implements MouseListener {
 	
 	/**
 	 * The getInstance() method enforces the Singleton design pattern.
+	 * @return instance The only instance of the Dashboard
 	 */
 	public static Dashboard getInstance() {
 		if (instance == null) {
@@ -163,9 +166,13 @@ public class Dashboard extends JFrame implements MouseListener {
 		}
 	}
 	
+	/**
+	 * The importData() method allows the user to import patient data from an appropriate .xml
+	 * file into the patient database.
+	 */
 	private void importData() {
 		try {
-			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().toString()));
+			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().getResource("data/").getPath()));
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("xml files (*.xml)", "xml");
 			fChooser.setFileFilter(filter);
 		} catch (Exception e) {
@@ -186,6 +193,27 @@ public class Dashboard extends JFrame implements MouseListener {
 			break;
 		case JFileChooser.CANCEL_OPTION :
 			break;
+		}
+	}
+	
+	/**
+	 * The exportData() method exports the selected patient records to "export.xml" in the bin/ folder.
+	 */
+	private void exportData() {
+		
+		int[] rows = tbResults.getSelectedRows();
+		
+		String[][] exportData = new String[rows.length][HEADER.length];
+		System.out.println(rows.length);
+		for (int j = 0; j < rows.length; j++) {
+			exportData[j] = searchResults[rows[j]];
+		}
+		
+		try {
+			Interpreter interpreter = new Interpreter();
+			interpreter.exportPatientData(Dashboard.class.getClassLoader().getResource(PATIENT).toURI(), Dashboard.class.getClassLoader().getResource(EXPORT).toURI(), exportData);
+		} catch (URISyntaxException urise) {
+			urise.printStackTrace();
 		}
 	}
 
@@ -273,6 +301,9 @@ public class Dashboard extends JFrame implements MouseListener {
 				break;
 			case "Import":
 				importData();
+				break;
+			case "Export":
+				exportData();
 				break;
 			}
 		}
@@ -415,28 +446,39 @@ public class Dashboard extends JFrame implements MouseListener {
 		
 	}
 
-	@Override
+	/**
+	 * When mouseClicked event occurs, the Dashboard GUI is refreshed.
+	 * @param e user clicks mouse
+	 */
 	public void mouseClicked(MouseEvent e) {
 		search();
 		draw();
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mousePressed(MouseEvent e) {
 		;
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mouseReleased(MouseEvent e) {
 		;
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mouseEntered(MouseEvent e) {
 		;
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mouseExited(MouseEvent e) {
 		;
 	}

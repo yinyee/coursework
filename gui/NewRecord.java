@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -22,6 +24,9 @@ import obj.Patient;
 import obj.Record;
 /**
  * The NewRecord screen launches when the "Add" button in the ViewEditPatient profile is clicked.
+ * The user can create a new record that is associated with the patient, which is saved to
+ * "records.xml".
+ * 
  * References:
  * - http://stackoverflow.com/questions/17034282/jfilechooser-regarding-the-open-and-cancel-buttons-java
  * @author yinyee
@@ -49,24 +54,24 @@ public class NewRecord extends gui.Record {
 		
 		boolean check = true;
 		
-		if (cboxRecordDate.getSelectedItem().toString() == "31") {
-			if (cboxRecordMonth.getSelectedItem().toString() == "February" ||
-				cboxRecordMonth.getSelectedItem().toString() == "April" ||
-				cboxRecordMonth.getSelectedItem().toString() == "June" ||
-				cboxRecordMonth.getSelectedItem().toString() == "September" ||
-				cboxRecordMonth.getSelectedItem().toString() == "November") {
+		if (cboxRecordDate.getSelectedItem().toString().equals("31")) {
+			if (cboxRecordMonth.getSelectedItem().toString().equals("February") ||
+				cboxRecordMonth.getSelectedItem().toString().equals("April") ||
+				cboxRecordMonth.getSelectedItem().toString().equals("June") ||
+				cboxRecordMonth.getSelectedItem().toString().equals("September") ||
+				cboxRecordMonth.getSelectedItem().toString().equals("November")) {
 				JOptionPane.showMessageDialog(small, "There is no 31st day in " + cboxRecordMonth.getSelectedItem().toString());
 				check = false;
 			}
 		}
 		
-		if (cboxRecordMonth.getSelectedItem().toString() == "February" && cboxRecordDate.getSelectedItem().toString() == "29") {
+		if (cboxRecordMonth.getSelectedItem().toString().equals("February") && cboxRecordDate.getSelectedItem().toString().equals("29")) {
 			if (Integer.valueOf(cboxRecordYear.getSelectedItem().toString()) % 4 != 0) {
 				JOptionPane.showMessageDialog(small, cboxRecordYear.getSelectedItem().toString() + " is not a leap year");
 				check = false;
 			}
-		} else if (cboxRecordMonth.getSelectedItem().toString() == "February" && (cboxRecordDate.getSelectedItem().toString() == "30" ||
-				cboxRecordDate.getSelectedItem().toString() == "31")) {
+		} else if (cboxRecordMonth.getSelectedItem().toString().equals("February")  && (cboxRecordDate.getSelectedItem().toString().equals("30") ||
+				cboxRecordDate.getSelectedItem().toString().equals("31") )) {
 			JOptionPane.showMessageDialog(small, "There are no 30th or 31st days in February");
 			check = false;
 		}
@@ -132,7 +137,7 @@ public class NewRecord extends gui.Record {
 	 */
 	private void upload() {
 		try {
-			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().toString()));
+			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().getResource("data/").getPath()));
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("jpg files (*.jpg)", "jpg");
 			fChooser.setFileFilter(filter);
 		} catch (Exception e) {
@@ -142,7 +147,10 @@ public class NewRecord extends gui.Record {
 		int m = this.fChooser.showOpenDialog(new JFrame());
 		switch(m) {
 		case JFileChooser.APPROVE_OPTION :
-			tAttachment.setText(fChooser.getSelectedFile().toString());
+			Path path = Paths.get(fChooser.getSelectedFile().toURI());
+			int count = path.getNameCount();
+			path = path.subpath(count-2, count);
+			tAttachment.setText(path.toString());
 			break;
 		case JFileChooser.CANCEL_OPTION :
 			break;
@@ -182,6 +190,7 @@ public class NewRecord extends gui.Record {
 		
 		this.setTitle("New Record -- " + patient.getFullName());;
 		this.setMinimumSize(DIMENSION);
+		this.setLocationRelativeTo(null);
 		Container panel = this.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		

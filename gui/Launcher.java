@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 /**
  * The Launcher class contains the main() method for the application.
  * @author yinyee
- *
  */
 public class Launcher {
 	

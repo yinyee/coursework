@@ -68,10 +68,12 @@ public class ViewEditPatient extends gui.Patient implements MouseListener {
 	private GridBagConstraints clPhoto, csMainHorizontal, clRecord, cscrRecord, cbAdd, cbView, cbDelete;
 		
 	public ViewEditPatient(obj.Patient patient) {
+		
 		this.patient = patient;
 		this.addMouseListener(this);
 		loadRecords();
 		
+		// Instantiate GUI elements
 		tabbedPane = new JTabbedPane();
 		pPersonalDetails = new JPanel(new GridBagLayout());
 		layout = new CardLayout();
@@ -274,7 +276,13 @@ public class ViewEditPatient extends gui.Patient implements MouseListener {
 	private void delete() {
 		n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this patient?", "Delete Patient", JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
-			// Delete from database
+			try {
+				Interpreter interpreter = new Interpreter();
+				interpreter.deletePatient(ViewEditPatient.class.getClassLoader().getResource(Dashboard.PATIENT).toURI(),  this.patient.getPatientData());
+			} catch (URISyntaxException urise) {
+				urise.printStackTrace();
+			}
+			
 			LOGGER.severe(patient.getFullName() + "deleted");
 			JOptionPane.showMessageDialog(small, "Patient deleted");
 			this.dispose();					
@@ -346,6 +354,7 @@ public class ViewEditPatient extends gui.Patient implements MouseListener {
 
 		this.setTitle("View/Edit -- " + patient.getFullName());
 		this.setMaximumSize(DIMENSION);
+		this.setLocationRelativeTo(null);
 
 		// Main tab
 		scalePhoto();
@@ -498,28 +507,39 @@ public class ViewEditPatient extends gui.Patient implements MouseListener {
 		
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mouseClicked(MouseEvent e) {
 		;
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mousePressed(MouseEvent e) {
 		;
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mouseReleased(MouseEvent e) {
 		;
 	}
 
-	@Override
+	/**
+	 * When a mouseEntered event occurs, the GUI is refreshed.
+	 * @param e The mouse entering the frame
+	 */
 	public void mouseEntered(MouseEvent e) {
 		refresh();
 		
 	}
 
-	@Override
+	/**
+	 * Not implemented
+	 */
 	public void mouseExited(MouseEvent e) {;
 		
 	}

@@ -17,6 +17,10 @@ import javax.swing.JTextField;
 import io.Interpreter;
 
 /**  
+ * The Login screen is launched by the main() method of the Launcher class.
+ * It prompts the user for a username and password, which is checked against
+ * the "login.xml" file.
+ *  
  * The Login class is based on the Singleton design pattern.
  * 
  * References used for this section include:
@@ -44,6 +48,7 @@ public class Login extends JFrame {
 
 	/**
 	 * The getInstance() method enforces the Singleton design pattern.
+	 * @return instance The only instance of the Login class
 	 */
 	public static Login getInstance() {
 		if (instance == null) {
@@ -82,6 +87,7 @@ public class Login extends JFrame {
 	private void draw() {
 		
 		this.setMinimumSize(new Dimension(300, 300));
+		this.setLocationRelativeTo(null);
 		Container panel = this.getContentPane();
 		lMessage = new JLabel("Please enter your login details");
 		lUsername = new JLabel("Username");

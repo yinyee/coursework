@@ -14,13 +14,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 
-import obj.util.Diseases;
+import obj.Diseases;
 
 /**
  * The Record class has been declared abstract to prevent it from being instantiated.
  * It has two subclasses -- NewRecord and ViewEditRecord.
  * @author yinyee
- *
  */
 public abstract class Record extends JFrame {
 	
@@ -240,10 +239,9 @@ public abstract class Record extends JFrame {
 	/**
 	 * The following overloaded methods to open a web page using the default browser have been
 	 * directly taken from this link:
-	 * >> http://stackoverflow.com/questions/10967451/open-a-link-in-browser-with-java-button
+	 * - http://stackoverflow.com/questions/10967451/open-a-link-in-browser-with-java-button
 	 * @param uri
 	 */
-	
 	protected void openWebpage(URI uri) {
 	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {

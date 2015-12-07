@@ -1,5 +1,11 @@
 package obj;
-
+/**
+ * The obj.Record class is the representation of a patient, whereas the
+ * gui.Record class is a pattern for the GUI displaying record information.
+ * 
+ * @author yinyee
+ *
+ */
 public class Record {
 	
 	private String patientFirstName;

@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -21,10 +23,11 @@ import obj.Patient;
 
 /**
  * The NewPatient screen launches when the "Register" button in the Dashboard is clicked.
+ * The user can register a new patient using this screen.  Clicking on the "Save" button
+ * saves the new patient record to "patients.xml".
  *  
- *  References used:
- *  >> https://docs.oracle.com/javase/tutorial/uiswing/components/tabbedpane.html
- *  
+ * References used:
+ * - https://docs.oracle.com/javase/tutorial/uiswing/components/tabbedpane.html
  * @author yinyee
  *
  */
@@ -50,31 +53,44 @@ public class NewPatient extends gui.Patient {
 	}
 	
 	private void cancel() {
-		this.dispose();
+		int n = JOptionPane.showConfirmDialog(small, "Changes will be discarded.\nCancel anyway?", "Discard edits", JOptionPane.YES_NO_OPTION);
+		switch (n) {
+		case JOptionPane.YES_OPTION :
+			this.dispose();
+			break;
+		case JOptionPane.NO_OPTION :
+			break;
+		} 
+		
 	}
 	
 	private boolean validDate() {
 		
 		boolean check = true;
 		
-		if (cboxBirthDate.getSelectedItem().toString() == "31") {
-			if (cboxBirthMonth.getSelectedItem().toString() == "February" ||
-				cboxBirthMonth.getSelectedItem().toString() == "April" ||
-				cboxBirthMonth.getSelectedItem().toString() == "June" ||
-				cboxBirthMonth.getSelectedItem().toString() == "September" ||
-				cboxBirthMonth.getSelectedItem().toString() == "November") {
+		if (Integer.valueOf(cboxBirthYear.getSelectedItem().toString()) > 2015) {
+			JOptionPane.showMessageDialog(small, "Patient cannot be born later than current year");
+			check = false;
+		}
+		
+		if (cboxBirthDate.getSelectedItem().toString().equals("31")) {
+			if (cboxBirthMonth.getSelectedItem().toString().equals("February") ||
+				cboxBirthMonth.getSelectedItem().toString().equals("April") ||
+				cboxBirthMonth.getSelectedItem().toString().equals("June") ||
+				cboxBirthMonth.getSelectedItem().toString().equals("September") ||
+				cboxBirthMonth.getSelectedItem().toString().equals("November")) {
 				JOptionPane.showMessageDialog(small, "There is no 31st day in " + cboxBirthMonth.getSelectedItem().toString());
 				check = false;
 			}
 		}
 		
-		if (cboxBirthMonth.getSelectedItem().toString() == "February" && cboxBirthDate.getSelectedItem().toString() == "29") {
+		if (cboxBirthMonth.getSelectedItem().toString().equals("February") && cboxBirthDate.getSelectedItem().toString().equals("29")) {
 			if (Integer.valueOf(cboxBirthYear.getSelectedItem().toString()) % 4 != 0) {
 				JOptionPane.showMessageDialog(small, cboxBirthYear.getSelectedItem().toString() + " is not a leap year");
 				check = false;
 			}
-		} else if (cboxBirthMonth.getSelectedItem().toString() == "February" && (cboxBirthDate.getSelectedItem().toString() == "30" ||
-				cboxBirthDate.getSelectedItem().toString() == "31")) {
+		} else if (cboxBirthMonth.getSelectedItem().toString().equals("February")  && (cboxBirthDate.getSelectedItem().toString().equals("30") ||
+				cboxBirthDate.getSelectedItem().toString().equals("31") )) {
 			JOptionPane.showMessageDialog(small, "There are no 30th or 31st days in February");
 			check = false;
 		}
@@ -150,6 +166,7 @@ public class NewPatient extends gui.Patient {
 			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().toString()));
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("jpg files (*.jpg)", "jpg");
 			fChooser.setFileFilter(filter);
+			fChooser.setCurrentDirectory(new File(NewPatient.class.getClassLoader().getResource("data/").getPath()));
 		} catch (Exception f) {
 			f.printStackTrace();
 		}
@@ -157,7 +174,10 @@ public class NewPatient extends gui.Patient {
 		int m = this.fChooser.showOpenDialog(new JFrame());
 		switch(m) {
 		case JFileChooser.APPROVE_OPTION :
-			tPhoto.setText(fChooser.getSelectedFile().toString());
+			Path path = Paths.get(fChooser.getSelectedFile().toURI());
+			int count = path.getNameCount();
+			path = path.subpath(count-2, count);
+			tPhoto.setText(path.toString());
 			break;
 		case JFileChooser.CANCEL_OPTION :
 			break;
@@ -188,12 +208,12 @@ public class NewPatient extends gui.Patient {
 	
 	/**
 	 * The draw() method contains the code to render the GUI.	
-	 */
-	
+	 */	
 	private void draw() {
 		
 		this.setTitle("Register New Patient");
 		this.setMaximumSize(DIMENSION);
+		this.setLocationRelativeTo(null);
 		
 		// Subclass-specific components
 		// Personal details tab

@@ -1,5 +1,11 @@
 package obj;
 
+/**
+ * The obj.Patient class is the representation of a patient, whereas the
+ * gui.Patient class is a pattern for the GUI displaying patient information.
+ * 
+ * @author yinyee
+ */
 public class Patient {
 
 	private String firstName;

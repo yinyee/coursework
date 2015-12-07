@@ -3,7 +3,6 @@ package io;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -35,6 +34,7 @@ import gui.Dashboard;
  * - http://www.w3schools.com/xml/dom_nodes_remove.asp
  * - https://docs.oracle.com/javase/tutorial/jaxp/xslt/writingDom.html
  * - http://www.w3schools.com/xml/dom_nodes_replace.asp
+ * - https://docs.oracle.com/javase/tutorial/essential/io/pathOps.html
  * @author yinyee
  */
 public class Interpreter {
@@ -44,11 +44,13 @@ public class Interpreter {
 	/**
 	 * The verify() method is written specifically for the Login class.
 	 * It checks that:
-	 * >> the username exists in the database
-	 * >> the password matches the username provided
-	 * @param domain
-	 * @param username
-	 * @param password
+	 * - the username exists in the database
+	 * - the password matches the username provided
+	 * @param domain The .xml file containing the login details
+	 * @param username The username provided by the user
+	 * @param password The password provided by the user
+	 * @param login The instance of the Login window
+	 * @return Message about the login attempt
 	 */	
 	public String verify(URI domain, String username, String password, JFrame login) {
 		String message = "";
@@ -78,10 +80,12 @@ public class Interpreter {
 	
 	/**
 	 * The search() method is written specifically for the Dashboard class.
+	 * It returns the patients which match the search terms provided by the user.
 	 * 
-	 * @param domain
-	 * @param searchField
-	 * @param searchText
+	 * @param domain The .xml file containing patient data
+	 * @param searchField The field specified by the user, e.g. first name
+	 * @param searchText The term specified by the user, e.g. "Alex"
+	 * @return The patients which match the search terms provided
 	 */
 	public String[][] searchPatients(URI domain, String searchField, String searchText) {
 		
@@ -183,8 +187,8 @@ public class Interpreter {
 	
 	/**
 	 * The saveNewPatient() method adds a new patient to the database.
-	 * @param domain
-	 * @param newPatient
+	 * @param domain The .xml file containing patient data
+	 * @param newPatient Data of the new patient
 	 */
 	public void saveNewPatient(URI domain, String[] newPatient) {
 		
@@ -204,7 +208,12 @@ public class Interpreter {
 		write(domain, doc.getDocumentElement());
 
 	}
-	
+	/**
+	 * The saveEditedPatient() method saves edits made to the patient.
+	 * @param domain The .xml file containing patient data
+	 * @param original The original patient data
+	 * @param edited The edited patient data
+	 */
 	public void saveEditedPatient(URI domain, String[] original, String[] edited) {
 		
 		Document doc = parse(domain);
@@ -236,11 +245,44 @@ public class Interpreter {
 	}
 	
 	/**
+	 * The deletePatient() method deletes the patient displayed in the ViewEditPatient screen.
+	 * @param domain The .xml file containing patient data
+	 * @param target The patient to be deleted
+	 */
+	public void deletePatient(URI domain, String[] target) {
+		
+		Document doc = parse(domain);
+		doc.getDocumentElement().normalize();
+				
+		NodeList database = doc.getElementsByTagName("patient");
+		
+		boolean check = false;
+		for (int i = 0; i < database.getLength(); i++) {
+			NodeList record = database.item(i).getChildNodes();
+			for (int j = 0; j < record.getLength(); j++) {
+				Node current = record.item(j);
+				if (current.getTextContent().equals(target[j])) {
+					check = true;
+				} else {
+					check = false;
+					break;
+				}
+			}
+			System.out.println(check);
+			if (check) {
+				database.item(i).getParentNode().removeChild(database.item(i));
+			}	
+		}
+		write(domain, doc.getDocumentElement());
+	}
+	
+	/**
 	 * The retrieveRecords method is written specifically for the ViewEditPatient class.
 	 * It retrieves existing records associated with the specified patient.
-	 * @param domain
-	 * @param firstName
-	 * @param lastName
+	 * @param domain The .xml file containing record data
+	 * @param firstName The patient's first name, which, together with the patient's last name, is used to match records to the patient
+	 * @param lastName The patient's last name, which, together with the patient's first name, is used to match records to the patient
+	 * @return The records that belong to that patient
 	 */
 	public String[][] retrieveRecords(URI domain, String firstName, String lastName) {
 		
@@ -299,8 +341,8 @@ public class Interpreter {
 	
 	/**
 	 * The saveNewRecord() method adds a new record to the patient's profile.
-	 * @param domain
-	 * @param newRecord
+	 * @param domain The .xml file containing record data
+	 * @param newRecord Data of the new record
 	 */
 	public void saveNewRecord(URI domain, String[] newRecord) {
 		
@@ -324,9 +366,9 @@ public class Interpreter {
 		
 	/**
 	 * The saveEditedRecord() saves the edits made in the ViewEditRecord screen.
-	 * @param domain
-	 * @param original
-	 * @param edited
+	 * @param domain The .xml file containing record data
+	 * @param original The original record
+	 * @param edited The edited record
 	 */
 	public void saveEditedRecord(URI domain, String[] original, String[] edited) {
 		
@@ -360,8 +402,8 @@ public class Interpreter {
 
 	/**
 	 * The deleteRecord() method deletes the record displayed in the ViewEditRecord screen.
-	 * @param domain
-	 * @param target
+	 * @param domain The .xml file containing record data
+	 * @param target The record to be deleted
 	 */
 	public void deleteRecord(URI domain, String[] target) {
 		
@@ -392,9 +434,9 @@ public class Interpreter {
 	
 	/**
 	 * The importPatients() method allows the user to import an .xml file containing
-	 * patient data into the database.
-	 * @param domain
-	 * @param file
+	 * patient data into the database.  The new data is appended to the existing data.
+	 * @param domain The .xml file containing patient data
+	 * @param file The .xml file containing additional patient data to be imported
 	 */
 	public void importPatients(URI domain, URI file) {
 		
@@ -424,11 +466,41 @@ public class Interpreter {
 	}
 	
 	/**
+	 * The exportPatientData() method exports selected rows from the patient search
+	 * results table in the Dashboard to a file called "export.xml" in the bin folder.
+	 * @param domain The .xml file containing patient data
+	 * @param exportFile The "export.xml" file containing the exported data
+	 * @param exportRecords The patient records to be exported
+	 */
+	public void exportPatientData(URI domain, URI exportFile, String[][] exportRecords) {
+		
+		Document original = parse(domain);
+		original.getDocumentElement().normalize();
+		
+		Document doc = parse(exportFile);
+		doc.getDocumentElement().normalize();
+		
+		NodeList database = original.getElementsByTagName("patient");
+		NodeList tags = database.item(0).getChildNodes();
+		
+		for (int a = 0; a < exportRecords.length; a++) {
+			Node newNode = doc.createElement("patient");
+			for (int i = 0; i < tags.getLength(); i++) {
+				Node element = doc.createElement(tags.item(i).getNodeName());
+				element.setTextContent(exportRecords[a][i].toString());
+				newNode.appendChild(element);
+			}
+			doc.getDocumentElement().appendChild(newNode);
+		}
+		write(exportFile, doc.getDocumentElement());
+	}
+
+	/**
 	 * The parse() method is a helper method for the Interpreter class.  It returns
 	 * a parsed XML DOM to the caller.
-	 * @param domain
-	 * @return
-	 * @throws URISyntaxException 
+	 * 
+	 * @param domain The URI of the .xml file to be parsed
+	 * @return The parsed XML document
 	 */
 	
 	private Document parse(URI domain) {
@@ -472,8 +544,9 @@ public class Interpreter {
 	}
 
 	/**
-	 * 
-	 * @param output
+	 * The write() method writes to the specified file.
+	 * @param domain The .xml file to be written to
+	 * @param node The starting node of the XML DOM subtree
 	 */
 	public void write(URI domain, Node node) {
 

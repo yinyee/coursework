@@ -13,9 +13,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 /**
  * The Patient class has been declared abstract to prevent it from being instantiated.
- * It has two subclasses -- NewPatient and ViewEditPatient.
+ * This class provides a pattern for the NewPatient and ViewEditPatient subclasses.
+ * 
  * @author yinyee
- *
  */
 public abstract class Patient extends JFrame {
 
