@@ -1,59 +1,8 @@
 <?xml version="1.0"?>
 <database>
-	<record>
-		<firstName>Yin Yee</firstName>
-		<lastName>Kan</lastName>
-		<recordDate>1</recordDate>
-		<recordMonth>January</recordMonth>
-		<recordYear>2015</recordYear>
-		<doctor>Dr. Andrews</doctor>
-		<diagnosis>Esthesioneuroblastoma</diagnosis>
-		<notes>Displaying varying biologic activity ranging from indolent growth, with patient survival exceeding 20 years, to a highly aggressive neoplasm capable of rapid widespread metastasis.</notes>
-		<attachment>data/img1.jpg</attachment>
-	</record>
-	<record>
-		<firstName>Yin Yee</firstName>
-		<lastName>Kan</lastName>
-		<recordDate>10</recordDate>
-		<recordMonth>February</recordMonth
-		><recordYear>1992</recordYear>
-		<doctor>Dr. Andrews</doctor>
-		<diagnosis>Nesidioblastoma</diagnosis>
-		<notes>Severe, long-standing hypoglycemia due to hyperinsulinism. Surgical removal corrected the low glucose problems.</notes>
-		<attachment>data/img2.jpg</attachment>
-	</record>
-	<record>
-		<firstName>Alexis</firstName>
-		<lastName>Sherrington</lastName>
-		<recordDate>19</recordDate>
-		<recordMonth>October</recordMonth>
-		<recordYear>2015</recordYear>
-		<doctor>Dr. Andrews</doctor>
-		<diagnosis>Cholangiocarcinoma</diagnosis>
-		<notes>Abnormal liver function tests, jaundice (yellowing of the eyes and skin occurring when bile ducts are blocked by tumor), abdominal pain, generalized itching, weight loss, fever, and changes in stool or urine color.</notes>
-		<attachment>data/img3.jpg</attachment>
-	</record>
-	<record>
-		<firstName>Alexis</firstName>
-		<lastName>Sherrington</lastName>
-		<recordDate>10</recordDate>
-		<recordMonth>February</recordMonth>
-		<recordYear>1992</recordYear>
-		<doctor>Dr. Andrews</doctor>
-		<diagnosis>Thymoma</diagnosis>
-		<notes>Cough and chest pain.</notes>
-		<attachment>data/img4.jpg</attachment>
-	</record>
-	<record>
-		<firstName>Alex</firstName>
-		<lastName>Nair</lastName>
-		<recordDate>19</recordDate>
-		<recordMonth>October</recordMonth>
-		<recordYear>2015</recordYear>
-		<doctor>Dr. Andrews</doctor>
-		<diagnosis>Mesothelioma</diagnosis>
-		<notes>Chest pain, shortness of breath, tiredness (fatigue), sweating and high temperatures, persistent cough, losing weight when not dieting, loss of appetite, difficulty swallowing, hhoarse or husky voice.</notes>
-		<attachment>data/img5.jpg</attachment>
-		</record>
-</database>
+	<record><firstName>Yin Yee</firstName><lastName>Kan</lastName><recordDate>1</recordDate><recordMonth>January</recordMonth><recordYear>2015</recordYear><doctor>Dr. Andrews</doctor><diagnosis>Esthesioneuroblastoma</diagnosis><notes>Displaying varying biologic activity ranging from indolent growth, with patient survival exceeding 20 years, to a highly aggressive neoplasm capable of rapid widespread metastasis.</notes><attachment>data/img1.jpg</attachment></record>
+	<record><firstName>Yin Yee</firstName><lastName>Kan</lastName><recordDate>10</recordDate><recordMonth>February</recordMonth><recordYear>1992</recordYear><doctor>Dr. Andrews</doctor><diagnosis>Nesidioblastoma</diagnosis><notes>Severe, long-standing hypoglycemia due to hyperinsulinism. Surgical removal corrected the low glucose problems.</notes><attachment>data/img2.jpg</attachment></record>
+	<record><firstName>Alexis</firstName><lastName>Sherrington</lastName><recordDate>19</recordDate><recordMonth>October</recordMonth><recordYear>2015</recordYear><doctor>Dr. Andrews</doctor><diagnosis>Cholangiocarcinoma</diagnosis><notes>Abnormal liver function tests, jaundice (yellowing of the eyes and skin occurring when bile ducts are blocked by tumor), abdominal pain, generalized itching, weight loss, fever, and changes in stool or urine color.</notes><attachment>data/img3.jpg</attachment></record>
+	<record><firstName>Alexis</firstName><lastName>Sherrington</lastName><recordDate>10</recordDate><recordMonth>February</recordMonth><recordYear>1992</recordYear><doctor>Dr. Andrews</doctor><diagnosis>Thymoma</diagnosis><notes>Cough and chest pain.</notes><attachment>data/img4.jpg</attachment></record>
+	<record><firstName>Alex</firstName><lastName>Nair</lastName><recordDate>19</recordDate><recordMonth>October</recordMonth><recordYear>2015</recordYear><doctor>Dr. Andrews</doctor><diagnosis>Mesothelioma</diagnosis><notes>Chest pain, shortness of breath, tiredness (fatigue), sweating and high temperatures, persistent cough, losing weight when not dieting, loss of appetite, difficulty swallowing, hhoarse or husky voice.</notes><attachment>data/img5.jpg</attachment></record></database>
 			

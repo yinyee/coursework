@@ -1,55 +1,7 @@
 <?xml version="1.0"?>
 <database>
-	<patient>
-		<firstName>Yin Yee</firstName>
-		<lastName>Kan</lastName>
-		<gender>Female</gender>
-		<birthDate>8</birthDate>
-		<birthMonth>December</birthMonth>
-		<birthYear>1983</birthYear>
-		<emailAddress>yin.kan.15@ucl.ac.uk</emailAddress>
-		<mobilePhoneNumber>07931155585</mobilePhoneNumber>
-		<homePhoneNumber>07931155585</homePhoneNumber>
-		<numberOrName>Flat 15, Croydon House</numberOrName>
-		<street>Wootton Street</street>
-		<city>London</city>
-		<postalCode>SE1 8TS</postalCode>
-		<country>United Kingdom</country>
-		<photo>data/photo1.jpg</photo>
-	</patient>
-	<patient>
-		<firstName>Alexis</firstName>
-		<lastName>Sherrington</lastName>
-		<gender>Female</gender>
-		<birthDate>14</birthDate>
-		<birthMonth>February</birthMonth>
-		<birthYear>1983</birthYear>
-		<emailAddress>alexis@gmail.com</emailAddress>
-		<mobilePhoneNumber>07988888888</mobilePhoneNumber>
-		<homePhoneNumber>07988888888</homePhoneNumber>
-		<numberOrName>Flat D, Cornwall Court</numberOrName>
-		<street>Cleaver Street</street>
-		<city>London</city>
-		<postalCode>SE11 6FD</postalCode>
-		<country>United Kingdom</country>
-		<photo>data/photo2.jpg</photo>
-	</patient>
-	<patient>
-		<firstName>Alex</firstName>
-		<lastName>Nair</lastName>
-		<gender>Male</gender>
-		<birthDate>12</birthDate>
-		<birthMonth>February</birthMonth>
-		<birthYear>1980</birthYear>
-		<emailAddress>alex.nair@gmail.com</emailAddress>
-		<mobilePhoneNumber>07911111111</mobilePhoneNumber>
-		<homePhoneNumber>07911111111</homePhoneNumber>
-		<numberOrName>34, Conrad House</numberOrName>
-		<street>Beaver Street</street>
-		<city>London</city>
-		<postalCode>N1 6FD</postalCode>
-		<country>United Kingdom</country>
-		<photo>data/photo3.jpg</photo>
-	</patient>
+	<patient><firstName>Yin Yee</firstName><lastName>Kan</lastName><gender>Female</gender><birthDate>8</birthDate><birthMonth>December</birthMonth><birthYear>1983</birthYear><emailAddress>yin.kan.15@ucl.ac.uk</emailAddress><mobilePhoneNumber>07931155585</mobilePhoneNumber><homePhoneNumber>07931155585</homePhoneNumber><numberOrName>Flat 15, Croydon House</numberOrName><street>Wootton Street</street><city>London</city><postalCode>SE1 8TS</postalCode><country>United Kingdom</country><photo>data/photo1.jpg</photo></patient>
+	<patient><firstName>Alexis</firstName><lastName>Sherrington</lastName><gender>Female</gender><birthDate>14</birthDate><birthMonth>February</birthMonth><birthYear>1983</birthYear><emailAddress>alexis@gmail.com</emailAddress><mobilePhoneNumber>07988888888</mobilePhoneNumber><homePhoneNumber>07988888888</homePhoneNumber><numberOrName>Flat D, Cornwall Court</numberOrName><street>Cleaver Street</street><city>London</city><postalCode>SE11 6FD</postalCode><country>United Kingdom</country><photo>data/photo2.jpg</photo></patient>
+	<patient><firstName>Alex</firstName><lastName>Nair</lastName><gender>Male</gender><birthDate>12</birthDate><birthMonth>February</birthMonth><birthYear>1980</birthYear><emailAddress>alex.nair@gmail.com</emailAddress><mobilePhoneNumber>07911111111</mobilePhoneNumber><homePhoneNumber>07911111111</homePhoneNumber><numberOrName>34, Conrad House</numberOrName><street>Beaver Street</street><city>London</city><postalCode>N1 6FD</postalCode><country>United Kingdom</country><photo>data/photo3.jpg</photo></patient>
 </database>
 			

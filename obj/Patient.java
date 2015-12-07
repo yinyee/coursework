@@ -17,6 +17,7 @@ public class Patient {
 	private String postalCode;
 	private String country;
 	private String photo;
+	private String[] patientData;
 	
 	public Patient (String[] patientData) {
 		this.firstName = patientData[0];
@@ -34,6 +35,7 @@ public class Patient {
 		this.postalCode = patientData[12];
 		this.country = patientData[13];
 		this.photo = patientData[14];
+		this.patientData = patientData;
 	}
 		
 	public String getFullName() {
@@ -102,5 +104,9 @@ public class Patient {
 	
 	public String getPhoto() {
 		return photo;
+	}
+	
+	public String[] getPatientData() {
+		return patientData;
 	}
 }

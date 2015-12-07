@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
@@ -23,7 +25,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import io.Interpreter;
-import obj.Patient;
 import obj.Record;
 
 /**
@@ -40,7 +41,7 @@ import obj.Record;
  *
  */
 
-public class ViewEditPatient extends gui.Patient {
+public class ViewEditPatient extends gui.Patient implements MouseListener {
 	
 	private static final long serialVersionUID = 1L;
 	private obj.Patient patient;
@@ -49,38 +50,96 @@ public class ViewEditPatient extends gui.Patient {
 	private final static Logger LOGGER = Logger.getLogger(ViewEditPatient.class.getName());
 	public final static String RECORDS = "data/records.xml";
 	private final static String[] HEADER = {"First name", "Last name", "Record date", "Record month", "Record year", "Doctor", "Diagnosis", "Notes", "Attachment"};
-	
+
 	private JFrame small;
 	private int n;
 	private JPanel pView, pEdit;
 	private CardLayout layout;
 	private JLabel lPhoto, lFullName, lGender, lBirthDate, lRecord;
+	private JLabel l2EmailAddress, l2MobilePhoneNumber, l2HomePhoneNumber, l2HomeNumberOrName, l2HomeStreet, l2HomeCity, l2HomePostalCode, l2HomeCountry;
 	private JLabel leContactDetails, leEmailAddress, leMobilePhoneNumber, leHomePhoneNumber, leHomeAddress, leHomeNumberOrName, leHomeStreet, leHomeCity, leHomePostalCode, leHomeCountry;
-	private JSeparator sMainHorizontal, seAddHorizontal;
+	private JSeparator sMainHorizontal, sAddHorizontal, seAddHorizontal;
 	private JTable tbRecord;
 	private JScrollPane scrRecord;
 	private JButton bAdd, bView, bEdit, bCancel, bSave, bDelete;
 	private ButtonListener bListener;
 	private ImageIcon iPhoto;
+	
+	private GridBagConstraints clPhoto, csMainHorizontal, clRecord, cscrRecord, cbAdd, cbView, cbDelete;
 		
 	public ViewEditPatient(obj.Patient patient) {
 		this.patient = patient;
-		if (loadRecords(this.patient) != null) {
-			this.records = loadRecords(this.patient);
-			tbRecord = new JTable(this.records, HEADER) {
-				private static final long serialVersionUID = 1L;
-				public boolean isCellEditable(int row, int column) {
-					return false;
-				}
-			};
-		} else {
-			tbRecord = new JTable(5, 10) {
-				private static final long serialVersionUID = 1L;
-				public boolean isCellEditable(int row, int column) {
-					return false;
-				}
-			};
-		}	
+		this.addMouseListener(this);
+		loadRecords();
+		
+		tabbedPane = new JTabbedPane();
+		pPersonalDetails = new JPanel(new GridBagLayout());
+		layout = new CardLayout();
+		pContactDetails = new JPanel(layout);
+		pView = new JPanel(new GridBagLayout());
+		pEdit = new JPanel(new GridBagLayout());
+		lPhoto = new JLabel();
+		lFullName = new JLabel();
+		lGender = new JLabel();
+		lBirthDate = new JLabel();
+		sMainHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		lRecord = new JLabel("MEDICAL RECORD");
+		scrRecord = new JScrollPane(tbRecord);
+		bListener = new ButtonListener();
+		bDelete = new JButton("Delete Patient");
+		bDelete.addActionListener(bListener);
+		bDelete.setActionCommand("Delete");
+		bAdd = new JButton("Add New Record");
+		bAdd.addActionListener(bListener);
+		bAdd.setActionCommand("Add");
+		bView = new JButton("View Record");
+		bView.addActionListener(bListener);
+		bView.setActionCommand("View");
+		clPhoto = new GridBagConstraints();
+		csMainHorizontal = new GridBagConstraints();
+		clRecord = new GridBagConstraints();
+		cscrRecord = new GridBagConstraints();
+		cbAdd = new GridBagConstraints();
+		cbView = new GridBagConstraints();
+		cbDelete = new GridBagConstraints();
+		l2EmailAddress = new JLabel();
+		l2MobilePhoneNumber = new JLabel();
+		l2HomePhoneNumber = new JLabel();
+		sAddHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		l2HomeNumberOrName = new JLabel();
+		l2HomeStreet = new JLabel();
+		l2HomeCity = new JLabel();
+		l2HomePostalCode = new JLabel();	
+		l2HomeCountry = new JLabel();
+		bEdit = new JButton("Edit");
+		bEdit.addActionListener(bListener);
+		bEdit.setActionCommand("Edit");
+		leContactDetails = new JLabel("CONTACT DETAILS");
+		leEmailAddress = new JLabel("Email address");
+		tEmailAddress = new JTextField();
+		leMobilePhoneNumber = new JLabel("Mobile phone number");
+		tMobilePhoneNumber = new JTextField();
+		leHomePhoneNumber = new JLabel("Home phone number");
+		tHomePhoneNumber = new JTextField();
+		seAddHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		leHomeAddress = new JLabel("HOME ADDRESS");
+		leHomeNumberOrName = new JLabel("House number and name");
+		tHouseNumberOrName = new JTextField();
+		leHomeStreet = new JLabel("Street");
+		tStreet = new JTextField();
+		leHomeCity = new JLabel("City or town");
+		tCity = new JTextField();
+		leHomePostalCode = new JLabel("Postal code");
+		tPostalCode = new JTextField();
+		leHomeCountry = new JLabel("Country");
+		tCountry = new JTextField();
+		bCancel = new JButton("Cancel");
+		bCancel.addActionListener(bListener);
+		bCancel.setActionCommand("Cancel");
+		bSave = new JButton("Save");
+		bSave.addActionListener(bListener);
+		bSave.setActionCommand("Save");
+		
 		draw();
 	}
 	
@@ -88,10 +147,29 @@ public class ViewEditPatient extends gui.Patient {
 	 * The loadRecords() method fetches the records associated with
 	 * this patient from the database.
 	 */
-	private String[][] loadRecords(Patient patient) {
-		
-		Interpreter interpreter = new Interpreter();
-		return interpreter.retrieveRecords(RECORDS, patient.getFirstName(), patient.getLastName());
+	private void loadRecords() {
+		try {
+			Interpreter interpreter = new Interpreter();
+			records = interpreter.retrieveRecords(ViewEditPatient.class.getClassLoader().getResource(RECORDS).toURI(), patient.getFirstName(), patient.getLastName());
+			if (records != null) {	
+				tbRecord = new JTable(records, HEADER) {
+					private static final long serialVersionUID = 1L;
+					public boolean isCellEditable(int row, int column) {
+						return false;
+					}
+				};
+			} else {
+				tbRecord = new JTable(5, 10) {
+					private static final long serialVersionUID = 1L;
+					public boolean isCellEditable(int row, int column) {
+						return false;
+					}
+				};
+			}				
+		} catch (URISyntaxException urise) {
+			urise.printStackTrace();
+		}
+
 	}
 	
 	/**
@@ -158,24 +236,31 @@ public class ViewEditPatient extends gui.Patient {
 			LOGGER.info("Country: changed from " + patient.getCountry() + " to " + tCountry.getText());
 		}
 			
-		String[] edittedPatient = new String[15];
-		edittedPatient[0] = patient.getFirstName();
-		edittedPatient[1] = patient.getLastName();
-		edittedPatient[2] = patient.getGender();
-		edittedPatient[3] = patient.getBirthDate();
-		edittedPatient[4] = patient.getBirthMonth();
-		edittedPatient[5] = patient.getBirthYear();
-		edittedPatient[6] = tEmailAddress.getText();
-		edittedPatient[7] = tMobilePhoneNumber.getText();
-		edittedPatient[8] = tHomePhoneNumber.getText();
-		edittedPatient[9] = tHouseNumberOrName.getText();
-		edittedPatient[10] = tStreet.getText();
-		edittedPatient[11] = tCity.getText();
-		edittedPatient[12] = tPostalCode.getText();
-		edittedPatient[13] = tCountry.getText();
-		edittedPatient[14] = patient.getPhoto();
+		String[] editedPatient = new String[15];
+		editedPatient[0] = patient.getFirstName();
+		editedPatient[1] = patient.getLastName();
+		editedPatient[2] = patient.getGender();
+		editedPatient[3] = patient.getBirthDate();
+		editedPatient[4] = patient.getBirthMonth();
+		editedPatient[5] = patient.getBirthYear();
+		editedPatient[6] = tEmailAddress.getText();
+		editedPatient[7] = tMobilePhoneNumber.getText();
+		editedPatient[8] = tHomePhoneNumber.getText();
+		editedPatient[9] = tHouseNumberOrName.getText();
+		editedPatient[10] = tStreet.getText();
+		editedPatient[11] = tCity.getText();
+		editedPatient[12] = tPostalCode.getText();
+		editedPatient[13] = tCountry.getText();
+		editedPatient[14] = patient.getPhoto();
 		
-		this.patient = new obj.Patient(edittedPatient);		
+		try {
+			Interpreter interpreter = new Interpreter();
+			interpreter.saveEditedPatient(ViewEditPatient.class.getClassLoader().getResource(Dashboard.PATIENT).toURI(), patient.getPatientData(), editedPatient);
+		} catch (URISyntaxException urise) {
+			urise.printStackTrace();
+		}
+				
+		patient = new obj.Patient(editedPatient);
 		draw();
 		layout.show(pContactDetails, "View");
 		
@@ -197,6 +282,14 @@ public class ViewEditPatient extends gui.Patient {
 	}
 	
 	/**
+	 * The refresh() method revalidates the GUI.
+	 */
+	private void refresh() {
+		loadRecords();
+		draw();
+	}
+	
+	/**
 	 * The ButtonListener class is a helper class that directs the program to 
 	 * perform certain actions, e.g. get information or save changes, depending 
 	 * on the buttons that the user clicks on.
@@ -205,8 +298,7 @@ public class ViewEditPatient extends gui.Patient {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
-			
+					
 			switch (e.getActionCommand()) {
 			case "Add" :
 				newRecord();
@@ -229,7 +321,7 @@ public class ViewEditPatient extends gui.Patient {
 			}		
 		}
 	}
-	
+		
 	/**
 	 * The scalePhoto() method loads and scales the patient's photo.
 	 */
@@ -254,46 +346,19 @@ public class ViewEditPatient extends gui.Patient {
 
 		this.setTitle("View/Edit -- " + patient.getFullName());
 		this.setMaximumSize(DIMENSION);
-		tabbedPane = new JTabbedPane();
-		pPersonalDetails = new JPanel(new GridBagLayout());
-		layout = new CardLayout();
-		pContactDetails = new JPanel(layout);
-		pView = new JPanel(new GridBagLayout());
-		pEdit = new JPanel(new GridBagLayout());
 
 		// Main tab
 		scalePhoto();
-		lPhoto = new JLabel(iPhoto);
-		lFullName = new JLabel(patient.getFullName());
-		lGender = new JLabel(patient.getGender());
-		lBirthDate = new JLabel("Born " + patient.getFormattedBirthDate());
-		sMainHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		lRecord = new JLabel("MEDICAL RECORD");
+		lPhoto.setIcon(iPhoto);
+		lFullName.setText(patient.getFullName());
+		lGender.setText(patient.getGender());;
+		lBirthDate.setText("Born " + patient.getFormattedBirthDate());;
 		tbRecord.setMinimumSize(tbRecord.getPreferredSize());
 		tbRecord.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tbRecord.setAutoCreateRowSorter(true);
-		scrRecord = new JScrollPane(tbRecord);
 		scrRecord.setViewportView(tbRecord);
 		scrRecord.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrRecord.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		bListener = new ButtonListener();
-		bDelete = new JButton("Delete Patient");
-		bDelete.addActionListener(bListener);
-		bDelete.setActionCommand("Delete");
-		bAdd = new JButton("Add New Record");
-		bAdd.addActionListener(bListener);
-		bAdd.setActionCommand("Add");
-		bView = new JButton("View Record");
-		bView.addActionListener(bListener);
-		bView.setActionCommand("View");
-
-		GridBagConstraints clPhoto = new GridBagConstraints();
-		GridBagConstraints csMainHorizontal = new GridBagConstraints();
-		GridBagConstraints clRecord = new GridBagConstraints();
-		GridBagConstraints cscrRecord = new GridBagConstraints();
-		GridBagConstraints cbAdd = new GridBagConstraints();
-		GridBagConstraints cbView = new GridBagConstraints();
-		GridBagConstraints cbDelete = new GridBagConstraints();
 		
 		clPhoto.gridx = 0;
 		clPhoto.gridy = 0;
@@ -359,18 +424,14 @@ public class ViewEditPatient extends gui.Patient {
 		// Additional tab
 		// Use Card layout to switch between View and Edit
 		// View card
-		JLabel l2EmailAddress = new JLabel(patient.getEmailAddress());
-		JLabel l2MobilePhoneNumber = new JLabel(patient.getMobilePhoneNumber());
-		JLabel l2HomePhoneNumber = new JLabel(patient.getHomePhoneNumber());
-		JSeparator sAddHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		JLabel l2HomeNumberOrName = new JLabel(patient.getHouseNumberOrName());
-		JLabel l2HomeStreet = new JLabel(patient.getStreet());
-		JLabel l2HomeCity = new JLabel(patient.getCity());
-		JLabel l2HomePostalCode = new JLabel(patient.getPostalCode());	
-		JLabel l2HomeCountry = new JLabel(patient.getCountry());
-		bEdit = new JButton("Edit");
-		bEdit.addActionListener(bListener);
-		bEdit.setActionCommand("Edit");
+		l2EmailAddress.setText(patient.getEmailAddress());
+		l2MobilePhoneNumber.setText(patient.getMobilePhoneNumber());
+		l2HomePhoneNumber.setText(patient.getHomePhoneNumber());
+		l2HomeNumberOrName.setText(patient.getHouseNumberOrName());
+		l2HomeStreet.setText(patient.getStreet());
+		l2HomeCity.setText(patient.getCity());
+		l2HomePostalCode.setText(patient.getPostalCode());	
+		l2HomeCountry.setText(patient.getCountry());
 				
 		pView.add(lContactDetails, clContactDetails);
 		pView.add(lEmailAddress, clEmailAddress);
@@ -394,33 +455,15 @@ public class ViewEditPatient extends gui.Patient {
 		pView.add(bEdit, cbEditSave);
 		
 		// Edit card
-		
-		leContactDetails = new JLabel("CONTACT DETAILS");
-		leEmailAddress = new JLabel("Email address");
-		tEmailAddress = new JTextField(patient.getEmailAddress());
-		leMobilePhoneNumber = new JLabel("Mobile phone number");
-		tMobilePhoneNumber = new JTextField(patient.getMobilePhoneNumber());
-		leHomePhoneNumber = new JLabel("Home phone number");
-		tHomePhoneNumber = new JTextField(patient.getHomePhoneNumber());
-		seAddHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		leHomeAddress = new JLabel("HOME ADDRESS");
-		leHomeNumberOrName = new JLabel("House number and name");
-		tHouseNumberOrName = new JTextField(patient.getHouseNumberOrName());
-		leHomeStreet = new JLabel("Street");
-		tStreet = new JTextField(patient.getStreet());
-		leHomeCity = new JLabel("City or town");
-		tCity = new JTextField(patient.getCity());
-		leHomePostalCode = new JLabel("Postal code");
-		tPostalCode = new JTextField(patient.getPostalCode());
-		leHomeCountry = new JLabel("Country");
-		tCountry = new JTextField(patient.getCountry());
-		bCancel = new JButton("Cancel");
-		bCancel.addActionListener(bListener);
-		bCancel.setActionCommand("Cancel");
-		bSave = new JButton("Save");
-		bSave.addActionListener(bListener);
-		bSave.setActionCommand("Save");
-				
+		tEmailAddress.setText(patient.getEmailAddress());
+		tMobilePhoneNumber.setText(patient.getMobilePhoneNumber());
+		tHomePhoneNumber.setText(patient.getHomePhoneNumber());
+		tHouseNumberOrName.setText(patient.getHouseNumberOrName());
+		tStreet.setText(patient.getStreet());
+		tCity.setText(patient.getCity());
+		tPostalCode.setText(patient.getPostalCode());
+		tCountry.setText(patient.getCountry());
+
 		pEdit.add(leContactDetails, clContactDetails);
 		pEdit.add(leEmailAddress, clEmailAddress);
 		pEdit.add(tEmailAddress, cl2EmailAddress);
@@ -455,4 +498,30 @@ public class ViewEditPatient extends gui.Patient {
 		
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		;
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		;
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		;
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		refresh();
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {;
+		
+	}
+	
 }

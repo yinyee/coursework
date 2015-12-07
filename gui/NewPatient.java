@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -15,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import io.Interpreter;
 import obj.Patient;
 
 /**
@@ -126,10 +128,20 @@ public class NewPatient extends gui.Patient {
 			newPatient[14] = tPhoto.getText();
 			
 			obj.Patient patient = new Patient(newPatient);
+			
+			try {
+				Interpreter interpreter = new Interpreter();
+				interpreter.saveNewPatient(NewPatient.class.getClassLoader().getResource(Dashboard.PATIENT).toURI(), newPatient);				
+			} catch (URISyntaxException urise) {
+				urise.printStackTrace();
+			}
+			
 			LOGGER.info("New patient " + patient.getFullName() + " saved to database");
+			
 			ViewEditPatient vepWindow = new ViewEditPatient(patient);
 			vepWindow.setVisible(true);
-			// output to string and save in database			
+			this.dispose();
+						
 		}		
 	}
 	

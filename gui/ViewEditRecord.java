@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import io.Interpreter;
 import obj.Record;
 
 /**
@@ -55,7 +56,59 @@ public class ViewEditRecord extends gui.Record {
 	private ImageIcon iAttachment;
 	
 	public ViewEditRecord(Record record) {
+		
 		this.record = record;
+		
+		this.setTitle("View/Edit Record -- " + record.getPatientFullName());
+		this.setMinimumSize(DIMENSION);
+		layout = new CardLayout();
+		pCard = new JPanel(layout);
+		pView = new JPanel(new GridBagLayout());
+		pEdit = new JPanel(new GridBagLayout());
+		l2Patient = new JLabel();
+		l2RecordDate = new JLabel();
+		l2Doctor = new JLabel();
+		l2Diagnosis = new JLabel();
+		bListener = new ButtonListener();
+		bGet = new JButton("Info");
+		bGet.addActionListener(bListener);
+		bGet.setActionCommand("Get");
+		tNotes = new JTextArea();
+		tNotes.setEditable(false);
+		tNotes.setLineWrap(true);
+		tNotes.setBackground(UIManager.getColor("Label.background"));
+		l2Attachment = new JLabel();
+		bEdit = new JButton("Edit");
+		bEdit.addActionListener(bListener);
+		bEdit.setActionCommand("Edit");
+		bDelete = new JButton("Delete Record");
+		bDelete.addActionListener(bListener);
+		bDelete.setActionCommand("Delete");		
+		lePatient = new JLabel("Patient");
+		le2Patient = new JLabel();
+		leRecordDate = new JLabel("Date");
+		leDoctor = new JLabel("Doctor");
+		tDoctor = new JTextField();
+		seHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		leDiagnosis = new JLabel("Diagnosis");
+		b2Get = new JButton("Info");
+		b2Get.addActionListener(bListener);
+		b2Get.setActionCommand("Get");
+		leNotes = new JLabel("Notes");
+		t2Notes = new JTextArea();
+		t2Notes.setLineWrap(true);
+		leAttachment = new JLabel("Attachment");
+		tAttachment = new JTextField();
+		bUpload = new JButton("Upload");
+		bUpload.addActionListener(bListener);
+		bUpload.setActionCommand("Upload");
+		bCancel = new JButton("Cancel");
+		bCancel.addActionListener(bListener);
+		bCancel.setActionCommand("Cancel");
+		bSave = new JButton("Save");
+		bSave.addActionListener(bListener);
+		bSave.setActionCommand("Save");
+		
 		draw();
 	}
 	
@@ -67,7 +120,6 @@ public class ViewEditRecord extends gui.Record {
 		if (n == JOptionPane.YES_OPTION) {
 			LOGGER.info("Edits discarded");
 			layout.show(pCard, "View");
-			pCard.validate();
 		}
 	}
 	
@@ -151,8 +203,14 @@ public class ViewEditRecord extends gui.Record {
 			editedRecord[7] = t2Notes.getText();
 			editedRecord[8] = tAttachment.getText();
 			
+			try {
+				Interpreter interpreter = new Interpreter();
+				interpreter.saveEditedRecord(ViewEditRecord.class.getClassLoader().getResource(ViewEditPatient.RECORDS).toURI(), this.record.getRecordData(), editedRecord);				
+			} catch (URISyntaxException urise) {
+				urise.printStackTrace();
+			}
+			
 			record = new obj.Record(editedRecord);
-			// Save to database
 			draw();
 			layout.show(pCard, "View");
 			
@@ -165,7 +223,13 @@ public class ViewEditRecord extends gui.Record {
 	private void delete() {
 		n = JOptionPane.showConfirmDialog(small, "Are you sure you want\n to delete this record?", "Delete Record", JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
-			// Delete from database
+			String[] target = this.record.getRecordData();
+			try {
+				Interpreter interpreter = new Interpreter();
+				interpreter.deleteRecord(ViewEditRecord.class.getClassLoader().getResource(ViewEditPatient.RECORDS).toURI(), target);				
+			} catch (URISyntaxException urise) {
+				urise.printStackTrace();
+			}
 			JOptionPane.showMessageDialog(small, "Record deleted");
 			LOGGER.severe("Record for " + record.getPatientFullName() + " has been deleted");
 			this.dispose();					
@@ -252,32 +316,15 @@ public class ViewEditRecord extends gui.Record {
 	 * particular subclass.	
 	 */
 	public void draw() {
-	
-		this.setTitle("View/Edit Record -- " + record.getPatientFullName());
-		this.setMinimumSize(DIMENSION);
-		layout = new CardLayout();
-		pCard = new JPanel(layout);
-		pView = new JPanel(new GridBagLayout());
-		pEdit = new JPanel(new GridBagLayout());
-		
+			
 		// View card
 		scalePhoto();
-		l2Patient = new JLabel(record.getPatientFullName());
-		l2RecordDate = new JLabel(record.getFormattedDate());
-		l2Doctor = new JLabel(record.getDoctor());
-		l2Diagnosis = new JLabel(record.getDiagnosis());
-		bListener = new ButtonListener();
-		bGet = new JButton("Info");
-		bGet.addActionListener(bListener);
-		bGet.setActionCommand("Get");
-		tNotes = new JTextArea(record.getNotes());
-		tNotes.setEditable(false);
-		tNotes.setLineWrap(true);
-		tNotes.setBackground(UIManager.getColor("Label.background"));
-		l2Attachment = new JLabel(iAttachment);
-		bEdit = new JButton("Edit");
-		bEdit.addActionListener(bListener);
-		bEdit.setActionCommand("Edit");
+		l2Patient.setText(record.getPatientFullName());
+		l2RecordDate.setText(record.getFormattedDate());
+		l2Doctor.setText(record.getDoctor());
+		l2Diagnosis.setText(record.getDiagnosis());
+		tNotes.setText(record.getNotes());
+		l2Attachment.setIcon(iAttachment);
 		
 		pView.add(lPatient, clPatient);
 		pView.add(l2Patient, cl2Patient);
@@ -297,37 +344,14 @@ public class ViewEditRecord extends gui.Record {
 		
 		// Edit card
 		
-		bDelete = new JButton("Delete Record");
-		bDelete.addActionListener(bListener);
-		bDelete.setActionCommand("Delete");		
-		lePatient = new JLabel("Patient");
-		le2Patient = new JLabel(record.getPatientFullName());
-		leRecordDate = new JLabel("Date");
+		le2Patient.setText(record.getPatientFullName());
 		cboxRecordDate.setSelectedItem(record.getRecordDate());
 		cboxRecordMonth.setSelectedItem(record.getRecordMonth());
 		cboxRecordYear.setSelectedItem(record.getRecordYear());
-		leDoctor = new JLabel("Doctor");
-		tDoctor = new JTextField(record.getDoctor());
-		seHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		leDiagnosis = new JLabel("Diagnosis");
+		tDoctor.setText(record.getDoctor());
 		cboxDiagnosis.setSelectedItem(record.getDiagnosis());
-		b2Get = new JButton("Info");
-		b2Get.addActionListener(bListener);
-		b2Get.setActionCommand("Get");
-		leNotes = new JLabel("Notes");
-		t2Notes = new JTextArea(record.getNotes());
-		t2Notes.setLineWrap(true);
-		leAttachment = new JLabel("Attachment");
-		tAttachment = new JTextField(record.getAttachment());
-		bUpload = new JButton("Upload");
-		bUpload.addActionListener(bListener);
-		bUpload.setActionCommand("Upload");
-		bCancel = new JButton("Cancel");
-		bCancel.addActionListener(bListener);
-		bCancel.setActionCommand("Cancel");
-		bSave = new JButton("Save");
-		bSave.addActionListener(bListener);
-		bSave.setActionCommand("Save");
+		t2Notes.setText(record.getNotes());
+		tAttachment.setText(record.getAttachment());
 		
 		pEdit.add(bDelete, cbDelete);
 		pEdit.add(lePatient, clPatient);

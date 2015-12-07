@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URISyntaxException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -58,7 +60,11 @@ public class Login extends JFrame {
 		username = tUsername.getText();
 		password = tPassword.getText(); 
 		Interpreter interpreter = new Interpreter();
-		lMessage.setText(interpreter.verify(LOGIN, username, password, this));
+		try {
+			lMessage.setText(interpreter.verify(Login.class.getClassLoader().getResource(LOGIN).toURI(), username, password, this));
+		} catch (URISyntaxException urise) {
+			urise.printStackTrace();;
+		}
 		lMessage.validate();
 	}
 	

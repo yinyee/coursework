@@ -11,6 +11,7 @@ public class Record {
 	private String diagnosis;
 	private String notes;
 	private String attachment;
+	private String[] recordData;
 	
 	public Record(String[] recordData) {
 		this.patientFirstName = recordData[0];
@@ -22,6 +23,7 @@ public class Record {
 		this.diagnosis = recordData[6];
 		this.notes = recordData[7];
 		this.attachment = recordData[8];
+		this.recordData = recordData;
 	}
 
 	public String getPatientFirstName() {
@@ -100,6 +102,10 @@ public class Record {
 
 	public void setAttachment(String newAttachment) {
 		attachment = newAttachment;
+	}
+	
+	public String[] getRecordData() {
+		return recordData;
 	}
 
 }

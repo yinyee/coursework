@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -16,6 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import io.Interpreter;
 import obj.Patient;
 import obj.Record;
 /**
@@ -78,7 +80,7 @@ public class NewRecord extends gui.Record {
 	private void save() {
 		
 		if (validDate()) {
-			// Save to database
+			
 			LOGGER.info("First name: " + patient.getFirstName());
 			LOGGER.info("Last name: " + patient.getLastName());
 			LOGGER.info("Record date: " + cboxRecordDate.getSelectedItem().toString());
@@ -99,11 +101,20 @@ public class NewRecord extends gui.Record {
 			newRecord[6] = cboxDiagnosis.getSelectedItem().toString();
 			newRecord[7] = tNotes.getText();
 			newRecord[8] = tAttachment.getText();
-			
 			obj.Record record = new Record(newRecord);
+			
+			try {
+				Interpreter interpreter = new Interpreter();
+				interpreter.saveNewRecord(NewRecord.class.getClassLoader().getResource(ViewEditPatient.RECORDS).toURI(), newRecord);				
+			} catch (URISyntaxException urise) {
+				urise.printStackTrace();
+			}
+			
 			ViewEditRecord verWindow = new ViewEditRecord(record);
 			verWindow.setVisible(true);
+			
 			LOGGER.info("New record for " + patient.getFullName() + " saved to database");
+			
 			this.dispose();
 
 		}

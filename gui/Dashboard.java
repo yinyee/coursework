@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -13,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import io.Interpreter;
 
@@ -22,6 +24,11 @@ import javax.swing.JSeparator;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 /**
@@ -42,10 +49,11 @@ import java.util.logging.Logger;
  *
  */
 
-public class Dashboard extends JFrame {
+public class Dashboard extends JFrame implements MouseListener {
 	
 	private static final long serialVersionUID = 1L;
 	private static Dashboard instance = null;
+	private JFileChooser fChooser = new JFileChooser();
 	public final static String PATIENT = "data/patient.xml";
 	
 	private final static Logger LOGGER = Logger.getLogger(Dashboard.class.getName());
@@ -58,17 +66,78 @@ public class Dashboard extends JFrame {
 	private String[][] searchResults;
 	
 	private JFrame small;
+	private Container panel;
 	int n;
 	private JLabel lWelcome, lSearch, lRegister, lResults;
 	private JTextField tSearch;
 	private JComboBox<String> cboxSearch;
-	private JButton bSearch, bRegister, bOpen, bLogout;
+	private JButton bSearch, bRegister, bOpen, bLogout, bImport, bExport;
 	private JSeparator sVertical, sHorizontal;
 	private JScrollPane scrResults;
 	private JTable tbResults;
 	private ButtonListener bListener;
 	
+	private GridBagConstraints clWelcome, clSearch, ccboxSearch, ctSearch, cbSearch, csVertical, clRegister, cbRegister, 
+			csHorizontal, clResults, cscrResults, cbOpen, cbLogout, cbImport, cbExport;
+
 	private Dashboard() {
+		
+		this.addMouseListener(this);
+		this.setTitle("Patient Management System -- Dashboard");
+		panel = this.getContentPane();
+		panel.setLayout(new GridBagLayout());
+
+		lWelcome = new JLabel("Welcome, Administrator");
+		lSearch = new JLabel("Search patients");
+		cboxSearch = new JComboBox<String>(SEARCHFIELDS);
+		tSearch = new JTextField();
+		bSearch = new JButton("Search");
+		sVertical = new JSeparator(JSeparator.VERTICAL);
+		lRegister = new JLabel("New patient");
+		bRegister = new JButton("Register");
+		sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
+		lResults = new JLabel("Search results");	
+		tbResults = new JTable(5, 10);
+		tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tbResults.setFillsViewportHeight(true);
+		scrResults = new JScrollPane(tbResults);
+		scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		bOpen = new JButton("Open patient profile");
+		bLogout = new JButton("Log out");
+		bImport = new JButton("Import");
+		bExport = new JButton("Export");
+		
+		bListener = new ButtonListener();
+		bSearch.addActionListener(bListener);
+		bSearch.setActionCommand("Search");
+		bRegister.addActionListener(bListener);
+		bRegister.setActionCommand("Register");
+		bOpen.addActionListener(bListener);
+		bOpen.setActionCommand("Open");
+		bLogout.addActionListener(bListener);
+		bLogout.setActionCommand("Logout");
+		bImport.addActionListener(bListener);
+		bImport.setActionCommand("Import");
+		bExport.addActionListener(bListener);
+		bExport.setActionCommand("Export");
+
+		clWelcome = new GridBagConstraints();
+		clSearch = new GridBagConstraints();
+		ccboxSearch = new GridBagConstraints();
+		ctSearch = new GridBagConstraints();
+		cbSearch = new GridBagConstraints();
+		csVertical = new GridBagConstraints();
+		clRegister = new GridBagConstraints();
+		cbRegister = new GridBagConstraints();
+		csHorizontal = new GridBagConstraints();
+		clResults = new GridBagConstraints();
+		cscrResults = new GridBagConstraints();
+		cbOpen = new GridBagConstraints();
+		cbLogout = new GridBagConstraints();
+		cbImport = new GridBagConstraints();
+		cbExport = new GridBagConstraints();
+
 		draw();
 	}
 	
@@ -93,6 +162,32 @@ public class Dashboard extends JFrame {
 			f.printStackTrace();
 		}
 	}
+	
+	private void importData() {
+		try {
+			fChooser.setCurrentDirectory(new File(NewRecord.class.getClassLoader().toString()));
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("xml files (*.xml)", "xml");
+			fChooser.setFileFilter(filter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		int m = this.fChooser.showOpenDialog(new JFrame());
+		switch(m) {
+		case JFileChooser.APPROVE_OPTION :
+			try {
+				URI file = fChooser.getSelectedFile().toURI();
+				Interpreter interpreter = new Interpreter();
+				interpreter.importPatients(Dashboard.class.getClassLoader().getResource(PATIENT).toURI(), file);
+			} catch (URISyntaxException urise) {
+				urise.printStackTrace();
+			}
+			draw();
+			break;
+		case JFileChooser.CANCEL_OPTION :
+			break;
+		}
+	}
 
 	/**
 	 * The search() method searches the database for patients based the
@@ -104,29 +199,30 @@ public class Dashboard extends JFrame {
 		searchText = tSearch.getText();
 		LOGGER.info("Searching patient database for " + searchField + " containing " + searchText);
 		
-		Interpreter interpreter = new Interpreter();	
-		if (interpreter.searchPatients(PATIENT, searchField, searchText) == null) {
-			JOptionPane.showMessageDialog(small, "There are no matches for\n" + searchField + " containing " + searchText);
-		} else {
-			
-			searchResults = interpreter.searchPatients(PATIENT, searchField, searchText);
-			
-			tbResults = new JTable(searchResults, HEADER) {
-				private static final long serialVersionUID = 1L;
-				public boolean isCellEditable(int row, int column) {
-					return false;
-				}
-			};
-			tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			tbResults.setMinimumSize(tbResults.getPreferredSize());
-			tbResults.setAutoCreateRowSorter(true);
-			
-			scrResults.setViewportView(tbResults);
-			scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-			scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			
-			this.validate();
-
+		try {
+			Interpreter interpreter = new Interpreter();	
+			if (interpreter.searchPatients(Dashboard.class.getClassLoader().getResource(PATIENT).toURI(), searchField, searchText) == null) {
+				JOptionPane.showMessageDialog(small, "There are no matches for\n" + searchField + " containing " + searchText);
+			} else {
+				searchResults = interpreter.searchPatients(Dashboard.class.getClassLoader().getResource(PATIENT).toURI(), searchField, searchText);
+				tbResults = new JTable(searchResults, HEADER) {
+					private static final long serialVersionUID = 1L;
+					public boolean isCellEditable(int row, int column) {
+						return false;
+					}
+				};
+				tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				tbResults.setMinimumSize(tbResults.getPreferredSize());
+				tbResults.setAutoCreateRowSorter(true);
+				
+				scrResults.setViewportView(tbResults);
+				scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+				scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				
+				this.validate();
+			} 
+		} catch (URISyntaxException urise) {
+				urise.printStackTrace();
 		}		
 	}
 	
@@ -144,7 +240,7 @@ public class Dashboard extends JFrame {
 			f.printStackTrace();
 		}
 	}
-	
+		
 	/**
 	 * The logout option exits the program with a goodbye message.
 	 */
@@ -175,61 +271,19 @@ public class Dashboard extends JFrame {
 			case "Logout":
 				logout();
 				break;
+			case "Import":
+				importData();
+				break;
 			}
 		}
 	}
-	
+		
 	/**
 	 * The draw() method contains the code to render the GUI.	
 	 */
 	private void draw() {
 		
-		this.setTitle("Patient Management System -- Dashboard");
-		lWelcome = new JLabel("Welcome, Administrator");
-		lSearch = new JLabel("Search patients");
-		cboxSearch = new JComboBox<String>(SEARCHFIELDS);
-		tSearch = new JTextField();
-		bSearch = new JButton("Search");
-		sVertical = new JSeparator(JSeparator.VERTICAL);
-		lRegister = new JLabel("New patient");
-		bRegister = new JButton("Register");
-		sHorizontal = new JSeparator(JSeparator.HORIZONTAL);
-		lResults = new JLabel("Search results");
-		tbResults = new JTable(5, 10);
-		tbResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		tbResults.setFillsViewportHeight(true);
-		scrResults = new JScrollPane(tbResults);
-		scrResults.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrResults.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		bOpen = new JButton("Open patient profile");
-		bLogout = new JButton("Log out");
-		
-		bListener = new ButtonListener();
-		bSearch.addActionListener(bListener);
-		bSearch.setActionCommand("Search");
-		bRegister.addActionListener(bListener);
-		bRegister.setActionCommand("Register");
-		bOpen.addActionListener(bListener);
-		bOpen.setActionCommand("Open");
-		bLogout.addActionListener(bListener);
-		bLogout.setActionCommand("Logout");
-		
-		Container panel = this.getContentPane();
-		panel.setLayout(new GridBagLayout());
-		
-		GridBagConstraints clWelcome = new GridBagConstraints();
-		GridBagConstraints clSearch = new GridBagConstraints();
-		GridBagConstraints ccboxSearch = new GridBagConstraints();
-		GridBagConstraints ctSearch = new GridBagConstraints();
-		GridBagConstraints cbSearch = new GridBagConstraints();
-		GridBagConstraints csVertical = new GridBagConstraints();
-		GridBagConstraints clRegister = new GridBagConstraints();
-		GridBagConstraints cbRegister = new GridBagConstraints();
-		GridBagConstraints csHorizontal = new GridBagConstraints();
-		GridBagConstraints clResults = new GridBagConstraints();
-		GridBagConstraints cscrResults = new GridBagConstraints();
-		GridBagConstraints cbOpen = new GridBagConstraints();
-		GridBagConstraints cbLogout = new GridBagConstraints();
+		panel = this.getContentPane();
 		
 		clWelcome.gridx = 0;
 		clWelcome.gridy = 0;
@@ -316,8 +370,24 @@ public class Dashboard extends JFrame {
 		cbOpen.fill = GridBagConstraints.HORIZONTAL;
 		cbOpen.insets = STANDARDINSETS;
 
+		cbImport.gridx = 1;
+		cbImport.gridy = 9;
+		cbImport.gridwidth = 1;
+		cbImport.gridheight = 1;
+		cbImport.weighty = 0.7;
+		cbImport.anchor = GridBagConstraints.FIRST_LINE_END;
+		cbImport.insets = STANDARDINSETS;
+		
+		cbExport.gridx = 2;
+		cbExport.gridy = 9;
+		cbExport.gridwidth = 1;
+		cbExport.gridheight = 1;
+		cbExport.weighty = 0.7;
+		cbExport.anchor = GridBagConstraints.FIRST_LINE_END;
+		cbExport.insets = STANDARDINSETS;
+		
 		cbLogout.gridx = 3;
-		cbLogout.gridy = 10;
+		cbLogout.gridy = 0;
 		cbLogout.gridwidth = 1;
 		cbLogout.gridheight = 1;
 		cbLogout.weighty = 0.7;
@@ -337,10 +407,38 @@ public class Dashboard extends JFrame {
 		panel.add(scrResults, cscrResults);
 		panel.add(bOpen, cbOpen);
 		panel.add(bLogout, cbLogout);
+		panel.add(bImport, cbImport);
+		panel.add(bExport, cbExport);
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
 		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		search();
+		draw();
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		;
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		;
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		;
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		;
 	}
 			
 }
